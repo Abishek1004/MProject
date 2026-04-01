@@ -1,0 +1,110 @@
+# ============================================================
+#  EWASTE2 — Root .gitignore
+#  Place this file at: c:\Users\Abishek\Downloads\Ewaste2\
+# ============================================================
+
+# ── OS & Editor ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+*~
+
+# ── Environment / Secrets ───────────────────────────────────
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets.yml
+
+# ─────────────────────────────────────────────────────────────
+#  FRONTEND  (React + Vite)
+# ─────────────────────────────────────────────────────────────
+Ewaste2/Mini-Project/frontend-integrated/node_modules/
+Ewaste2/Mini-Project/frontend-integrated/dist/
+Ewaste2/Mini-Project/frontend-integrated/.cache/
+Ewaste2/Mini-Project/frontend-integrated/coverage/
+Ewaste2/Mini-Project/frontend-integrated/*.local
+
+# ─────────────────────────────────────────────────────────────
+#  BACKEND  (Spring Boot / Maven)
+# ─────────────────────────────────────────────────────────────
+Ewaste2/Mini-Project/Backend/backend-integrated/target/
+Ewaste2/Mini-Project/Backend/backend-integrated/*.class
+Ewaste2/Mini-Project/Backend/backend-integrated/hs_err_pid*
+Ewaste2/Mini-Project/Backend/backend-integrated/.mvn/wrapper/maven-wrapper.jar
+
+# Secrets — never commit real credentials
+Mini-Project/Backend/backend-integrated/src/main/resources/application.properties
+
+# ─────────────────────────────────────────────────────────────
+#  IMAGE PREDICTION  (Python / YOLO)
+# ─────────────────────────────────────────────────────────────
+
+# Virtual environments
+Ewaste2/Mini-Project/Image_Prediction/.venv/
+Ewaste2/Mini-Project/Image_Prediction/venv/
+Ewaste2/Mini-Project/Image_Prediction/env/
+
+# Python cache
+Ewaste2/Mini-Project/Image_Prediction/__pycache__/
+Ewaste2/Mini-Project/Image_Prediction/*.pyc
+Ewaste2/Mini-Project/Image_Prediction/*.pyo
+Ewaste2/Mini-Project/Image_Prediction/*.pyd
+
+# Datasets & Labels (large — share via Google Drive / Kaggle instead)
+Ewaste2/Mini-Project/Image_Prediction/Dataset/
+Ewaste2/Mini-Project/Image_Prediction/labels/
+
+# YOLO Training output (runs/detect/train/weights/best.pt can be 100s of MB)
+Ewaste2/Mini-Project/Image_Prediction/runs/
+
+# Pre-trained base model (download separately — not project code)
+Ewaste2/Mini-Project/Image_Prediction/yolov8n.pt
+
+# ─────────────────────────────────────────────────────────────
+#  MOBILE PREDICTION  (Python / ML)
+# ─────────────────────────────────────────────────────────────
+Ewaste2/Mini-Project/Mobile_Prediction/
+# If you DO want Mobile_Prediction folder tracked, comment the line above
+# and instead ignore only large artifacts inside it:
+# Ewaste2/Mini-Project/Mobile_Prediction/.venv/
+# Ewaste2/Mini-Project/Mobile_Prediction/__pycache__/
+# Ewaste2/Mini-Project/Mobile_Prediction/runs/
+# Ewaste2/Mini-Project/Mobile_Prediction/*.pt
+
+# ─────────────────────────────────────────────────────────────
+#  COMMON ML / DATA  patterns (catch-all)
+# ─────────────────────────────────────────────────────────────
+*.pt
+*.pth
+*.h5
+*.pkl
+*.pickle
+*.onnx
+*.tflite
+*.csv
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*.bin
+*.npz
+*.npy
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Temp / uploads
+tmp/
+temp/
+uploads/

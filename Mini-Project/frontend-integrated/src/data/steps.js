@@ -1,0 +1,18 @@
+export const STEPS = [
+  { num:'01', icon:'📥', title:'Collect Electronic Waste', img:'/images/process/collect.jpg',
+    color:'#059569', light:'#ecfdf5', border:'#a7f3d0',
+    desc:'Users submit their old devices through our platform. We review, confirm, and schedule a free doorstep pickup. Devices are packed in secure tamper-proof packaging.',
+    points:['Free doorstep pickup','Flexible scheduling','Tamper-proof packaging'] },
+  { num:'02', icon:'🔍', title:'Sort Materials', img:'/images/process/sort.jpg',
+    color:'#0891b2', light:'#ecfeff', border:'#a5f3fc',
+    desc:'Every device is carefully inspected and sorted. Hazardous components — lithium batteries, LCD screens, circuit boards — are identified for specialised handling.',
+    points:['Condition grading','Hazard identification','Certified technicians'] },
+  { num:'03', icon:'⚙️', title:'Recycle Components', img:'/images/process/recycle.jpg',
+    color:'#7c3aed', light:'#f5f3ff', border:'#ddd6fe',
+    desc:'Precious metals like gold, silver and copper are recovered from circuit boards. Functional parts are refurbished. All storage is permanently wiped with certified software.',
+    points:['Precious metal recovery','Part refurbishment','Certified data wiping'] },
+  { num:'04', icon:'🌿', title:'Dispose Safely', img:'/images/process/dispose.jpg',
+    color:'#65a30d', light:'#f7fee7', border:'#d9f99d',
+    desc:'Remaining materials are disposed of in strict compliance with ISO 14001 and CPCB e-waste management regulations. Zero harmful substances are released.',
+    points:['ISO 14001 certified','CPCB compliant','Zero landfill goal'] },
+]

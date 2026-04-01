@@ -1,0 +1,34 @@
+package com.example.e_waste_management_backend.dto;
+
+public class AuthResponse {
+
+    private String token;
+    private UserInfo user;
+
+    public AuthResponse(String token, UserInfo user) {
+        this.token = token;
+        this.user = user;
+    }
+
+    public String getToken() { return token; }
+    public UserInfo getUser() { return user; }
+
+    public static class UserInfo {
+        private Long id;
+        private String name;
+        private String email;
+        private String mobileNo;
+
+        public UserInfo(Long id, String name, String email, String mobileNo) {
+            this.id = id;
+            this.name = name;
+            this.email = email;
+            this.mobileNo = mobileNo;
+        }
+
+        public Long getId() { return id; }
+        public String getName() { return name; }
+        public String getEmail() { return email; }
+        public String getMobileNo() { return mobileNo; }
+    }
+}
