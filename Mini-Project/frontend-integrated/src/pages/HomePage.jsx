@@ -51,7 +51,7 @@ function TypeWriter({ text, speed = 38, delay = 900 }) {
   )
 }
 
-function CategoryCard({ cat, onClick }) {
+function CategoryCard({ cat, onClick, go }) {
   return (
     <motion.div
       className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow cursor-pointer overflow-hidden w-full transition-colors duration-300"
@@ -76,16 +76,18 @@ function CategoryCard({ cat, onClick }) {
           {cat.badge}
         </span>
 
-        <ImgF
-          src={cat.img}
-          alt={cat.name}
-          style={{ maxWidth: 150, maxHeight: 150, objectFit: 'contain' }}
-          fallback={
-            <div className="text-center">
-              <div className="text-8xl">{cat.emoji}</div>
-            </div>
-          }
-        />
+        <div className="p-2 cursor-pointer z-10" onClick={(e) => { e.stopPropagation(); go('cart') }}>
+          <ImgF
+            src={cat.img}
+            alt={cat.name}
+            style={{ maxWidth: 150, maxHeight: 150, objectFit: 'contain' }}
+            fallback={
+              <div className="text-center">
+                <div className="text-8xl">{cat.emoji}</div>
+              </div>
+            }
+          />
+        </div>
       </div>
 
       {/* Text */}
@@ -134,7 +136,7 @@ export default function HomePage({ go }) {
       {/* HERO */}
       <section
         className="relative overflow-hidden px-5 pt-[98px] pb-28"
-        style={{ background: 'linear-gradient(135deg,#014f3a,#059569)' }}
+        style={{ background: 'linear-gradient(135deg,#024632,#037252)' }}
       >
         <div className="absolute -top-20 -right-24 w-[420px] h-[420px] rounded-full pointer-events-none"
              style={{ background: '#26c49a', opacity: 0.25, filter: 'blur(40px)' }} />
@@ -181,7 +183,7 @@ export default function HomePage({ go }) {
                 whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => catRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-white text-[#024334] font-poppins font-semibold text-sm md:text-base px-7 py-3.5 rounded-xl border-none cursor-pointer shadow-lg shadow-black/15"
+                className="bg-white text-[#037252] font-poppins font-semibold text-sm md:text-base px-7 py-3.5 rounded-xl border-none cursor-pointer shadow-lg shadow-black/15"
               >
                 Get My Price Now →
               </motion.button>
@@ -261,6 +263,7 @@ export default function HomePage({ go }) {
               key={cat.id}
               cat={cat}
               onClick={() => go('category', { category: cat.id })}
+              go={go}
             />
           ))}
         </motion.div>
@@ -303,15 +306,14 @@ export default function HomePage({ go }) {
           className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100"
           {...inViewFadeUp}
         >
-          Ready to Recycle &amp; Earn?
         </motion.h2>
         <motion.button
           whileHover={{ scale: 1.04, boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}
           whileTap={{ scale: 0.97 }}
           onClick={() => catRef.current?.scrollIntoView({ behavior: 'smooth' })}
-          className="bg-green-600 hover:bg-eco-700 text-white px-6 py-3 rounded-lg border-none cursor-pointer font-semibold transition-colors"
+          className="bg-[#037252] hover:bg-[#025c42] text-white px-8 py-4 rounded-xl border-none cursor-pointer font-poppins font-bold transition-all duration-300"
         >
-          Start Now →
+          Start Now — Get Price →
         </motion.button>
       </section>
 

@@ -87,7 +87,7 @@ function CategorySearch({ categoryId, go }) {
 }
 
 // ── Brand card ────────────────────────────────────────────────────────────────
-function CompanyCard({ company, catColor, catLight, onClick }) {
+function CompanyCard({ company, catColor, catLight, onClick, go }) {
   return (
     <motion.button
       onClick={onClick}
@@ -104,9 +104,11 @@ function CompanyCard({ company, catColor, catLight, onClick }) {
       }}
       whileTap={{ scale: 0.97, y: -2 }}
     >
-      <ImgF src={company.logo} alt={company.name}
-        style={{ width:48, height:48, objectFit:'contain' }}
-        fallback={<span style={{ fontSize:'2.2rem' }}>{company.emoji}</span>} />
+      <div className="z-10 cursor-pointer p-1" onClick={(e) => { e.stopPropagation(); go('cart') }}>
+        <ImgF src={company.logo} alt={company.name}
+          style={{ width:48, height:48, objectFit:'contain' }}
+          fallback={<span style={{ fontSize:'2.2rem' }}>{company.emoji}</span>} />
+      </div>
       <div>
         <p className="font-poppins font-bold text-base text-slate-800 dark:text-slate-100">
           {company.name}
@@ -198,6 +200,7 @@ export default function CategoryPage({ nav, go, goBack, canGoBack }) {
               catColor={cat.color}
               catLight={cat.light}
               onClick={() => go('models', { company: company.id })}
+              go={go}
             />
           ))}
         </motion.div>

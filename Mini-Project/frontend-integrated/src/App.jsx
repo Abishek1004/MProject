@@ -18,6 +18,7 @@ import ModelsPage    from './pages/ModelsPage'
 import VariantsPage  from './pages/VariantsPage'
 import DetailsPage   from './pages/DetailsPage'
 import EstimatePage  from './pages/EstimatePage'
+import CartPage      from './pages/CartPage'
 
 // ─── ROUTE MAP ───────────────────────────────────────────────────────────────
 const ROUTES = {
@@ -34,6 +35,7 @@ const ROUTES = {
   '/variants': 'variants',
   '/details':  'details',
   '/estimate': 'estimate',
+  '/cart':     'cart',
 }
 
 function pageToPath(page, nav = {}) {
@@ -42,6 +44,7 @@ function pageToPath(page, nav = {}) {
     home: '/', about: '/about', process: '/process', search: '/search',
     signin: '/login', signup: '/signup', models: '/models',
     variants: '/variants', details: '/details', estimate: '/estimate',
+    cart: '/cart',
   }
   return map[page] || '/'
 }
@@ -96,6 +99,7 @@ export default function App() {
       variants: 'Variants — EcoRecycle',
       details: 'Device Details — EcoRecycle',
       estimate: 'Price Estimate — EcoRecycle',
+      cart: 'My Cart — EcoRecycle',
     }
     document.title = titles[page] || 'EcoRecycle'
   }, [page, nav])
@@ -195,7 +199,7 @@ export default function App() {
         go={go} goBack={goBack} canGoBack={canGoBack}
         onSignIn={() => setAuthMode('signin')}
         onLogout={onLogout}
-        onCart={() => setCartOpen(true)}
+        onCart={() => go('cart')}
         onSearch={(q) => go('search', { searchQuery: q || '' })}
       />
 
@@ -217,6 +221,7 @@ export default function App() {
           {page === 'variants' && <VariantsPage {...shared} />}
           {page === 'details'  && <DetailsPage  {...shared} />}
           {page === 'estimate' && <EstimatePage {...shared} addToCart={addToCart} />}
+          {page === 'cart'     && <CartPage     {...shared} cart={cart} onRemove={removeFromCart} />}
         </motion.div>
       </AnimatePresence>
 

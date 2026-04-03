@@ -7,12 +7,12 @@ import { api } from '../utils/api'
 import { staggerContainer, fadeUp } from '../utils/motion'
 
 const ACCENTS = [
-  { a: '#38bdf8', b: '#0284c7' },
-  { a: '#34d399', b: '#059569' },
-  { a: '#f87171', b: '#dc2626' },
-  { a: '#818cf8', b: '#4f46e5' },
-  { a: '#fbbf24', b: '#d97706' },
-  { a: '#f472b6', b: '#db2777' },
+  { a: '#037252', b: '#025c42' },
+  { a: '#037252', b: '#025c42' },
+  { a: '#037252', b: '#025c42' },
+  { a: '#037252', b: '#025c42' },
+  { a: '#037252', b: '#025c42' },
+  { a: '#037252', b: '#025c42' },
 ]
 
 function getConditionSteps(categoryId) {
@@ -276,48 +276,59 @@ function PreviewImage({ src, accent }) {
 function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview }) {
   return (
     <button
-      onClick={() => { onTap(opt.label); setPreview(opt.image) }}
-      onMouseEnter={() => setPreview(opt.image)}
+      onClick={() => { onTap(opt.label); if (setPreview) setPreview(opt.image) }}
+      className="group"
       style={{
-        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-        padding: '10px 14px', borderRadius: 14, textAlign: 'left',
-        background: selected ? `${accent}12` : '#f8fafc',
-        border: `1.5px solid ${selected ? accent + '80' : '#e2e8f0'}`,
-        cursor: 'pointer', transition: 'all 0.17s ease',
+        flex: '1 1 calc(33.33% - 10px)', minWidth: 120, height: 130, 
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '16px 10px 12px', borderRadius: 16, textAlign: 'center',
+        background: selected ? `${accent}08` : '#ffffff',
+        border: `1.5px solid ${selected ? accent : '#eef2f6'}`,
+        boxShadow: selected ? `0 4px 12px ${accent}20` : '0 2px 4px rgba(0,0,0,0.02)',
+        cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        position: 'relative', overflow: 'hidden',
         WebkitTapHighlightColor: 'transparent', outline: 'none',
       }}
     >
-      {/* thumb */}
+      {/* indicator dot/check in top-left */}
       <div style={{
-        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-        background: selected ? `${accent}20` : '#fff',
-        border: `1px solid ${selected ? accent + '55' : '#e2e8f0'}`,
+        position: 'absolute', top: 10, left: 10,
+        width: 18, height: 18, borderRadius: isRadio ? '50%' : 4,
+        background: selected ? accent : '#f1f5f9',
+        border: selected ? 'none' : '1.5px solid #cbd5e1',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <img src={opt.image} alt={opt.label} style={{ width: 22, height: 22, objectFit: 'contain' }}
-          onError={e => { e.currentTarget.style.opacity = '0.15' }} />
-      </div>
-      {/* label */}
-      <span style={{
-        flex: 1, fontSize: 13.5, fontWeight: 500, lineHeight: 1.4,
-        color: selected ? '#1e293b' : '#64748b', fontFamily: "'Inter',sans-serif",
-      }}>{opt.label}</span>
-      {/* indicator */}
-      <div style={{
-        width: 20, height: 20, flexShrink: 0, display: 'flex',
-        alignItems: 'center', justifyContent: 'center',
-        borderRadius: isRadio ? '50%' : 6,
-        background: selected ? accent : 'transparent',
-        border: selected ? 'none' : '2px solid #cbd5e1',
-        transition: 'all 0.17s ease',
+        transition: 'all 0.2s ease',
       }}>
         {selected && (
-          <svg viewBox="0 0 12 12" width={12} height={12} fill="none">
-            <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2.2"
+          <svg viewBox="0 0 12 12" width={10} height={10} fill="none">
+            <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2.5"
               strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
       </div>
+
+      {/* Center Image */}
+      <div style={{
+        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        marginBottom: 8, width: '100%',
+      }}>
+        <img src={opt.image} alt={opt.label} 
+          style={{ 
+            width: 54, height: 54, objectFit: 'contain', 
+            opacity: selected ? 1 : 0.85,
+            transform: selected ? 'scale(1.05)' : 'scale(1)',
+            transition: 'all 0.2s ease',
+          }}
+          onError={e => { e.currentTarget.style.opacity = '0.15' }} />
+      </div>
+
+      {/* label below */}
+      <span style={{
+        fontSize: 11.5, fontWeight: 700, lineHeight: 1.25,
+        color: selected ? '#0f172a' : '#64748b', fontFamily: "'Inter',sans-serif",
+        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+        overflow: 'hidden', height: 28,
+      }}>{opt.label}</span>
     </button>
   )
 }
@@ -408,19 +419,9 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
 
       {/* header */}
       <div style={{ padding: '20px 20px 0', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-        {/* progress bars */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 14 }}>
-          {steps.map((_, i) => (
-            <div key={i} style={{
-              flex: i === step ? 2.5 : 1, height: 4, borderRadius: 8,
-              background: i < step ? ac.a : i === step ? ac.a : '#e2e8f0',
-              transition: 'all 0.4s ease',
-            }} />
-          ))}
-        </div>
 
-        {/* back + badge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        {/* back button */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <button onClick={goBack} disabled={step === 0} style={{
             width: 34, height: 34, borderRadius: 10, border: '1.5px solid #e2e8f0',
             background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -430,18 +431,6 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span style={{
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.07em',
-            padding: '4px 12px', borderRadius: 20,
-            background: `${ac.a}18`, color: ac.a,
-            border: `1px solid ${ac.a}44`, fontFamily: "'Inter',sans-serif",
-          }}>STEP {step + 1} / {steps.length}</span>
-          <div style={{ width: 34 }} />
-        </div>
-
-        {/* preview image */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-          <PreviewImage src={preview} accent={ac.a} />
         </div>
 
         {/* title */}
@@ -603,7 +592,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
         </div>
       ) : (
         <div key={`o${animKey}`} className="cond-fade-up"
-          style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 340, overflowY: 'auto' }}>
+          style={{ padding: '14px 16px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 10, maxHeight: 440, overflowY: 'auto', justifyContent: 'flex-start' }}>
           {cur.options.map(opt => {
             const selected = isRadio
               ? answers[cur.key] === opt.label
@@ -709,7 +698,7 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
     })
   }
 
-  const cc = cat?.color || '#059569'
+  const cc = '#037252'
 
   const specOptions = useMemo(() => {
     const combos = []

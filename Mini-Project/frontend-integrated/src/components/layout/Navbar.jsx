@@ -25,9 +25,21 @@ export default function Navbar({ cart, page, go, onSignIn, onLogout, onCart, onS
       if (dropRef.current   && !dropRef.current.contains(e.target))   setDropOpen(false)
       if (searchRef.current && !searchRef.current.contains(e.target)) setSearchOpen(false)
     }
+    
+    const keyHandler = (e) => {
+      if (e.key === '/' && !searchOpen && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault()
+        handleSearchOpen()
+      }
+    }
+
     document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
+    document.addEventListener('keydown', keyHandler)
+    return () => {
+      document.removeEventListener('mousedown', handler)
+      document.removeEventListener('keydown', keyHandler)
+    }
+  }, [searchOpen])
 
   useEffect(() => {
     if (page === 'search') setLocalQuery(searchQuery || '')
@@ -76,53 +88,68 @@ export default function Navbar({ cart, page, go, onSignIn, onLogout, onCart, onS
           </button>
 
           {/* Centre nav */}
-          <div className="hidden md:flex items-center gap-1 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-3 flex-1 justify-center px-4 min-w-0">
             {links.map(({ label, page: p }, i) => (
-              <motion.button
-                key={p}
-                onClick={() => go(p)}
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06, duration: 0.28, ease: 'easeOut' }}
-                className={`px-4 py-2 rounded-lg border-none cursor-pointer font-inter font-semibold text-sm transition-all duration-150
-                  ${page === p
-                    ? 'bg-eco-50 dark:bg-eco-900/30 text-eco-600 dark:text-eco-400'
-                    : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-eco-600 dark:hover:text-eco-400'}`}
-              >
-                {label}
-              </motion.button>
+                <motion.button
+                  key={p}
+                  onClick={() => go(p)}
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.28, ease: 'easeOut' }}
+                  className={`px-3 py-2 rounded-xl border-none cursor-pointer font-inter font-bold text-[13px] transition-all duration-150 flex-shrink-0
+                    ${page === p
+                      ? 'bg-eco-50 dark:bg-eco-900/40 text-eco-600 dark:text-eco-400 shadow-sm'
+                      : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-eco-600 dark:hover:text-eco-400'}`}
+                >
+                  <span className="not-italic whitespace-nowrap">{label}</span>
+                </motion.button>
             ))}
           </div>
 
           {/* Search bar — desktop */}
-          <div ref={searchRef} className="hidden md:flex items-center flex-1 max-w-[300px] relative">
-            {searchOpen ? (
-              <div className="flex items-center w-full bg-slate-50 dark:bg-slate-800 border-2 border-eco-400 rounded-xl overflow-hidden">
-                <svg className="ml-3 flex-shrink-0" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#059569" strokeWidth="2.5">
-                  <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
-                </svg>
-                <input ref={inputRef} value={localQuery} onChange={(e) => setLocalQuery(e.target.value)}
-                  onKeyDown={handleKeyDown} placeholder="Search — iPhone 15, MacBook Air…"
-                  className="flex-1 px-3 py-2.5 text-sm font-inter bg-transparent outline-none text-slate-800 dark:text-slate-200 placeholder-slate-400" />
-                {localQuery && (
-                  <button onClick={() => setLocalQuery('')}
-                    className="mr-1 w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-xs flex items-center justify-center border-none cursor-pointer hover:bg-slate-300 flex-shrink-0">×</button>
-                )}
-                <button onClick={() => handleSearchSubmit(localQuery)}
-                  className="bg-eco-600 hover:bg-eco-700 rounded-xl text-white text-xs font-bold font-inter px-3 py-2.5 border-none cursor-pointer flex-shrink-0 transition-colors">
-                  Go
-                </button>
-              </div>
-            ) : (
-              <button onClick={handleSearchOpen}
-                className="flex items-center gap-2 w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 text-sm font-inter cursor-pointer hover:border-eco-300 hover:bg-eco-50 dark:hover:bg-slate-700 transition-colors">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
-                </svg>
-                Search all devices…
-                <span className="ml-auto text-[11px] bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 px-1.5 py-0.5 rounded font-mono">Go</span>
-              </button>
-            )}
+          <div ref={searchRef} className="hidden lg:flex items-center relative flex-shrink-1 min-w-[140px] max-w-[260px] w-full mx-1">
+            <AnimatePresence mode="wait">
+              {searchOpen ? (
+                <motion.div 
+                  key="open"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center w-full bg-slate-50 dark:bg-slate-800 border-2 border-eco-400 rounded-xl overflow-hidden shadow-inner"
+                >
+                  <svg className="ml-3 flex-shrink-0" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#059569" strokeWidth="2.5">
+                    <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
+                  </svg>
+                  <input ref={inputRef} value={localQuery} onChange={(e) => setLocalQuery(e.target.value)}
+                    onKeyDown={handleKeyDown} placeholder="Search…"
+                    className="flex-1 min-w-0 px-3 py-2.5 text-xs font-inter bg-transparent outline-none text-slate-800 dark:text-slate-200 placeholder-slate-400" />
+                  {localQuery && (
+                    <button onClick={() => setLocalQuery('')}
+                      className="mr-1 w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-xs flex items-center justify-center border-none cursor-pointer hover:bg-slate-300 flex-shrink-0">×</button>
+                  )}
+                  <button onClick={() => handleSearchSubmit(localQuery)}
+                    className="bg-eco-600 hover:bg-eco-700 rounded-xl text-white text-[10px] font-bold font-inter px-3 py-2.5 border-none cursor-pointer flex-shrink-0 transition-colors">
+                    Go
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.button 
+                  key="closed"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={handleSearchOpen}
+                  className="flex items-center gap-2 w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-400 dark:text-slate-500 text-sm font-inter cursor-pointer hover:border-eco-300 hover:bg-eco-50 dark:hover:bg-slate-700 transition-colors overflow-hidden"
+                >
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
+                  </svg>
+                  <span className="text-xs truncate hidden xl:inline">Search devices…</span>
+                  <span className="ml-auto flex-shrink-0 text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 px-1.5 py-0.5 rounded font-mono">/</span>
+                </motion.button>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Right actions */}
@@ -270,7 +297,7 @@ export default function Navbar({ cart, page, go, onSignIn, onLogout, onCart, onS
             ) : (
               /* Auth — signed out */
               <button onClick={onSignIn}
-                className="bg-eco-600 hover:bg-eco-700 text-white font-poppins font-bold text-sm px-5 py-2.5 rounded-xl border-none cursor-pointer transition-all duration-150 hover:shadow-md">
+                className="bg-[#037252] hover:bg-[#025c42] text-white font-poppins font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl border-none cursor-pointer transition-all duration-150 hover:shadow-md whitespace-nowrap flex-shrink-0">
                 Sign In
               </button>
             )}
