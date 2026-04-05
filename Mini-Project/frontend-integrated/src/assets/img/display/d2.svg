@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="100px" height="100px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#2C3439;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#2C3439;}
+	.st2{filter:url(#Adobe_OpacityMaskFilter);}
+	.st3{mask:url(#SVGID_1_);}
+	.st4{fill:#EE8B22;}
+	.st5{filter:url(#Adobe_OpacityMaskFilter_00000121247476350160795610000013681296885126050702_);}
+	.st6{mask:url(#SVGID_00000114046800200188279770000006161727689428991895_);}
+</style>
+<g>
+	<g>
+		<g>
+			<g>
+				<path class="st0" d="M56.6,6.1H39.2c-2.1,0-3.8-1.7-3.8-3.8V0.9h25v1.4C60.4,4.4,58.7,6.1,56.6,6.1z"/>
+			</g>
+		</g>
+	</g>
+	<g>
+		<path class="st0" d="M67.9,99.6H27.9c-3.2,0-5.8-2.6-5.8-5.8V6.2c0-3.2,2.6-5.8,5.8-5.8h39.9c3.2,0,5.8,2.6,5.8,5.8v87.7
+			C73.6,97,71,99.6,67.9,99.6z M27.9,2.4c-2.1,0-3.8,1.7-3.8,3.8v87.7c0,2.1,1.7,3.8,3.8,3.8h39.9c2.1,0,3.8-1.7,3.8-3.8V6.2
+			c0-2.1-1.7-3.8-3.8-3.8H27.9z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path class="st1" d="M47.3,56C47.3,56,47.3,55.9,47.3,56C47.3,55.9,47.4,55.9,47.3,56z"/>
+	</g>
+</g>
+<g>
+	<g>
+		<path class="st1" d="M47.3,56C47.2,55.9,47.3,55.9,47.3,56C47.4,55.9,47.4,56,47.3,56z"/>
+	</g>
+</g>
+<g>
+	<defs>
+		<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="35.3" y="26.7" width="3.8" height="3.8">
+			<feFlood  style="flood-color:white;flood-opacity:1" result="back"/>
+			<feBlend  in="SourceGraphic" in2="back" mode="normal"/>
+		</filter>
+	</defs>
+	<mask maskUnits="userSpaceOnUse" x="35.3" y="26.7" width="3.8" height="3.8" id="SVGID_1_">
+		<g class="st2">
+			
+				<image style="overflow:visible;" width="93" height="93" xlink:href="13723D5F.jpg"  transform="matrix(5.051599e-02 0 0 5.051599e-02 34.8639 26.2066)">
+			</image>
+		</g>
+	</mask>
+	<g class="st3">
+		<g>
+			<circle class="st4" cx="37.2" cy="28.6" r="1.9"/>
+		</g>
+	</g>
+</g>
+<g>
+	<defs>
+		
+			<filter id="Adobe_OpacityMaskFilter_00000011021384310827456820000014453496671744486052_" filterUnits="userSpaceOnUse" x="42.1" y="39.8" width="2.1" height="2.1">
+			<feFlood  style="flood-color:white;flood-opacity:1" result="back"/>
+			<feBlend  in="SourceGraphic" in2="back" mode="normal"/>
+		</filter>
+	</defs>
+	
+		<mask maskUnits="userSpaceOnUse" x="42.1" y="39.8" width="2.1" height="2.1" id="SVGID_00000173840125192277681940000007380237343317726338_">
+		<g style="filter:url(#Adobe_OpacityMaskFilter_00000011021384310827456820000014453496671744486052_);">
+			
+				<image style="overflow:visible;" width="69" height="69" xlink:href="13723D5A.jpg"  transform="matrix(4.060068e-02 0 0 4.060068e-02 41.7404 39.4987)">
+			</image>
+		</g>
+	</mask>
+	<g style="mask:url(#SVGID_00000173840125192277681940000007380237343317726338_);">
+		<g>
+			<circle class="st4" cx="43.1" cy="40.9" r="1"/>
+		</g>
+	</g>
+</g>
+</svg>

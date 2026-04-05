@@ -3,8 +3,80 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CATEGORIES, getCompany } from '../data'
 import BackButton from '../components/ui/BackButton'
 import box from '../assets/img/original_box.svg'
+import charger from '../assets/img/charger.svg'
 import { api } from '../utils/api'
 import { staggerContainer, fadeUp } from '../utils/motion'
+import bill from '../assets/img/validbill.svg'
+import i1 from '../assets/img/glass/i1.svg';
+import i2 from '../assets/img/glass/i2.svg';
+import i3 from '../assets/img/glass/i3.svg';
+import i4 from '../assets/img/glass/i4.svg';
+import i5 from '../assets/img/glass/i5.svg';
+import i6 from '../assets/img/glass/i6.svg';
+import d1 from '../assets/img/display/d1.svg'
+import d2 from '../assets/img/display/d2.svg'
+import d3 from '../assets/img/display/d3.svg'
+import d4 from '../assets/img/display/d4.svg'
+import d5 from '../assets/img/display/d5.svg'
+import d6 from '../assets/img/display/d6.svg'
+import d7 from '../assets/img/display/d7.svg'
+import b1 from '../assets/img/body/b1.svg'
+import b2 from '../assets/img/body/b2.svg'
+import b3 from '../assets/img/body/b3.svg'
+import b4 from '../assets/img/body/b4.svg'
+import b5 from '../assets/img/body/b5.svg'
+import b6 from '../assets/img/body/b6.svg'
+import f1 from '../assets/img/fault/f1.svg'
+import f2 from '../assets/img/fault/f2.svg'
+import f5 from '../assets/img/fault/f5.svg'
+import f6 from '../assets/img/fault/f6.svg'
+import f8 from '../assets/img/fault/f8.svg'
+import f9 from '../assets/img/fault/f9.svg'
+import f11 from '../assets/img/fault/f11.svg'
+import f12 from '../assets/img/fault/f12.svg'
+import f13 from '../assets/img/fault/f13.svg'
+import ld1 from '../assets/img/display/ld1.svg'
+import ld2 from '../assets/img/display/ld2.svg'
+import ld3 from '../assets/img/display/ld3.svg'
+import ld4 from '../assets/img/display/ld4.svg'
+import ld5 from '../assets/img/display/ld5.svg'
+import ld6 from '../assets/img/display/ld6.svg'
+import lb1 from '../assets/img/body/lb1.svg'
+import lb2 from '../assets/img/body/lb2.svg'
+import lb3 from '../assets/img/body/lb3.svg'
+import lb4 from '../assets/img/body/lb4.svg'
+import lf1 from '../assets/img/fault/lf1.svg'
+import lf2 from '../assets/img/fault/lf2.svg'
+import lf3 from '../assets/img/fault/lf3.svg'
+import lf4 from '../assets/img/fault/lf4.svg'
+import lf5 from '../assets/img/fault/lf5.svg'
+import lf6 from '../assets/img/fault/lf6.svg'
+import lf7 from '../assets/img/fault/lf7.svg'
+import lf8 from '../assets/img/fault/lf8.svg'
+import lf9 from '../assets/img/fault/lf9.svg'
+import tg1 from '../assets/img/glass/tg1.svg'
+import tg2 from '../assets/img/glass/tg2.svg'
+import tg3 from '../assets/img/glass/tg3.svg'
+import tg4 from '../assets/img/glass/tg4.svg'
+import td1 from '../assets/img/display/td1.svg'
+import td2 from '../assets/img/display/td2.svg'
+import td3 from '../assets/img/display/td3.svg'
+import td4 from '../assets/img/display/td4.svg'
+import td5 from '../assets/img/display/td5.svg'
+import td6 from '../assets/img/display/td6.svg'
+import tb1 from '../assets/img/body/tb1.svg'
+import tb2 from '../assets/img/body/tb2.svg'
+import tb3 from '../assets/img/body/tb3.svg'
+import tb4 from '../assets/img/body/tb4.svg'
+import tf1 from '../assets/img/fault/tf1.svg'
+import tf2 from '../assets/img/fault/tf2.svg'
+import tf3 from '../assets/img/fault/tf3.svg'
+import tf4 from '../assets/img/fault/tf4.svg'
+import tf5 from '../assets/img/fault/tf5.svg'
+import tf6 from '../assets/img/fault/tf6.svg'
+import tf7 from '../assets/img/fault/tf7.svg'
+import tf8 from '../assets/img/fault/tf8.svg'
+import tf9 from '../assets/img/fault/tf9.svg'
 
 const ACCENTS = [
   { a: '#037252', b: '#025c42' },
@@ -23,53 +95,53 @@ function getConditionSteps(categoryId) {
         id: 1, title: 'Working Status', subtitle: 'Is your laptop working?',
         type: 'radio', key: 'workingStatus', defaultImage: '/images/working.svg',
         options: [
-          { label: 'Working',     image: '/images/working.svg' },
-          { label: 'Not Working', image: '/images/not-working.svg' },
+          { label: 'Working',      },
+          { label: 'Not Working',  },
         ],
       },
       {
         id: 2, title: 'Accessories', subtitle: 'Select all included accessories',
         type: 'checkbox', key: 'accessories', defaultImage: '/images/charger.svg',
         options: [
-          { label: 'Original Charger',               image: '/images/charger.svg' },
-          { label: 'Valid Bill with Serial Number',  image: box },
+          { label: 'Original Charger',               image: charger },
+          { label: 'Valid Bill with Serial Number',  image: bill },
         ],
       },
       {
         id: 3, title: 'Display Condition', subtitle: 'Select display condition',
         type: 'radio', key: 'displayCondition', defaultImage: '/images/display-ok.svg',
         options: [
-          { label: 'No Defect',       image: '/images/display-ok.svg' },
-          { label: 'Minor Scratches', image: '/images/minor-scratch.svg' },
-          { label: 'Major Scratches', image: '/images/major-scratch.svg' },
-          { label: 'Minor Spots',     image: '/images/minor-spot.svg' },
-          { label: 'Major Spots',     image: '/images/major-spot.svg' },
-          { label: 'Display Lines',   image: '/images/lines.svg' },
+          { label: 'No Defect',       image: ld1 },
+          { label: 'Minor Scratches', image: ld2 },
+          { label: 'Major Scratches', image: ld3},
+          { label: 'Minor Spots',     image: ld4 },
+          { label: 'Major Spots',     image: ld5 },
+          { label: 'Display Lines',   image: ld6 },
         ],
       },
       {
         id: 4, title: 'Body Condition', subtitle: 'Select body condition',
         type: 'radio', key: 'bodyCondition', defaultImage: '/images/body-ok.svg',
         options: [
-          { label: 'No Defect',                image: '/images/body-ok.svg' },
-          { label: 'Minor Scratches',          image: '/images/body-minor.svg' },
-          { label: 'Major Scratches or Dents', image: '/images/body-major.svg' },
-          { label: 'Major Dents or Cracked',   image: '/images/dent.svg' },
+          { label: 'No Defect',                image: lb1 },
+          { label: 'Minor Scratches',          image: lb2 },
+          { label: 'Major Scratches or Dents', image: lb3},
+          { label: 'Major Dents or Cracked',   image: lb4},
         ],
       },
       {
         id: 5, title: 'Faults', subtitle: 'Select all faults present',
         type: 'checkbox', key: 'faults', defaultImage: '/images/speaker.svg',
         options: [
-          { label: 'Camera Faulty',   image: '/images/front-camera.svg' },
-          { label: 'Speaker Faulty',  image: '/images/speaker.svg' },
-          { label: 'Mic Faulty',      image: '/images/mic.svg' },
-          { label: 'WiFi Faulty',     image: '/images/wifi.svg' },
-          { label: 'Bluetooth Faulty',image: '/images/bluetooth.svg' },
-          { label: 'Battery Faulty',  image: '/images/battery.svg' },
-          { label: 'Charging Faulty', image: '/images/charging.svg' },
-          { label: 'Keyboard Faulty', image: '/images/button.svg' },
-          { label: 'Trackpad Faulty', image: '/images/button.svg' },
+          { label: 'Camera Faulty',   image: lf1},
+          { label: 'Speaker Faulty',  image: lf2 },
+          { label: 'Mic Faulty',      image: lf3 },
+          { label: 'WiFi Faulty',     image: lf4 },
+          { label: 'Bluetooth Faulty',image: lf5 },
+          { label: 'Battery Faulty',  image: lf6 },
+          { label: 'Charging Faulty', image: lf7 },
+          { label: 'Keyboard Faulty', image: lf8 },
+          { label: 'Trackpad Faulty', image: lf9 },
         ],
       },
     ]
@@ -89,55 +161,56 @@ function getConditionSteps(categoryId) {
         id: 2, title: 'Accessories', subtitle: 'Select all included accessories',
         type: 'checkbox', key: 'accessories', defaultImage: '/images/box.svg',
         options: [
-          { label: 'Original Box',     image: '/images/box.svg' },
-          { label: 'Original Charger', image: '/images/charger.svg' },
+          { label: 'Original Box',     image: box },
+          { label: 'Original Charger', image: charger },
         ],
       },
       {
         id: 3, title: 'Glass Defects', subtitle: 'Select glass condition',
         type: 'radio', key: 'glassDefects', defaultImage: '/images/no-damage.svg',
         options: [
-          { label: 'No Defect',          image: '/images/no-damage.svg' },
-          { label: 'Minor Scratches',    image: '/images/minor-scratch.svg' },
-          { label: 'Major Scratches',    image: '/images/major-scratch.svg' },
-          { label: 'Front Glass Broken', image: '/images/front-crack.svg' },
-          { label: 'Back Glass Broken',  image: '/images/back-crack.svg' },
+          { label: 'No Defect',          image: tg1 },
+          { label: 'Minor Scratches',    image: tg2 },
+          { label: 'Major Scratches',    image: tg3 },
+          { label: 'Front Glass Broken or Cracked', image: tg4 },
+          
         ],
       },
       {
         id: 4, title: 'Display Defects', subtitle: 'Select display condition',
         type: 'radio', key: 'displayDefects', defaultImage: '/images/display-ok.svg',
         options: [
-          { label: 'No Defect',      image: '/images/display-ok.svg' },
-          { label: 'Minor Spots',    image: '/images/minor-spot.svg' },
-          { label: 'Major Spots',    image: '/images/major-spot.svg' },
-          { label: 'Display Lines',  image: '/images/lines.svg' },
-          { label: 'Touch Faulty',   image: '/images/touch.svg' },
-          { label: 'Display Faulty', image: '/images/display-fault.svg' },
+          { label: 'No Defect',      image: td1 },
+          { label: 'Minor Spots',    image: td2 },
+          { label: 'Major Spots',    image: td3 },
+          { label: 'Display Lines',  image: td4 },
+          { label: 'Touch Faulty',   image: td5 },
+          { label: 'Display Faulty', image: td6 },
         ],
       },
       {
         id: 5, title: 'Body Defects', subtitle: 'Select body condition',
         type: 'radio', key: 'bodyDefects', defaultImage: '/images/body-ok.svg',
         options: [
-          { label: 'No Defect',                image: '/images/body-ok.svg' },
-          { label: 'Minor Scratches',          image: '/images/body-minor.svg' },
-          { label: 'Major Scratches or Dents', image: '/images/body-major.svg' },
-          { label: 'Major Dents or Cracked',   image: '/images/dent.svg' },
+          { label: 'No Defect',                image: tb1 },
+          { label: 'Minor Scratches',          image: tb2 },
+          { label: 'Major Scratches or Dents', image: tb3 },
+          { label: 'Major Dents or Cracked',   image: tb4 },
         ],
       },
       {
         id: 6, title: 'Faults', subtitle: 'Select all faults present',
         type: 'checkbox', key: 'faults', defaultImage: '/images/speaker.svg',
         options: [
-          { label: 'Camera Faulty',    image: '/images/front-camera.svg' },
-          { label: 'Speaker Faulty',   image: '/images/speaker.svg' },
-          { label: 'Mic Faulty',       image: '/images/mic.svg' },
-          { label: 'WiFi Faulty',      image: '/images/wifi.svg' },
-          { label: 'Bluetooth Faulty', image: '/images/bluetooth.svg' },
-          { label: 'Charging Faulty',  image: '/images/charging.svg' },
-          { label: 'Battery Faulty',   image: '/images/battery.svg' },
-          { label: 'Buttons Faulty',   image: '/images/button.svg' },
+          { label: 'Front Camera Faulty',    image: tf1 },
+          { label: 'Back Camera Faulty',    image: tf9 },
+          { label: 'Speaker Faulty',   image: tf2 },
+          { label: 'Mic Faulty',       image: tf3 },
+          { label: 'WiFi Faulty',      image: tf4},
+          { label: 'Bluetooth Faulty', image: tf5 },
+          { label: 'Charging Faulty',  image: tf6 },
+          { label: 'Battery Faulty',   image: tf7},
+          { label: 'Buttons Faulty',   image: tf8 },
         ],
       },
       {
@@ -163,59 +236,59 @@ function getConditionSteps(categoryId) {
       type: 'checkbox', key: 'accessories', defaultImage: '/images/box.svg',
       options: [
         { label: 'Original Box with same IMEI', image: box },
-        { label: 'Original Charger',            image: '/images/charger.svg' },
+        { label: 'Original Charger',            image: charger},
       ],
     },
     {
       id: 3, title: 'Glass Defects', subtitle: 'Select glass condition',
       type: 'radio', key: 'glassDefects', defaultImage: '/images/no-damage.svg',
       options: [
-        { label: 'No Defect',          image: '/images/no-damage.svg' },
-        { label: 'Minor Scratches',    image: '/images/minor-scratch.svg' },
-        { label: 'Major Scratches',    image: '/images/major-scratch.svg' },
-        { label: 'Front Glass Broken', image: '/images/front-crack.svg' },
-        { label: 'Back Glass Broken',  image: '/images/back-crack.svg' },
-        { label: 'Both Broken',        image: '/images/full-damage.svg' },
+      { label: 'No Defect',           image: i1 },
+  { label: 'Minor Scratches',     image: i2 },
+  { label: 'Major Scratches',     image: i3 },
+  { label: 'Front Glass Broken',  image: i4 },
+  { label: 'Back Glass Broken',   image: i5 },
+  { label: 'Both Broken',         image: i6 },
       ],
     },
     {
       id: 4, title: 'Display Defects', subtitle: 'Select display condition',
       type: 'radio', key: 'displayDefects', defaultImage: '/images/display-ok.svg',
       options: [
-        { label: 'No Defect',       image: '/images/display-ok.svg' },
-        { label: 'Minor Spots',     image: '/images/minor-spot.svg' },
-        { label: 'Major Spots',     image: '/images/major-spot.svg' },
-        { label: 'Display Lines',   image: '/images/lines.svg' },
-        { label: 'Display Changed', image: '/images/display-change.svg' },
-        { label: 'Touch Faulty',    image: '/images/touch.svg' },
-        { label: 'Display Faulty',  image: '/images/display-fault.svg' },
+        { label: 'No Defect',       image: d1 },
+        { label: 'Minor Spots',     image: d2 },
+        { label: 'Major Spots',     image: d3 },
+        { label: 'Display Lines',   image: d4 },
+        { label: 'Display Changed', image: d5 },
+        { label: 'Touch Faulty',    image: d6 },
+        { label: 'Display Faulty',  image: d7 },
       ],
     },
     {
       id: 5, title: 'Body Defects', subtitle: 'Select body condition',
       type: 'radio', key: 'bodyDefects', defaultImage: '/images/body-ok.svg',
       options: [
-        { label: 'No Defect',                image: '/images/body-ok.svg' },
-        { label: 'Minor Scratches',          image: '/images/body-minor.svg' },
-        { label: 'Major Scratches or Dents', image: '/images/body-major.svg' },
-        { label: 'Major Dents or Cracked',   image: '/images/dent.svg' },
-        { label: 'Body Bend',                image: '/images/bend.svg' },
-        { label: 'Body Deform',              image: '/images/deform.svg' },
+        { label: 'No Defect',                image: b1 },
+        { label: 'Minor Scratches',          image: b2},
+        { label: 'Major Scratches or Dents', image: b3 },
+        { label: 'Major Dents or Cracked',   image: b4 },
+        { label: 'Body Bend',                image: b5 },
+        { label: 'Body Deform',              image: b6 },
       ],
     },
     {
       id: 6, title: 'Faults', subtitle: 'Select all faults present',
       type: 'checkbox', key: 'faults', defaultImage: '/images/speaker.svg',
       options: [
-        { label: 'Front Camera Faulty', image: '/images/front-camera.svg' },
-        { label: 'Back Camera Faulty',  image: '/images/back-camera.svg' },
-        { label: 'Speaker Faulty',      image: '/images/speaker.svg' },
-        { label: 'Mic Faulty',          image: '/images/mic.svg' },
-        { label: 'WiFi Faulty',         image: '/images/wifi.svg' },
-        { label: 'Bluetooth Faulty',    image: '/images/bluetooth.svg' },
-        { label: 'Charging Faulty',     image: '/images/charging.svg' },
-        { label: 'Battery Faulty',      image: '/images/battery.svg' },
-        { label: 'Buttons Faulty',      image: '/images/button.svg' },
+        { label: 'Front Camera Faulty', image: f1 },
+        { label: 'Back Camera Faulty',  image: f2 },
+        { label: 'Speaker Faulty',      image: f5 },
+        { label: 'Mic Faulty',          image: f6 },
+        { label: 'WiFi Faulty',         image: f8 },
+        { label: 'Bluetooth Faulty',    image: f9  },
+        { label: 'Charging Faulty',     image: f11 },
+        { label: 'Battery Faulty',      image: f12 },
+        { label: 'Buttons Faulty',      image: f13},
       ],
     },
     {
@@ -273,15 +346,15 @@ function PreviewImage({ src, accent }) {
 }
 
 /* ─── single option row ──────────────────────────────────── */
-function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview }) {
+function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImage, isLargeText }) {
   return (
     <button
       onClick={() => { onTap(opt.label); if (setPreview) setPreview(opt.image) }}
       className="group"
       style={{
-        flex: '1 1 calc(33.33% - 10px)', minWidth: 120, height: 130, 
+        flex: '1 1 calc(33.33% - 10px)', minWidth: 120, height: hideImage ? 90 : 130, 
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '16px 10px 12px', borderRadius: 16, textAlign: 'center',
+        padding: hideImage ? '10px' : '16px 10px 12px', borderRadius: 16, textAlign: 'center',
         background: selected ? `${accent}08` : '#ffffff',
         border: `1.5px solid ${selected ? accent : '#eef2f6'}`,
         boxShadow: selected ? `0 4px 12px ${accent}20` : '0 2px 4px rgba(0,0,0,0.02)',
@@ -308,26 +381,31 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview }) {
       </div>
 
       {/* Center Image */}
-      <div style={{
-        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        marginBottom: 8, width: '100%',
-      }}>
-        <img src={opt.image} alt={opt.label} 
-          style={{ 
-            width: 54, height: 54, objectFit: 'contain', 
-            opacity: selected ? 1 : 0.85,
-            transform: selected ? 'scale(1.05)' : 'scale(1)',
-            transition: 'all 0.2s ease',
-          }}
-          onError={e => { e.currentTarget.style.opacity = '0.15' }} />
-      </div>
+      {!hideImage && (
+        <div style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          marginBottom: 8, width: '100%',
+        }}>
+          <img src={opt.image} alt={opt.label} 
+            style={{ 
+              width: 54, height: 54, objectFit: 'contain', 
+              opacity: selected ? 1 : 0.85,
+              transform: selected ? 'scale(1.05)' : 'scale(1)',
+              transition: 'all 0.2s ease',
+            }}
+            onError={e => { e.currentTarget.style.opacity = '0.15' }} />
+        </div>
+      )}
 
       {/* label below */}
       <span style={{
-        fontSize: 11.5, fontWeight: 700, lineHeight: 1.25,
-        color: selected ? '#0f172a' : '#64748b', fontFamily: "'Inter',sans-serif",
+        fontSize: isLargeText ? 18 : 11.5, 
+        fontWeight: isLargeText ? 800 : 700, 
+        lineHeight: 1.25,
+        color: selected ? '#0f172a' : '#64748b', 
+        fontFamily: isLargeText ? "'Poppins',sans-serif" : "'Inter',sans-serif",
         display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-        overflow: 'hidden', height: 28,
+        overflow: 'hidden', height: isLargeText ? 'auto' : 28,
       }}>{opt.label}</span>
     </button>
   )
@@ -597,9 +675,12 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
             const selected = isRadio
               ? answers[cur.key] === opt.label
               : answers[cur.key].includes(opt.label)
+            const hideImage = cur.key === 'workingStatus'
+            const isLargeText = cur.key === 'workingStatus'
             return (
               <OptionRow key={opt.label} opt={opt} selected={selected} isRadio={isRadio}
                 accent={ac.a} setPreview={setPreview}
+                hideImage={hideImage} isLargeText={isLargeText}
                 onTap={label => isRadio ? handleRadio(cur.key, label) : handleCheckbox(cur.key, label)} />
             )
           })}
