@@ -11,6 +11,12 @@
   html {
     color: #1e293b; /* slate-800 */
     transition: background-color 0.3s ease, color 0.3s ease;
+    
+    /* Fluid Typography Variables */
+    --fs-nav: clamp(9px, 1vw, 13px);
+    --fs-h1: clamp(2.5rem, 8vw, 4.5rem);
+    --fs-h2: clamp(2rem, 5vw, 3rem);
+    --fs-h3: clamp(1.25rem, 3vw, 1.75rem);
   }
 
   .dark html {
@@ -22,6 +28,7 @@
     background: #f8fafc;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
   }
 
   .dark body {
@@ -31,10 +38,20 @@
 
   h1, h2, h3, h4 {
     font-family: 'Poppins', sans-serif;
+    text-wrap: balance; /* Prevents awkward single-word lines in translations */
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
 
   button {
     font-family: 'Inter', sans-serif;
+  }
+  
+  /* Global width adjustment for long translations */
+  .text-fit {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
   }
 
   ::-webkit-scrollbar {

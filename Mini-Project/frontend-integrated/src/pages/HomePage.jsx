@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'
 import { CATEGORIES } from '../data'
 import Footer from '../components/layout/Footer'
 import ImgF from '../components/ui/ImgF'
+import PhoneMockup from '../components/ui/PhoneMockup'
+import LaptopMockup from '../components/ui/LaptopMockup'
 import { staggerContainer, fadeUp, inViewFadeUp } from '../utils/motion'
 
 // ── TypeWriter: types once per session, never restarts on re-mount ───────────
@@ -135,14 +137,22 @@ export default function HomePage({ go }) {
 
       {/* HERO */}
       <section
-        className="relative overflow-hidden px-5 pt-[98px] pb-28"
-        style={{ background: 'linear-gradient(135deg,#024632,#037252)' }}
+        className="relative overflow-hidden px-5 pt-[120px] pb-32"
+        style={{ background: 'radial-gradient(circle at 50% 50%, #037252 0%, #024632 100%)' }}
       >
-        <div className="absolute -top-20 -right-24 w-[420px] h-[420px] rounded-full pointer-events-none"
-             style={{ background: '#26c49a', opacity: 0.25, filter: 'blur(40px)' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
+             style={{ background: '#26c49a', opacity: 0.15, filter: 'blur(80px)' }} />
 
-        <div className="max-w-[1120px] mx-auto grid md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          {/* Mobile Phone — Left Column */}
+          <div className="lg:col-span-3 flex justify-center lg:justify-start order-2 lg:order-1">
+            <PhoneMockup />
+          </div>
+
+          {/* Text Content — Middle Column */}
           <motion.div
+            className="lg:col-span-6 text-center order-1 lg:order-2"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
@@ -158,7 +168,7 @@ export default function HomePage({ go }) {
             <motion.h1
               variants={fadeUp}
               className="font-poppins font-black leading-tight mb-4"
-              style={{ fontSize: 'clamp(2.4rem,4.4vw,3.6rem)', color: '#f8fafc' }}
+              style={{ fontSize: 'clamp(2rem,3.5vw,3rem)', color: '#f8fafc' }}
             >
               Turn Your Old
               <br />
@@ -167,7 +177,7 @@ export default function HomePage({ go }) {
               <span style={{ color: '#b5ffe4' }}>Into Cash</span>
             </motion.h1>
 
-            <motion.p variants={fadeUp} className="font-inter text-base md:text-lg text-emerald-50/80 max-w-xl mb-8">
+            <motion.p variants={fadeUp} className="font-inter text-base text-emerald-50/80 max-w-lg mx-auto mb-8">
               Get instant price quotes for old phones, laptops &amp; tablets.{' '}
               <span className="text-white/90 font-medium">
                 <TypeWriter
@@ -178,12 +188,12 @@ export default function HomePage({ go }) {
               </span>
             </motion.p>
 
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-4 justify-center">
               <motion.button
                 whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => catRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-white text-[#037252] font-poppins font-semibold text-sm md:text-base px-7 py-3.5 rounded-xl border-none cursor-pointer shadow-lg shadow-black/15"
+                className="bg-white text-[#037252] font-poppins font-semibold text-sm px-6 py-3 rounded-xl border-none cursor-pointer shadow-lg shadow-black/15"
               >
                 Get My Price Now →
               </motion.button>
@@ -191,38 +201,18 @@ export default function HomePage({ go }) {
                 whileHover={{ backgroundColor: 'rgba(240,253,250,0.12)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => go('process')}
-                className="bg-transparent text-emerald-50 font-poppins font-semibold text-sm md:text-base px-4 py-3.5 rounded-xl border border-emerald-200/40 cursor-pointer transition-colors"
+                className="bg-transparent text-emerald-50 font-poppins font-semibold text-sm px-4 py-3 rounded-xl border border-emerald-200/40 cursor-pointer transition-colors"
               >
                 How It Works ↗
               </motion.button>
             </motion.div>
           </motion.div>
 
-          {/* Hero image — right column */}
-          <motion.div
-            className="hidden md:flex items-center justify-center"
-            initial={{ opacity: 0, x: 40, scale: 0.92 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.65, delay: 0.25, ease: [0.22, 0.68, 0, 1.1] }}
-          >
-            <div
-              className="relative w-full max-w-[420px]"
-              style={{ animation: 'heroFloat 4.5s ease-in-out infinite' }}
-            >
-              {/* Glow ring behind image */}
-              <div
-                className="absolute inset-8 rounded-full pointer-events-none"
-                style={{ background: 'radial-gradient(circle,#6ee7b7 0%,transparent 70%)', opacity: 0.35, filter: 'blur(24px)' }}
-              />
-              <img
-                src="/hero-devices.png"
-                alt="Recycle your old phone, laptop and tablet"
-                className="w-full h-auto relative drop-shadow-2xl"
-                style={{ filter: 'drop-shadow(0 12px 48px rgba(110,231,183,0.35))' }}
-              />
-            </div>
-            <style>{`@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}`}</style>
-          </motion.div>
+          {/* Laptop — Right Column */}
+          <div className="lg:col-span-3 flex justify-center lg:justify-end order-3">
+            <LaptopMockup />
+          </div>
+
         </div>
       </section>
 

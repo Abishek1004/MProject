@@ -80,15 +80,15 @@ export default function Navbar({ cart, page, go, onSignIn, onLogout, onCart, onS
         <div className="px-5 flex items-center justify-between h-14 gap-3">
 
           {/* Logo */}
-          <button onClick={() => go('home')} className="flex items-center gap-2.5 bg-transparent border-none cursor-pointer flex-shrink-0">
-            <ImgF src={ecologo} fallback="♻️" alt="logo" style={{ width:50, height:35, objectFit:'contain', fontSize:'1.2rem' }} />
-            <span className="font-montserrat font-extrabold text-xl tracking-tight">
+          <button onClick={() => go('home')} className="flex items-center gap-2 bg-transparent border-none cursor-pointer flex-shrink-1 min-w-0 max-w-[180px]">
+            <ImgF src={ecologo} fallback="♻️" alt="logo" style={{ width:40, height:30, objectFit:'contain', fontSize:'1.2rem', flexShrink: 0 }} />
+            <span className="font-montserrat font-extrabold text-lg tracking-tight hidden sm:inline truncate">
               <span className="text-eco-600">Eco</span><span className="text-slate-800 dark:text-slate-100">Loop</span>
             </span>
           </button>
 
           {/* Centre nav */}
-          <div className="hidden lg:flex items-center gap-3 flex-1 justify-center px-4 min-w-0">
+          <div className="hidden lg:flex items-center gap-2 flex-1 justify-center px-1 min-w-0">
             {links.map(({ label, page: p }, i) => (
                 <motion.button
                   key={p}
@@ -96,18 +96,19 @@ export default function Navbar({ cart, page, go, onSignIn, onLogout, onCart, onS
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.06, duration: 0.28, ease: 'easeOut' }}
-                  className={`px-3 py-2 rounded-xl border-none cursor-pointer font-inter font-bold text-[13px] transition-all duration-150 flex-shrink-0
+                  className={`px-2 py-1.5 rounded-xl border-none cursor-pointer font-inter font-bold transition-all duration-150 flex-shrink-1 min-w-0
                     ${page === p
                       ? 'bg-eco-50 dark:bg-eco-900/40 text-eco-600 dark:text-eco-400 shadow-sm'
                       : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-eco-600 dark:hover:text-eco-400'}`}
+                  style={{ fontSize: 'var(--fs-nav)' }}
                 >
-                  <span className="not-italic whitespace-nowrap">{label}</span>
+                  <span className="not-italic whitespace-nowrap overflow-hidden text-ellipsis">{label}</span>
                 </motion.button>
             ))}
           </div>
 
           {/* Search bar — desktop */}
-          <div ref={searchRef} className="hidden lg:flex items-center relative flex-shrink-1 min-w-[140px] max-w-[260px] w-full mx-1">
+          <div ref={searchRef} className="hidden lg:flex items-center relative flex-shrink-1 min-w-[80px] max-w-[220px] w-full mx-1">
             <AnimatePresence mode="wait">
               {searchOpen ? (
                 <motion.div 
