@@ -17,6 +17,7 @@ import CategoryPage  from './pages/CategoryPage'
 import ModelsPage    from './pages/ModelsPage'
 import VariantsPage  from './pages/VariantsPage'
 import DetailsPage   from './pages/DetailsPage'
+import SystemConfigPage from './pages/SystemConfigPage'
 import EstimatePage  from './pages/EstimatePage'
 import CartPage      from './pages/CartPage'
 
@@ -34,6 +35,7 @@ const ROUTES = {
   '/models':   'models',
   '/variants': 'variants',
   '/details':  'details',
+  '/sysconfig':'sysconfig',
   '/estimate': 'estimate',
   '/cart':     'cart',
 }
@@ -43,7 +45,7 @@ function pageToPath(page, nav = {}) {
   const map = {
     home: '/', about: '/about', process: '/process', search: '/search',
     signin: '/login', signup: '/signup', models: '/models',
-    variants: '/variants', details: '/details', estimate: '/estimate',
+    variants: '/variants', details: '/details', sysconfig: '/sysconfig', estimate: '/estimate',
     cart: '/cart',
   }
   return map[page] || '/'
@@ -97,7 +99,8 @@ export default function App() {
       category: `${nav.category ? nav.category.charAt(0).toUpperCase() + nav.category.slice(1) : 'Category'} — EcoRecycle`,
       models: 'Models — EcoRecycle',
       variants: 'Variants — EcoRecycle',
-      details: 'Device Details — EcoRecycle',
+      details: 'Device Condition — EcoRecycle',
+      sysconfig: 'System Configuration — EcoRecycle',
       estimate: 'Price Estimate — EcoRecycle',
       cart: 'My Cart — EcoRecycle',
     }
@@ -220,6 +223,7 @@ export default function App() {
           {page === 'models'   && <ModelsPage   {...shared} />}
           {page === 'variants' && <VariantsPage {...shared} />}
           {page === 'details'  && <DetailsPage  {...shared} />}
+          {page === 'sysconfig'&& <SystemConfigPage {...shared} />}
           {page === 'estimate' && <EstimatePage {...shared} addToCart={addToCart} />}
           {page === 'cart'     && <CartPage     {...shared} cart={cart} onRemove={removeFromCart} />}
         </motion.div>

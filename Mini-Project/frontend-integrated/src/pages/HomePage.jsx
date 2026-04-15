@@ -1,34 +1,33 @@
-import { useRef, useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORIES } from '../data'
+import heroVideo from '../assets/img/Home/ewaste_video - Copy.mp4'
 import Footer from '../components/layout/Footer'
 import ImgF from '../components/ui/ImgF'
-import PhoneMockup from '../components/ui/PhoneMockup'
-import LaptopMockup from '../components/ui/LaptopMockup'
 import { staggerContainer, fadeUp, inViewFadeUp } from '../utils/motion'
 
-// ── TypeWriter: types once per session, never restarts on re-mount ───────────
-let _twDone = false   // module-level: survives re-renders / route changes
+let typewriterDone = false
 
 function TypeWriter({ text, speed = 38, delay = 900 }) {
-  const [displayed, setDisplayed] = useState(_twDone ? text : '')
-  const [done, setDone]           = useState(_twDone)
+  const [displayed, setDisplayed] = useState(typewriterDone ? text : '')
+  const [done, setDone] = useState(typewriterDone)
 
   useEffect(() => {
-    if (_twDone) return   // already typed — show full text instantly
+    if (typewriterDone) return
 
-    let i = 0
+    let index = 0
     let intervalId = null
 
     const timeoutId = setTimeout(() => {
       intervalId = setInterval(() => {
-        i++
-        setDisplayed(text.slice(0, i))
-        if (i >= text.length) {
+        index += 1
+        setDisplayed(text.slice(0, index))
+
+        if (index >= text.length) {
           clearInterval(intervalId)
           setDone(true)
-          _twDone = true   // persist across re-mounts
+          typewriterDone = true
         }
       }, speed)
     }, delay)
@@ -37,7 +36,7 @@ function TypeWriter({ text, speed = 38, delay = 900 }) {
       clearTimeout(timeoutId)
       if (intervalId) clearInterval(intervalId)
     }
-  }, [])   // run only once per mount; module flag prevents re-run anyway
+  }, [delay, speed, text])
 
   return (
     <>
@@ -48,7 +47,7 @@ function TypeWriter({ text, speed = 38, delay = 900 }) {
           style={{ background: '#b5ffe4', animation: 'twCaret 0.7s step-end infinite' }}
         />
       )}
-      <style>{`@keyframes twCaret{0%,100%{opacity:1}50%{opacity:0}}`}</style>
+      <style>{'@keyframes twCaret{0%,100%{opacity:1}50%{opacity:0}}'}</style>
     </>
   )
 }
@@ -61,12 +60,19 @@ function CategoryCard({ cat, onClick, go }) {
       onClick={onClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onClick()
+      }}
       variants={fadeUp}
-      whileHover={{ y: -7, scale: 1.03, boxShadow: '0 18px 42px rgba(0,0,0,0.12)', borderColor: cat.color, transition: { duration: 0.22 } }}
+      whileHover={{
+        y: -7,
+        scale: 1.03,
+        boxShadow: '0 18px 42px rgba(0,0,0,0.12)',
+        borderColor: cat.color,
+        transition: { duration: 0.22 },
+      }}
       whileTap={{ scale: 0.98, y: -2 }}
     >
-      {/* Image */}
       <div
         className="min-h-[190px] flex items-center justify-center relative p-6"
         style={{ background: cat.light }}
@@ -83,16 +89,15 @@ function CategoryCard({ cat, onClick, go }) {
             src={cat.img}
             alt={cat.name}
             style={{ maxWidth: 150, maxHeight: 150, objectFit: 'contain' }}
-            fallback={
+            fallback={(
               <div className="text-center">
                 <div className="text-8xl">{cat.emoji}</div>
               </div>
-            }
+            )}
           />
         </div>
       </div>
 
-      {/* Text */}
       <div className="p-5 pb-6">
         <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{cat.name}</h3>
         <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">{cat.sub}</p>
@@ -104,7 +109,7 @@ function CategoryCard({ cat, onClick, go }) {
           >
             {cat.count}
           </span>
-          <span style={{ color: cat.color }}>→</span>
+          <span style={{ color: cat.color }}>?</span>
         </div>
       </div>
     </motion.div>
@@ -113,46 +118,46 @@ function CategoryCard({ cat, onClick, go }) {
 
 export default function HomePage({ go }) {
   const catRef = useRef(null)
-  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const [bannerDismissed] = useState(false)
 
-  const { user, firstName, displayName, isLoggedIn, loading } = useAuth()
+  const { firstName, displayName, isLoggedIn } = useAuth()
   const name = firstName || displayName || 'User'
   const showBanner = isLoggedIn && !bannerDismissed
 
   const stats = [
     { val: '50,000+', label: 'Happy Customers' },
-    { val: '15',      label: 'Cities Served'   },
-    { val: '₹2 Cr+',  label: 'Paid to Users'   },
-    { val: '99%',     label: 'Recycled Safely'  },
+    { val: '15', label: 'Cities Served' },
+    { val: '?2 Cr+', label: 'Paid to Users' },
+    { val: '99%', label: 'Recycled Safely' },
   ]
 
   const features = [
-    { icon: '⚡', title: 'Instant Price Quote', desc: 'Get price in 2 minutes.'  },
-    { icon: '🚚', title: 'Free Pickup',         desc: 'Doorstep pickup available.' },
-    { icon: '🔒', title: 'Data Safety',         desc: 'Certified data wiping.'   },
+    { icon: '', title: 'Instant Price Quote', desc: 'Get price in 2 minutes.' },
+    { icon: '??', title: 'Free Pickup', desc: 'Doorstep pickup available.' },
+    { icon: '??', title: 'Data Safety', desc: 'Certified data wiping.' },
   ]
 
   return (
-    <div>
+    <div style={{ background: '#eff5e6' }}>
+      {showBanner ? <div className="hidden">{name}</div> : null}
 
-      {/* HERO */}
       <section
-        className="relative overflow-hidden px-5 pt-[120px] pb-32"
-        style={{ background: 'radial-gradient(circle at 50% 50%, #037252 0%, #024632 100%)' }}
+        className="relative overflow-hidden px-5 pt-[130px] pb-20 flex items-center min-h-screen"
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
-             style={{ background: '#26c49a', opacity: 0.15, filter: 'blur(80px)' }} />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/30 z-0 pointer-events-none"></div>
 
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
-          {/* Mobile Phone — Left Column */}
-          <div className="lg:col-span-3 flex justify-center lg:justify-start order-2 lg:order-1">
-            <PhoneMockup />
-          </div>
-
-          {/* Text Content — Middle Column */}
+        <div className="relative z-10 max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center w-full">
           <motion.div
-            className="lg:col-span-6 text-center order-1 lg:order-2"
+            className="lg:col-span-12 text-center order-1 lg:order-2"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
@@ -162,19 +167,19 @@ export default function HomePage({ go }) {
               className="inline-flex items-center px-4 py-1.5 rounded-full text-[11px] font-inter font-semibold tracking-[0.18em] uppercase mb-5"
               style={{ background: 'rgba(15,118,110,0.18)', color: '#e0fff6', border: '1px solid rgba(208,250,237,0.35)' }}
             >
-              ♻ INDIA&apos;S #1 E-WASTE RECYCLING PLATFORM
+              INDIA&apos;S #1 E-WASTE RECYCLING PLATFORM
             </motion.span>
 
             <motion.h1
               variants={fadeUp}
-              className="font-poppins font-black leading-tight mb-4"
-              style={{ fontSize: 'clamp(2rem,3.5vw,3rem)', color: '#f8fafc' }}
+              className="font-poppins font-black leading-[1.1] mb-6 tracking-tight"
+              style={{ fontSize: 'clamp(2.5rem, 5vw, 4.2rem)', color: '#ffffff' }}
             >
               Turn Your Old
               <br />
               or Damage Devices
               <br />
-              <span style={{ color: '#b5ffe4' }}>Into Cash</span>
+              <span className="text-emerald-300 drop-shadow-sm">Into Cash</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} className="font-inter text-base text-emerald-50/80 max-w-lg mx-auto mb-8">
@@ -188,37 +193,31 @@ export default function HomePage({ go }) {
               </span>
             </motion.p>
 
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4 justify-center">
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-5 justify-center">
               <motion.button
-                whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ y: -3, scale: 1.05, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => catRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-white text-[#037252] font-poppins font-semibold text-sm px-6 py-3 rounded-xl border-none cursor-pointer shadow-lg shadow-black/15"
+                className="bg-white text-[#037252] font-poppins font-bold text-base px-8 py-4 rounded-xl border-none cursor-pointer shadow-xl transition-all"
               >
-                Get My Price Now →
+                Get My Price Now ?
               </motion.button>
               <motion.button
-                whileHover={{ backgroundColor: 'rgba(240,253,250,0.12)' }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ backgroundColor: 'rgba(255,255,255,0.1)', y: -2 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => go('process')}
-                className="bg-transparent text-emerald-50 font-poppins font-semibold text-sm px-4 py-3 rounded-xl border border-emerald-200/40 cursor-pointer transition-colors"
+                className="bg-transparent text-white font-poppins font-bold text-base px-8 py-4 rounded-xl border-2 border-white/30 cursor-pointer transition-all backdrop-blur-sm"
               >
-                How It Works ↗
+                How It Works ?
               </motion.button>
             </motion.div>
           </motion.div>
 
-          {/* Laptop — Right Column */}
-          <div className="lg:col-span-3 flex justify-center lg:justify-end order-3">
-            <LaptopMockup />
-          </div>
-
         </div>
       </section>
 
-      {/* STATS */}
       <motion.section
-        className="grid grid-cols-2 md:grid-cols-4 text-center border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-colors duration-300"
+        className="grid grid-cols-2 md:grid-cols-4 text-center border-b border-slate-200 dark:border-slate-700 transition-colors duration-300" style={{ background: '#eff5e6' }}
         variants={staggerContainer}
         initial="initial"
         whileInView="animate"
@@ -226,14 +225,13 @@ export default function HomePage({ go }) {
       >
         {stats.map((s, i) => (
           <motion.div key={i} className="p-6" variants={fadeUp}>
-            <div className="text-xl font-bold text-green-600 dark:text-eco-400">{s.val}</div>
+            <div className="text-xl font-bold text-green-0 dark:text-eco-400">{s.val}</div>
             <div className="text-sm text-gray-500 dark:text-slate-400">{s.label}</div>
           </motion.div>
         ))}
       </motion.section>
 
-      {/* CATEGORIES */}
-      <section ref={catRef} className="px-5 py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+      <section ref={catRef} className="px-5 py-20 dark:bg-slate-900 transition-colors duration-300">
         <motion.h2
           className="text-center text-2xl font-bold mb-10 text-slate-800 dark:text-slate-100"
           {...inViewFadeUp}
@@ -259,7 +257,6 @@ export default function HomePage({ go }) {
         </motion.div>
       </section>
 
-      {/* FEATURES */}
       <section className="px-5 py-20 bg-gray-50 dark:bg-slate-800/60 transition-colors duration-300">
         <motion.h2
           className="text-center text-2xl font-bold mb-10 text-slate-800 dark:text-slate-100"
@@ -280,7 +277,11 @@ export default function HomePage({ go }) {
               key={f.title}
               className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow dark:shadow-slate-900/50 transition-colors duration-300"
               variants={fadeUp}
-              whileHover={{ y: -5, boxShadow: '0 12px 32px rgba(0,0,0,0.10)', transition: { duration: 0.2 } }}
+              whileHover={{
+                y: -5,
+                boxShadow: '0 12px 32px rgba(0,0,0,0.10)',
+                transition: { duration: 0.2 },
+              }}
             >
               <div className="text-3xl mb-3">{f.icon}</div>
               <h3 className="font-bold text-slate-800 dark:text-slate-100">{f.title}</h3>
@@ -290,22 +291,7 @@ export default function HomePage({ go }) {
         </motion.div>
       </section>
 
-      {/* CTA */}
-      <section className="px-5 pb-20 text-center bg-white dark:bg-slate-900 transition-colors duration-300">
-        <motion.h2
-          className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100"
-          {...inViewFadeUp}
-        >
-        </motion.h2>
-        <motion.button
-          whileHover={{ scale: 1.04, boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => catRef.current?.scrollIntoView({ behavior: 'smooth' })}
-          className="bg-[#037252] hover:bg-[#025c42] text-white px-8 py-4 rounded-xl border-none cursor-pointer font-poppins font-bold transition-all duration-300"
-        >
-          Start Now — Get Price →
-        </motion.button>
-      </section>
+
 
       <Footer />
     </div>

@@ -1,18 +1,207 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EcoRecycle — Sell Your Old Devices</title>
-    <meta name="description" content="Get instant price quotes for your old phones, laptops & tablets. Free pickup, fair prices, certified recycling." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-D-QR_08s.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CTdlMvnU.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRecycle — Sell Your Old Devices</title>
+  <meta name="description"
+    content="Get instant price quotes for your old phones, laptops & tablets. Free pickup, fair prices, certified recycling." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap"
+    rel="stylesheet" />
+  
+  <!-- Global styles to hide Google Translate banner and all UI elements -->
+  <style>
+    /* ===== COMPREHENSIVE GOOGLE TRANSLATE HIDING ===== */
+    
+    /* 1. Banner Frame - All variants */
+    .goog-te-banner-frame {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      position: fixed !important;
+      top: -9999px !important;
+      z-index: -9999 !important;
+    }
+
+    body .goog-te-banner-frame,
+    body.goog-te-banner-frame {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* 2. Google Translate Floating Widget */
+    .goog-te-floating-widget {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      width: 0 !important;
+      position: fixed !important;
+      top: -9999px !important;
+      z-index: -9999 !important;
+    }
+
+    .goog-te-float {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* 3. Google Translate Gadget (main widget) */
+    .goog-te-gadget {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .goog-te-gadget-simple {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .goog-te-gadget::before,
+    .goog-te-gadget::after {
+      display: none !important;
+    }
+
+    /* 4. Google Translate Select Element (hidden dropdown) */
+    .goog-te-combo {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* 5. Hide all Google Translate controls */
+    .goog-te-ctrl {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .goog-te-ctrl-fullscreen {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .goog-te-ctrl-open {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* 6. Hide G icon and buttons */
+    .goog-te-button {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .goog-te-tooltip {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* 7. Hide remaining Google elements */
+    .goog-te-banner {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .goog-te-benc {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .goog-te-element {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    .skiptranslate {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* 8. Hide any iframe from Google */
+    iframe.goog-te-banner-frame {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* 9. Google Translate container */
+    #google_translate_element {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      position: fixed !important;
+      top: -9999px !important;
+      z-index: -9999 !important;
+    }
+
+    /* 10. Prevent layout shift - reset body margins */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    body {
+      overflow-x: auto !important;
+    }
+
+    /* 11. Ensure Google elements don't overlay */
+    body::before,
+    body::after {
+      display: none !important;
+    }
+
+    /* 12. Hide any injected Google styles */
+    style[data-styled-version] {
+      display: none !important;
+    }
+
+    /* 13. Remove space that Google might create */
+    .goog-te-banner-frame ~ body {
+      margin-top: 0 !important;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-Cn-K8xaV.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DdrhFYXj.css">
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Initialize Google Translate callback (called by translate_a/element.js) -->
+  <script>
+    function googleTranslateElementInit() {
+      // Element will be initialized from LanguageSelector component
+      // This is a fallback to ensure the callback exists
+      if (typeof google !== 'undefined' && google.translate) {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,ta,hi,te,ml,kn,fr,es',
+            autoDisplay: false,
+          },
+          'google_translate_element'
+        )
+      }
+    }
+  </script>
+</body>
+
 </html>
