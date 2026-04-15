@@ -1,18 +1,44 @@
 export const STEPS = [
-  { num:'01', icon:'📥', title:'Pickup', img:'/images/process/collect.jpg',
-    color:'#059569', light:'#ecfdf5', border:'#a7f3d0',
-    desc:'We collect your old or unused mobile safely from your doorstep.',
-    points:['Safely collected', 'Doorstep service', 'Mobile & unused devices'] },
-  { num:'02', icon:'🔍', title:'Detailed Inspection', img:'/images/process/sort.jpg',
-    color:'#0891b2', light:'#ecfeff', border:'#a5f3fc',
-    desc:'Our team checks the phone’s condition and ensures it is ready for recycling.',
-    points:['Condition check', 'Expert valuation', 'Readiness assessment'] },
-  { num:'03', icon:'⚙️', title:'Secure Data Wiping & Wallet Credit', img:'/images/process/recycle.jpg',
-    color:'#7c3aed', light:'#f5f3ff', border:'#ddd6fe',
-    desc:'All personal data is permanently erased. Accounts are removed, and the phone is reset. After a few hours, the approved amount will be added to your EcoLoop wallet.',
-    points:['Permanent data erasure', 'Account removal', 'Instant wallet credit'] },
-  { num:'04', icon:'🌿', title:'Certified Recycling', img:'/images/process/dispose.jpg',
-    color:'#65a30d', light:'#f7fee7', border:'#d9f99d',
-    desc:'Phones are sent to government-approved e-waste recycling companies, ensuring safe and eco-friendly disposal.',
-    points:['Government approved', 'Eco-friendly disposal', 'ISO certified partners'] },
-]
+  { 
+    num: '01', icon: '📱', title: 'Select Device', img: '/images/process/select.jpg',
+    color: '#059569', light: '#ecfdf5', border: '#a7f3d0',
+    desc: 'Browse through our extensive list and select the device you want to recycle.',
+    points: ['Smartphones & Laptops', 'Working or Non-working', 'Wide variety of brands'] 
+  },
+  { 
+    num: '02', icon: '📝', title: 'Condition Check', img: '/images/process/check.jpg',
+    color: '#0891b2', light: '#ecfeff', border: '#a5f3fc',
+    desc: 'Answer a few simple questions about your device’s current health and condition.',
+    points: ['Quick assessment', 'Self-diagnosis', 'Guided walkthrough'] 
+  },
+  { 
+    num: '03', icon: '🤖', title: 'AI Price Quote', img: '/images/process/ai.jpg',
+    color: '#7c3aed', light: '#f5f3ff', border: '#ddd6fe',
+    desc: 'Our advanced AI analyzes your device health and gives you an instant, fair price quote.',
+    points: ['Instant valuation', 'Transparent pricing', 'Best market rates'] 
+  },
+  { 
+    num: '04', icon: '🚚', title: 'Schedule Pickup', img: '/images/process/pickup.jpg',
+    color: '#65a30d', light: '#f7fee7', border: '#d9f99d',
+    desc: 'Choose a convenient location and time slot that works best for your schedule.',
+    points: ['Doorstep collection', 'Flexible timing', 'Free pickup service'] 
+  },
+  { 
+    num: '05', icon: '🛡️', title: 'Secure Data Wipe', img: '/images/process/wipe.jpg',
+    color: '#f59e0b', light: '#fffbeb', border: '#fef3c7',
+    desc: 'We use military-grade encryption to permanently erase all your personal data.',
+    points: ['Privacy guaranteed', 'Standardized wiping', 'Zero data leakage'] 
+  },
+  { 
+    num: '06', icon: '✅', title: 'Admin Approval', img: '/images/process/approve.jpg',
+    color: '#ef4444', light: '#fef2f2', border: '#fee2e2',
+    desc: 'Our expert team verifies the device condition to finalize the transaction.',
+    points: ['Quality verification', 'Quick processing', 'Expert check'] 
+  },
+  { 
+    num: '07', icon: '💰', title: 'Wallet Credit', img: '/images/process/wallet.jpg',
+    color: '#037252', light: '#f0fdf4', border: '#bbf7d0',
+    desc: 'The approved amount is instantly added to your EcoLoop wallet for you to use.',
+    points: ['Instant payment', 'Secure wallet', 'Ready to spend'] 
+  }
+];

@@ -6,45 +6,45 @@ import PageHeader from '../components/ui/PageHeader';
 // --- Premium Content Definitions ---
 
 const MISSION = {
-  badge: "Circular Economy Leaders",
-  title: "Driving a World Without Electronic Waste",
+  badge: "Simplified E-Waste Solutions",
+  title: "Your Tech's Second Life Starts Here",
   description: [
-    "India generates over 3.2 million tonnes of e-waste annually, but less than 10% is processed responsibly. This isn't just an environmental crisis—it's a massive loss of precious high-tech materials.",
-    "EcoLoop is redefining the lifecycle of technology. By bridging the gap between consumers and certified green recyclers, we're building a sustainable future where every device is a resource, not a pollutant."
+    "At EcoLoop, we believe every device has value—whether it's powered on or long forgotten. We've built a platform that makes recycling as easy as a few clicks.",
+    "From your old working smartphones to non-functional laptops, we bridge the gap between your drawer and a cleaner planet, putting money back in your pocket along the way."
   ],
-  metric: { val: "3.2M+", label: "Tonnes of Annual Impact" }
+  metric: { val: "5-Step", label: "Seamless Process" }
 };
 
 const VALUES = [
   { 
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-      </svg>
-    ),
-    title: 'Circular Stewardship',
-    color: '#10B981',
-    desc: 'Ensuring that every salvaged material—from copper to gold—is reintroduced into the manufacturing loop with zero environmental leakage.'
-  },
-  { 
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
       </svg>
     ),
-    title: 'Certified Integrity',
-    color: '#0EA5E9',
-    desc: 'Every device undergoes military-grade data erasure before recycling, guaranteed by verified compliance standards and ethical transparency.'
+    title: 'Smart AI Eval',
+    color: '#10B981',
+    desc: 'Our advanced AI instantly analyzes your device condition (working or not) to give you the most accurate and fair price.'
   },
   { 
     icon: (
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
     ),
-    title: 'Equitable Liquidity',
+    title: 'Data Shield',
+    color: '#0EA5E9',
+    desc: 'Your privacy is our priority. We use military-grade encryption to wipe and protect your data before any recycling happens.'
+  },
+  { 
+    icon: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    ),
+    title: 'Instant Wallet',
     color: '#F59E0B',
-    desc: 'Combining tech-valuation AI with ethical markets to provide owners with the highest possible value for their retiring technology.'
+    desc: 'No waiting around. Once your device is collected, we add the money directly to your wallet for immediate use.'
   }
 ];
 
@@ -55,10 +55,10 @@ const TEAM = [
   ];
 
 const STATS = [
-  { val: '2019', label: 'Founded' },
-  { val: '1.2M+', label: 'Devices Saved' },
-  { val: '50K+', label: 'Eco-Partners' },
-  { val: '15+', label: 'Cities Impacted' }
+  { val: '100%', label: 'Data Privacy' },
+  { val: '24/7', label: 'AI Support' },
+  { val: '1k+', label: 'Happy Recyclers' },
+  { val: 'Inst.', label: 'Wallet Credit' }
 ];
 
 // --- Animation Variants ---
@@ -156,13 +156,13 @@ export default function AboutPage() {
               className="font-bold tracking-tight text-slate-900 dark:text-white"
               style={{ fontSize: 'var(--fs-h1)' }}
             >
-              Leading the <span className="text-emerald-600 dark:text-emerald-500">Technical Rebirth</span>
+              Turning old tech into <span className="text-emerald-600 dark:text-emerald-500">New Value</span>
             </motion.h1>
             <motion.p 
               variants={fadeUp}
               className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
             >
-              Empowering households to transform electronic waste into environmental capital through circular innovation.
+              Whether it's working or not, we help you recycle your devices safely and get paid for doing the right thing.
             </motion.p>
           </motion.div>
         </div>
@@ -231,8 +231,8 @@ export default function AboutPage() {
         {/* Values Section */}
         <div className="max-w-7xl mx-auto px-6 mb-48">
           <div className="text-center mb-24">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">Our Core Philosophy</h2>
-            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">The principles that guide our progress towards a zero-waste landscape.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">How It Works</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">Our simple process ensures your device is recycled responsibly and you get rewarded instantly.</p>
           </div>
 
           <motion.div 
@@ -304,10 +304,10 @@ export default function AboutPage() {
             
             <div className="relative z-10 space-y-10">
               <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight">
-                Be Carbon Conscious. <br/> Join the Revolution.
+                Ready to clear your <br/> tech clutter?
               </h2>
               <p className="text-slate-400 dark:text-slate-500 text-xl max-w-2xl mx-auto font-light leading-relaxed">
-                Turn your retiring hardware into a legacy of renewal. Start your circular journey today.
+                Turn your old devices into cash in minutes. It's good for your wallet and great for the planet.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button 

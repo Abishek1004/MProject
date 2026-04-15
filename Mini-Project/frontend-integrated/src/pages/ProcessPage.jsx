@@ -11,7 +11,7 @@ export default function ProcessPage({ go }) {
       <PageHeader
         badge="How It Works"
         title="The E-Waste Recycling Process"
-        subtitle="From your doorstep to certified safe disposal — a transparent 4-step journey that protects people and the planet."
+        subtitle="From selecting your device to receiving your payment — a simple, automated journey that ensures your tech gets a second life while you get rewarded."
       />
 
       {/* Steps summary strip */}
@@ -22,7 +22,7 @@ export default function ProcessPage({ go }) {
         transition={{ duration: 0.35, ease: 'easeOut' }}
       >
         <motion.div
-          className="max-w-[1100px] mx-auto px-5 grid grid-cols-2 md:grid-cols-4"
+          className="max-w-[1200px] mx-auto px-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7"
           variants={staggerContainer}
           initial="initial"
           animate="animate"
@@ -30,7 +30,7 @@ export default function ProcessPage({ go }) {
           {STEPS.map((s, i) => (
             <motion.div
               key={s.num}
-              className={`py-4 px-3 text-center ${i < 3 ? 'border-r border-slate-100 dark:border-slate-700' : ''}`}
+              className={`py-4 px-3 text-center ${i < STEPS.length - 1 ? 'lg:border-r border-slate-100 dark:border-slate-700' : ''}`}
               variants={fadeUp}
             >
               <div className="text-2xl mb-1">{s.icon}</div>

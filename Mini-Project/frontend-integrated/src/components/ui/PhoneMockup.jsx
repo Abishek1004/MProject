@@ -43,7 +43,7 @@ const PhoneMockup = () => {
         opacity: { duration: 0.8 }
       }}
       style={{ perspective: 1200 }}
-      className="relative w-full max-w-[280px] sm:max-w-[320px]"
+      className="relative w-full max-w-[200px] sm:max-w-[240px]"
     >
       <motion.div
         style={{

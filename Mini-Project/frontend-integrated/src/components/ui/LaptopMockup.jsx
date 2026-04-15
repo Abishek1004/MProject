@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 
 const LaptopMockup = () => {
@@ -34,11 +34,11 @@ const LaptopMockup = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 50 }}
+      initial={{ opacity: 0, scale: 0.92, y: 40 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 1, delay: 0.2 }}
-      style={{ perspective: 1500 }}
-      className="relative w-full max-w-[580px]"
+      transition={{ duration: 0.9, delay: 0.2 }}
+      style={{ perspective: 1400 }}
+      className="relative w-full max-w-[560px]"
     >
       <motion.div
         style={{
@@ -51,10 +51,10 @@ const LaptopMockup = () => {
         className="relative shadow-2xl transition-shadow duration-500"
       >
         {/* Laptop Screen (Top) */}
-        <div className="relative aspect-[16/10.5] w-full rounded-t-2xl bg-slate-900 p-2.5 overflow-hidden transition-colors border-2 border-slate-800">
+        <div className="relative aspect-[16/10] w-full rounded-t-xl bg-[#111827] p-2 overflow-hidden border-[2px] border-slate-800 shadow-2xl">
           
           {/* Screen Content */}
-          <div className="relative h-full w-full overflow-hidden rounded-lg bg-white ring-1 ring-slate-900/10">
+          <div className="relative h-full w-full overflow-hidden rounded-[6px] bg-[#f8fafc] ring-1 ring-slate-900/10">
             <motion.div
               style={{ y: internalImageY }}
               className="h-full w-full"
@@ -62,7 +62,8 @@ const LaptopMockup = () => {
               <img 
                 src="/laptop-screen.png" 
                 alt="EcoLoop Web Dashboard" 
-                className="w-full object-cover scale-[1.2] origin-top"
+                className="h-full w-full object-cover opacity-95"
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' }}
               />
             </motion.div>
 
@@ -74,14 +75,58 @@ const LaptopMockup = () => {
           </div>
         </div>
 
-        {/* Laptop Base (Bottom) */}
-        <div 
-          className="relative h-4 w-full bg-slate-800 rounded-b-xl border-t border-slate-700 shadow-xl"
-          style={{ transform: 'rotateX(-15deg)', transformOrigin: 'top' }}
+        {/* Hinge */}
+        <div className="relative mx-auto h-1.5 w-[94%] rounded-full bg-slate-800 -mt-[2px] z-10" />
+
+        {/* Laptop Base (Keyboard Deck) */}
+        <div
+          className="relative h-20 w-[98%] mx-auto bg-[#2b2f35] rounded-b-lg border-t border-slate-600 shadow-2xl overflow-hidden"
+          style={{
+            transform: 'rotateX(-58deg) translateY(-14px)',
+            transformOrigin: 'top',
+            boxShadow: '0 20px 32px rgba(0,0,0,0.35)'
+          }}
         >
-           {/* Center indent / Trackpad area */}
-           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-slate-900 rounded-b-md" />
+          {/* Metallic finish */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-400/15 via-slate-700/5 to-slate-950/25" />
+
+          {/* Keyboard layout */}
+          <div className="absolute inset-x-5 top-2.5 bottom-6 opacity-75">
+            <div className="mb-1 grid grid-cols-14 gap-[2px]">
+              {[...Array(14)].map((_, i) => (
+                <div key={`fn-${i}`} className="h-1 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+              ))}
+            </div>
+
+            <div className="grid grid-cols-14 gap-[2px]">
+              {[...Array(42)].map((_, i) => (
+                <div key={`k-${i}`} className="h-2 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+              ))}
+            </div>
+
+            <div className="mt-[2px] grid grid-cols-14 gap-[2px]">
+              <div className="col-span-2 h-2 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+              <div className="col-span-2 h-2 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+              <div className="col-span-6 h-2 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+              <div className="col-span-2 h-2 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+              <div className="col-span-2 h-2 rounded-[1px] bg-slate-900 border border-slate-800/70" />
+            </div>
+          </div>
+
+          {/* Trackpad */}
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-20 h-3.5 bg-slate-900/55 rounded-sm border border-slate-700/60 shadow-inner" />
+
+          {/* Front lip */}
+          <div className="absolute bottom-0 inset-x-0 h-1.5 bg-gradient-to-t from-black/40 to-transparent" />
         </div>
+
+        {/* Front thickness strip */}
+        <div
+          className="relative h-2.5 w-[98%] mx-auto bg-slate-900 rounded-b-md -mt-4"
+          style={{
+            boxShadow: '0 10px 20px rgba(0,0,0,0.45)'
+          }}
+        />
       </motion.div>
 
       {/* Shadow */}
