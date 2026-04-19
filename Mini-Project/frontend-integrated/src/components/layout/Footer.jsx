@@ -60,7 +60,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#131921] text-white pt-16 pb-8 px-6 md:px-20 font-sans tracking-tight">
+    <footer className="bg-[#131921] text-white pt-16 pb-8 px-6 md:px-20 font-sans tracking-tight relative z-10">
       {/* Top Multi-column Section */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 border-b border-gray-700 pb-12">
         {footerSections.map((section, idx) => (

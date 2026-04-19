@@ -57,6 +57,30 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
+  predictLaptopPrice: (payload) =>
+    fetch('http://localhost:5002/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).then(async (res) => {
+      const data = await res.json().catch(() => ({ error: 'Invalid response' }))
+      if (!res.ok) return Promise.reject(data)
+      return data
+    }),
+
+  predictTabletPrice: (payload) =>
+    fetch('http://localhost:5003/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).then(async (res) => {
+      const data = await res.json().catch(() => ({ error: 'Invalid response' }))
+      if (!res.ok) return Promise.reject(data)
+      return data
+    }),
+
+
+
   analyzePhoneImage: (file) => {
     const form = new FormData()
     form.append('image', file)
@@ -85,5 +109,21 @@ export const api = {
       return Promise.reject(err)
     })
   },
+
+  // ── Admin Endpoints (Node.js Backend - Port 3000) ──────────────────────────
+  getAllUsers: () =>
+    fetch('http://localhost:3000/api/users').then(res => res.json()),
+
+  deleteUser: (id) =>
+    fetch(`http://localhost:3000/api/users/${id}`, {
+      method: 'DELETE',
+    }).then(res => res.json()),
+
+  createUser: (userData) =>
+    fetch('http://localhost:3000/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    }).then(res => res.json()),
 }
 

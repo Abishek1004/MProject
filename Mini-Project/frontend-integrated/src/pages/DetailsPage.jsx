@@ -878,16 +878,24 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
         <div className="w-full lg:w-[360px] order-1 lg:order-2">
           <div className="sticky top-10">
             <motion.div
-              className="rounded-[2.5rem] p-8 overflow-hidden relative"
-              style={{ 
-                background: cat?.light || '#ecfdf5', 
-                border: `2px solid ${cc}15`,
-                boxShadow: `0 30px 60px -15px ${cc}15`
-              }}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
+              <motion.div
+                className="rounded-[2.5rem] p-8 overflow-hidden relative"
+                style={{ 
+                  background: cat?.light || '#ecfdf5', 
+                  border: `2px solid ${cc}15`,
+                  boxShadow: `0 30px 60px -15px ${cc}15`
+                }}
+                animate={{ y: [0, -12, 0] }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }}
+              >
               {/* Glass decorations */}
               <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: cc }}></div>
               <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10" style={{ background: cc }}></div>
@@ -935,6 +943,7 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
                 </div>
               </div>
             </motion.div>
+          </motion.div>
           </div>
         </div>
       </div>
