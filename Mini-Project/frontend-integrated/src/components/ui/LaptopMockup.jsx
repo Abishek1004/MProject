@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import laptopScreen from '../../assets/img/laptop-screen.png';
 
 const LaptopMockup = () => {
   const x = useMotionValue(0);
@@ -60,12 +61,13 @@ const LaptopMockup = () => {
               className="h-full w-full"
             >
               <img 
-                src="/laptop-screen.png" 
+                src={laptopScreen} 
                 alt="EcoLoop Web Dashboard" 
-                className="h-full w-full object-cover opacity-95"
+                className="w-full h-full object-cover opacity-95 origin-top"
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' }}
               />
             </motion.div>
+
 
             {/* Screen Glare */}
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/10 via-transparent to-black/5 opacity-40" />

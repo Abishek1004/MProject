@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import appScreen from '../../assets/img/app-screen.png';
 
 const PhoneMockup = () => {
   const containerRef = useRef(null);
@@ -67,39 +68,16 @@ const PhoneMockup = () => {
             className="h-full w-full origin-top"
           >
             <img 
-              src="/app-screen.png" 
+              src={appScreen} 
               alt="EcoLoop App Screen" 
-              className="w-full object-cover scale-[1.3] origin-top brightness-[0.85]"
+              className="w-full h-full object-cover origin-top"
             />
           </motion.div>
 
-          {/* iPhone Overlay: Status Bar & Icons */}
+          {/* iPhone Overlay: Status Bar & Icons (Removed because they are in the image) */}
           <div className="absolute inset-0 z-10 flex flex-col p-5 pt-8 pointer-events-none">
-            {/* Status Bar */}
-            <div className="flex justify-between items-center text-[10px] font-bold text-white px-2 mb-8">
-              <span>9:41</span>
-              <div className="flex gap-1 items-center">
-                <div className="w-3 h-2 border border-white/50 rounded-sm relative">
-                  <div className="absolute inset-[1px] bg-white rounded-sm w-[70%]" />
-                </div>
-                <span>70%</span>
-              </div>
-            </div>
-
-            {/* App Icon Grid (Simulated) */}
-            <div className="grid grid-cols-4 gap-4 px-2">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="flex flex-col items-center gap-1 opacity-90">
-                  <div className={`w-10 h-10 rounded-[10px] shadow-lg ${
-                    i % 3 === 0 ? 'bg-gradient-to-br from-blue-400 to-blue-600' : 
-                    i % 3 === 1 ? 'bg-gradient-to-br from-green-400 to-green-600' : 
-                    'bg-gradient-to-br from-indigo-400 to-purple-600'
-                  }`} />
-                  <div className="w-8 h-1 bg-white/30 rounded-full" />
-                </div>
-              ))}
-            </div>
           </div>
+
 
           {/* Screen Glare Effect */}
           <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/20 via-transparent to-black/5 opacity-60" />

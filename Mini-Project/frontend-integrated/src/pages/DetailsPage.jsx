@@ -352,9 +352,9 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
       onClick={() => { onTap(opt.label); if (setPreview) setPreview(opt.image) }}
       className="group"
       style={{
-        flex: '1 1 calc(33.33% - 10px)', minWidth: 120, height: hideImage ? 90 : 130, 
+        flex: '1 1 calc(33.33% - 10px)', minWidth: 100, height: hideImage ? 65 : 105, 
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: hideImage ? '10px' : '16px 10px 12px', borderRadius: 16, textAlign: 'center',
+        padding: hideImage ? '8px' : '10px 8px 8px', borderRadius: 12, textAlign: 'center',
         background: selected ? `${accent}08` : '#ffffff',
         border: `1.5px solid ${selected ? accent : '#eef2f6'}`,
         boxShadow: selected ? `0 4px 12px ${accent}20` : '0 2px 4px rgba(0,0,0,0.02)',
@@ -365,8 +365,8 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
     >
       {/* indicator dot/check in top-left */}
       <div style={{
-        position: 'absolute', top: 10, left: 10,
-        width: 18, height: 18, borderRadius: isRadio ? '50%' : 4,
+        position: 'absolute', top: 8, left: 8,
+        width: 16, height: 16, borderRadius: isRadio ? '50%' : 4,
         background: selected ? accent : '#f1f5f9',
         border: selected ? 'none' : '1.5px solid #cbd5e1',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -388,7 +388,7 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
         }}>
           <img src={opt.image} alt={opt.label} 
             style={{ 
-              width: 54, height: 54, objectFit: 'contain', 
+              width: 44, height: 44, objectFit: 'contain', 
               opacity: selected ? 1 : 0.85,
               transform: selected ? 'scale(1.05)' : 'scale(1)',
               transition: 'all 0.2s ease',
@@ -399,13 +399,13 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
 
       {/* label below */}
       <span style={{
-        fontSize: isLargeText ? 18 : 11.5, 
+        fontSize: isLargeText ? 15 : 10.5, 
         fontWeight: isLargeText ? 800 : 700, 
         lineHeight: 1.25,
         color: selected ? '#0f172a' : '#64748b', 
         fontFamily: isLargeText ? "'Poppins',sans-serif" : "'Inter',sans-serif",
         display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-        overflow: 'hidden', height: isLargeText ? 'auto' : 28,
+        overflow: 'hidden', height: isLargeText ? 'auto' : 24,
       }}>{opt.label}</span>
     </button>
   )
@@ -501,7 +501,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
         {/* back button */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <button onClick={goBack} disabled={step === 0} style={{
-            width: 34, height: 34, borderRadius: 10, border: '1.5px solid #e2e8f0',
+            width: 30, height: 30, borderRadius: 8, border: '1.5px solid #e2e8f0',
             background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: step === 0 ? 'default' : 'pointer', opacity: step === 0 ? 0.3 : 1,
           }}>
@@ -584,8 +584,8 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
             htmlFor="wizard-device-image"
             style={{
               border: '2px dashed #cbd5e1',
-              borderRadius: 18,
-              padding: '18px 16px',
+              borderRadius: 14,
+              padding: '14px 12px',
               textAlign: 'center',
               cursor: 'pointer',
               background: answers[cur.key] ? `${ac.a}10` : '#f8fafc',
@@ -593,7 +593,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
               display: 'block',
             }}
           >
-            <div style={{ fontSize: 28, marginBottom: 6 }}>📷</div>
+            <div style={{ fontSize: 24, marginBottom: 4 }}>📷</div>
             <div style={{ fontWeight: 700, fontFamily: "'Inter',sans-serif", color: '#0f172a', fontSize: 13.5 }}>
               {answers[cur.key] ? 'Change uploaded image' : 'Click to upload device image'}
             </div>
@@ -670,7 +670,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
         </div>
       ) : (
         <div key={`o${animKey}`} className="cond-fade-up"
-          style={{ padding: '14px 16px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 10, maxHeight: 440, overflowY: 'auto', justifyContent: 'flex-start' }}>
+          style={{ padding: '10px 12px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 8, maxHeight: 440, overflowY: 'auto', justifyContent: 'flex-start' }}>
           {cur.options.map(opt => {
             const selected = isRadio
               ? answers[cur.key] === opt.label
@@ -688,7 +688,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
       )}
 
       {/* next button */}
-      <div style={{ padding: '8px 16px 18px' }}>
+      <div style={{ padding: '6px 12px 14px' }}>
         {(isRadio && !answers[cur.key]) && (
           <p style={{ textAlign: 'center', fontSize: 11, color: '#94a3b8', marginBottom: 6, fontFamily: "'Inter',sans-serif" }}>
             Select an option to continue
@@ -739,24 +739,8 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
     [nav.category, nav.company, nav.modelId, nav.variant],
   )
 
-  const ramOptions     = nav.ramOptions     || ['4GB','6GB','8GB','12GB','16GB']
-  const storageOptions = nav.storageOptions || ['64GB','128GB','256GB','512GB']
-
-  const [form, setForm]           = useState({ processor: '', ram: '', storage: '' })
-  const [errs, setErrs]           = useState({})
   const [conditionDone, setConditionDone] = useState(false)
   const [conditionData, setConditionData] = useState(null)
-  const [specQuery, setSpecQuery] = useState('')
-
-  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
-
-  const validate = () => {
-    const e = {}
-    if (nav.category === 'laptop' && !form.processor) e.processor = 'Select processor'
-    if (!form.ram)     e.ram     = 'Select RAM'
-    if (!form.storage) e.storage = 'Select storage'
-    setErrs(e); return !Object.keys(e).length
-  }
 
   const handleConditionComplete = (answers) => {
     setConditionData(normalizeConditionForPricing(nav.category, answers))
@@ -764,248 +748,196 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
   }
 
   const handleSubmit = () => {
-    if (!validate()) return
     if (!conditionDone) {
       alert('Please complete the condition assessment first.')
       return
     }
-    go('estimate', {
-      deviceDetails: {
-        processor: form.processor,
-        ram: form.ram,
-        storage: form.storage,
-        ...conditionData,
-      }
-    })
+    go('sysconfig', { conditionData })
   }
 
   const cc = '#037252'
 
-  const specOptions = useMemo(() => {
-    const combos = []
-    for (const r of ramOptions) {
-      for (const s of storageOptions) combos.push({ ram: r, storage: s, label: `${r} / ${s}` })
-    }
-    const q = specQuery.trim().toLowerCase()
-    if (!q) return combos
-    return combos.filter((c) => c.label.toLowerCase().includes(q))
-  }, [ramOptions, storageOptions, specQuery])
-
-  const processorOptions = useMemo(() => ([
-    'Intel i3', 'Intel i5', 'Intel i7', 'Intel i9',
-    'Ryzen 3', 'Ryzen 5', 'Ryzen 7', 'Ryzen 9',
-    'Apple M1', 'Apple M2', 'Apple M3',
-    'Other',
-  ]), [])
 
   return (
-    <div className="max-w-[720px] mx-auto px-4 pt-8 pb-20">
+    <div className="max-w-[1240px] mx-auto px-4 pt-8 pb-20">
+
       <BackButton goBack={goBack} canGoBack={canGoBack} label="Variants" />
 
-      {/* Device summary card */}
-      <motion.div
-        className="rounded-2xl p-5 my-5 flex items-center gap-4"
-        style={{ background: cat?.light || '#ecfdf5', border: `1.5px solid ${cc}30` }}
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.36, ease: 'easeOut' }}
-      >
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-          style={{ background: `${cc}20` }}>{cat?.emoji}</div>
-        <div className="min-w-0">
-          <p className="text-slate-500 text-xs font-inter">Selected Device</p>
-          <p className="font-poppins font-bold text-slate-800 text-lg truncate">{nav.variant}</p>
-          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            <span className="text-xs font-inter font-semibold" style={{ color: cc }}>
-              {company?.name} · {cat?.name}
-            </span>
-            <span className="text-xs text-slate-400 font-inter">Base ₹{(nav.variantBase || 0).toLocaleString()}</span>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="mb-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08, duration: 0.32 }}
-      >
-        <p className="text-slate-400 dark:text-slate-500 text-xs font-inter font-semibold uppercase tracking-widest mb-1">Device Details</p>
-        <h1 className="font-poppins font-extrabold text-slate-800 dark:text-slate-100 text-2xl mb-1">Tell Us About Your Device</h1>
-        <p className="text-slate-500 dark:text-slate-400 font-inter text-sm">These details determine your accurate recycle value.</p>
-      </motion.div>
-
-      {/* ── System configuration ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.14, duration: 0.36 }}
-      >
-      {nav.category === 'laptop' ? (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm mb-5 transition-colors duration-300">
-          <p className="text-slate-400 dark:text-slate-500 text-xs font-inter font-semibold uppercase tracking-widest mb-4">System Configuration</p>
-
-          <FieldLabel label="Processor" error={errs.processor} />
-          <select
-            value={form.processor}
-            onChange={(e) => set('processor', e.target.value)}
-            className="w-full mb-5 px-4 py-3.5 rounded-xl border-2 outline-none text-sm font-inter bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
-            style={{ borderColor: errs.processor ? '#fca5a5' : '#e2e8f0' }}
+      <div className="flex flex-col lg:flex-row gap-10 mt-8 items-start">
+        {/* ── Left Column: Interaction ── */}
+        <div className="flex-1 min-w-0 order-2 lg:order-1">
+          {/* Phone Type Header Section */}
+          <motion.div
+            className="mb-10"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            <option value="">Select processor</option>
-            {processorOptions.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-8 h-[2px] rounded-full" style={{ background: cc }}></span>
+              <p className="text-slate-400 dark:text-slate-500 text-xs font-inter font-bold uppercase tracking-[0.2em]">
+                {company?.name} · {cat?.name}
+              </p>
+            </div>
+            <h1 className="font-poppins font-black text-slate-800 dark:text-slate-100 text-4xl lg:text-5xl mb-3 leading-tight tracking-tight">
+              {nav.variant}
+            </h1>
+            <div className="h-1.5 w-20 rounded-full mb-8" style={{ background: `linear-gradient(90deg, ${cc}, ${cc}40)` }}></div>
+            
+            <h2 className="font-poppins font-extrabold text-slate-800 dark:text-slate-100 text-2xl mb-1 mt-10">Tell Us About Your Device</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-inter text-sm max-w-lg">These details determine your accurate recycle value. Please answer honestly for the best price.</p>
+          </motion.div>
 
-          <FieldLabel label="RAM" error={errs.ram} />
-          <select
-            value={form.ram}
-            onChange={(e) => set('ram', e.target.value)}
-            className="w-full mb-5 px-4 py-3.5 rounded-xl border-2 outline-none text-sm font-inter bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
-            style={{ borderColor: errs.ram ? '#fca5a5' : '#e2e8f0' }}
+          {/* ── Condition Wizard (Working Status First) ── */}
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
           >
-            <option value="">Select RAM</option>
-            {ramOptions.map((r) => <option key={r} value={r}>{r}</option>)}
-          </select>
+            <p className="text-slate-400 text-[11px] font-inter font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px]" style={{ color: cc }}>1</span>
+              Device Condition Assessment
+            </p>
 
-          <FieldLabel label="Storage" error={errs.storage} />
-          <select
-            value={form.storage}
-            onChange={(e) => set('storage', e.target.value)}
-            className="w-full px-4 py-3.5 rounded-xl border-2 outline-none text-sm font-inter bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
-            style={{ borderColor: errs.storage ? '#fca5a5' : '#e2e8f0' }}
-          >
-            <option value="">Select storage</option>
-            {storageOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </div>
-      ) : (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm mb-5 transition-colors duration-300">
-          <FieldLabel label="RAM / Storage" error={errs.ram || errs.storage} />
-
-          <div className="relative mb-4">
-            <div
-              className="flex items-center gap-2 bg-slate-50 border-2 rounded-xl px-3 py-2.5 transition-colors"
-              style={{ borderColor: specQuery ? cc : '#e2e8f0' }}
-            >
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke={specQuery ? cc : '#94a3b8'} strokeWidth="2.5">
-                <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
-              </svg>
-              <input
-                value={specQuery}
-                onChange={(e) => setSpecQuery(e.target.value)}
-                placeholder="Search RAM / storage (e.g. 4GB, 128GB)…"
-                className="flex-1 bg-transparent outline-none text-sm font-inter text-slate-800 placeholder-slate-400"
-              />
-              {specQuery && (
-                <button
-                  onClick={() => setSpecQuery('')}
-                  className="w-6 h-6 rounded-full bg-slate-200 text-slate-500 text-sm flex items-center justify-center border-none cursor-pointer hover:bg-slate-300"
-                  aria-label="Clear search"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {specOptions.map((opt) => {
-              const selected = form.ram === opt.ram && form.storage === opt.storage
-              return (
-                <button
-                  key={opt.label}
-                  onClick={() => { set('ram', opt.ram); set('storage', opt.storage) }}
-                  className="w-full text-left rounded-xl border bg-white px-4 py-3 flex items-center gap-3 transition-all"
-                  style={{
-                    borderColor: selected ? cc : '#e2e8f0',
-                    boxShadow: selected ? `0 8px 18px ${cc}18` : 'none',
-                  }}
-                >
-                  <span
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ background: selected ? cc : '#e2e8f0', boxShadow: selected ? `0 0 0 4px ${cc}20` : 'none' }}
-                  />
-                  <span className="font-inter font-semibold text-sm text-slate-800">{opt.label}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          {specOptions.length === 0 && (
-            <div className="text-center text-sm font-inter text-slate-400 py-8">
-              No matching options for <strong>"{specQuery}"</strong>
-            </div>
-          )}
-        </div>
-      )}
-      </motion.div>
-
-      {/* ── Condition Wizard ── */}
-      <motion.div
-        className="mb-5"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.36 }}
-      >
-        <p className="text-slate-400 text-xs font-inter font-semibold uppercase tracking-widest mb-2">Device Condition</p>
-
-        {conditionDone ? (
-          /* ── summary card after completion ── */
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center"
-                  style={{ background: '#10b98120', border: '1px solid #10b98155' }}>
-                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="font-poppins font-bold text-slate-800 text-sm">Condition Recorded</span>
-              </div>
-              <button onClick={() => setConditionDone(false)}
-                className="text-xs font-inter font-semibold px-3 py-1.5 rounded-lg"
-                style={{ background: `${cc}12`, color: cc, border: `1px solid ${cc}30` }}>
-                Edit
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(conditionData).map(([key, val]) => {
-                const step = steps.find(s => s.key === key)
-                if (!step) return null
-                const display = Array.isArray(val) ? (val.length ? val.join(', ') : 'None') : val || '—'
-                return (
-                  <div key={key} className="rounded-xl p-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                    <p className="text-[10px] font-inter font-semibold text-slate-400 uppercase tracking-widest mb-1">{step.title}</p>
-                    <p className="text-xs font-inter font-semibold text-slate-700 leading-snug">{display}</p>
+            {conditionDone ? (
+              /* ── summary card after completion ── */
+              <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+                      style={{ background: '#10b98120', border: '1.5px solid #10b98133' }}>
+                      <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span className="font-poppins font-bold text-slate-800 dark:text-slate-100 text-base block">Conditions Recorded</span>
+                      <span className="text-slate-500 text-[10px] font-medium uppercase font-inter tracking-wider">Verification Complete</span>
+                    </div>
                   </div>
-                )
-              })}
-            </div>
-          </div>
-        ) : (
-          <ConditionWizard cc={cc} steps={steps} persistKey={imagePersistKey} onComplete={handleConditionComplete} />
-        )}
-      </motion.div>
+                  <button onClick={() => setConditionDone(false)}
+                    className="text-xs font-inter font-bold px-4 py-2 rounded-xl transition-all active:scale-95"
+                    style={{ background: `${cc}12`, color: cc, border: `1.5px solid ${cc}25` }}>
+                    Edit Assessment
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(conditionData).map(([key, val]) => {
+                    const step = steps.find(s => s.key === key)
+                    if (!step) return null
+                    const display = Array.isArray(val) ? (val.length ? val.join(', ') : 'None') : val || '—'
+                    return (
+                      <div key={key} className="rounded-2xl p-4 transition-colors" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                        <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-1">{step.title}</p>
+                        <p className="text-xs font-inter font-bold text-slate-700 leading-snug">{display}</p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="shadow-2xl shadow-slate-200/40 dark:shadow-none rounded-3xl overflow-hidden">
+                <ConditionWizard cc={cc} steps={steps} persistKey={imagePersistKey} onComplete={handleConditionComplete} />
+              </div>
+            )}
+          </motion.div>
 
-      {/* ── Submit ── */}
-      <motion.button
-        onClick={handleSubmit}
-        className="w-full text-white font-poppins font-bold text-[1.05rem] py-4 rounded-2xl border-none cursor-pointer transition-all"
-        style={{
-          background: conditionDone ? cc : '#94a3b8',
-          boxShadow: conditionDone ? `0 4px 16px ${cc}40` : 'none',
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.28 }}
-        whileHover={{ scale: conditionDone ? 1.02 : 1, y: conditionDone ? -2 : 0 }}
-        whileTap={{ scale: conditionDone ? 0.97 : 1 }}
-      >
-        Get My Price Estimate →
-      </motion.button>
-      {!conditionDone && (
-        <p className="text-center text-xs font-inter text-slate-400 mt-2">Complete the condition steps above to continue</p>
-      )}
+
+          {/* ── Submit Button ── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="pt-4"
+          >
+            <motion.button
+              onClick={handleSubmit}
+              className="w-full text-white font-poppins font-black text-lg py-5 rounded-3xl border-none cursor-pointer shadow-2xl transition-all"
+              style={{
+                background: conditionDone ? `linear-gradient(135deg, ${cc}, #025c42)` : '#cbd5e1',
+                boxShadow: conditionDone ? `0 12px 30px ${cc}40` : 'none',
+              }}
+              whileHover={{ scale: conditionDone ? 1.015 : 1, y: conditionDone ? -2 : 0 }}
+              whileTap={{ scale: conditionDone ? 0.98 : 1 }}
+            >
+              Continue to Specifications →
+            </motion.button>
+            {!conditionDone && (
+              <p className="text-center text-xs font-inter font-medium text-slate-400 mt-4 flex items-center justify-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
+                </svg>
+                Complete all assessment steps to unlock pricing
+              </p>
+            )}
+          </motion.div>
+        </div>
+
+        {/* ── Right Column: Persistent Device Summary ── */}
+        <div className="w-full lg:w-[360px] order-1 lg:order-2">
+          <div className="sticky top-10">
+            <motion.div
+              className="rounded-[2.5rem] p-8 overflow-hidden relative"
+              style={{ 
+                background: cat?.light || '#ecfdf5', 
+                border: `2px solid ${cc}15`,
+                boxShadow: `0 30px 60px -15px ${cc}15`
+              }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              {/* Glass decorations */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: cc }}></div>
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10" style={{ background: cc }}></div>
+
+              <div className="relative z-10">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg bg-white"
+                  style={{ color: cc }}>{cat?.emoji}</div>
+                
+                <p className="text-slate-500 text-[10px] font-bold font-inter tracking-[0.2em] uppercase mb-1 opacity-70">Summary Details</p>
+                <h3 className="font-poppins font-black text-slate-800 text-2xl mb-4 leading-tight">{nav.variant}</h3>
+                
+                <div className="space-y-4 pt-4 border-t border-slate-900/5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-inter text-slate-500 font-medium">Brand</span>
+                    <span className="text-sm font-inter text-slate-800 font-bold">{company?.name}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-inter text-slate-500 font-medium">Category</span>
+                    <span className="text-sm font-inter text-slate-800 font-bold uppercase tracking-wider text-[11px]">{cat?.name}</span>
+                  </div>
+                  <div className="flex justify-between items-center bg-white/50 p-4 rounded-2xl mt-4">
+                    <span className="text-sm font-inter text-slate-500 font-medium">Starting Value</span>
+                    <span className="text-xl font-poppins text-slate-800 font-black" style={{ color: cc }}>
+                      ₹{(nav.variantBase || 0).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-5 rounded-3xl bg-white/60 border border-white/80 backdrop-blur-sm">
+                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-3">Live Valuation Status</p>
+                   <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                         <div className={`w-2 h-2 rounded-full ${conditionDone ? 'bg-green-500' : 'bg-slate-300'}`}></div>
+                         <span className={`text-[11px] font-bold font-inter ${conditionDone ? 'text-green-600' : 'text-slate-400'}`}>
+                           {conditionDone ? 'Condition Verified' : 'Conditions Pending…'}
+                         </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                         <span className="text-[11px] font-bold font-inter text-slate-400">
+                           Specs Pending…
+                         </span>
+                      </div>
+                   </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
