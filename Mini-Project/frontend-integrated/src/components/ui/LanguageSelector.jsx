@@ -51,13 +51,16 @@ function restoreLanguage() {
   }
 }
 
-export default function LanguageSelector() {
+export default function LanguageSelector({ themeColor, themeLight }) {
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState(() => {
     return localStorage.getItem('selectedLanguage') || 'en'
   })
   const [isLoading, setIsLoading] = useState(false)
   const dropRef = useRef(null)
+
+  const cc = themeColor || '#059569'
+  const cl = themeLight || '#effaf6'
 
   useEffect(() => {
     window.googleTranslateElementInit = initGoogleTranslate
@@ -111,14 +114,27 @@ export default function LanguageSelector() {
           onClick={() => setOpen(v => !v)}
           disabled={isLoading}
           aria-label="Select language"
-          className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer transition-all duration-200 hover:border-eco-400 hover:bg-eco-50 dark:hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed"
+          style={{ 
+            borderColor: open ? cc : undefined,
+          }}
+          onMouseEnter={(e) => {
+             e.currentTarget.style.borderColor = cc;
+             e.currentTarget.style.backgroundColor = `${cc}08`;
+          }}
+          onMouseLeave={(e) => {
+            if(!open) {
+              e.currentTarget.style.borderColor = '';
+              e.currentTarget.style.backgroundColor = '';
+            }
+          }}
         >
           <svg
             width="16"
             height="16"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="#059569"
+            stroke={cc}
             strokeWidth="2"
             className={isLoading ? 'animate-spin' : ''}
           >
@@ -159,9 +175,13 @@ export default function LanguageSelector() {
                 className={`w-full text-left px-4 py-3 text-sm font-inter border-none cursor-pointer transition-all duration-100 disabled:opacity-60 disabled:cursor-not-allowed notranslate
                   ${
                     selected === lang.code
-                      ? 'bg-eco-50 dark:bg-eco-900/30 text-eco-700 dark:text-eco-400 font-semibold'
+                      ? 'font-semibold'
                       : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                   }`}
+                style={{
+                  backgroundColor: selected === lang.code ? cl : undefined,
+                  color: selected === lang.code ? cc : undefined
+                }}
               >
                 <span className="flex items-center justify-between">
                   <span>{lang.label}</span>

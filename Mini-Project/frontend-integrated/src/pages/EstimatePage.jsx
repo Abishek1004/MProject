@@ -30,118 +30,152 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
   const price = mlPrice ?? basePrice
 
   const predictPayload = useMemo(() => {
-    if (nav.category !== 'mobile') return null
+    if (nav.category !== 'mobile' && nav.category !== 'laptop') return null
 
-    const brandName = brand?.name || ''
-    const ram_gb = parseInt((d?.ram || '').toString().replace(/[^0-9]/g, ''), 10) || 0
-    const storage_gb = parseInt((d?.storage || '').toString().replace(/[^0-9]/g, ''), 10) || 0
+    if (nav.category === 'mobile') {
+      const brandName = brand?.name || ''
+      const ram_gb = parseInt((d?.ram || '').toString().replace(/[^0-9]/g, ''), 10) || 0
+      const storage_gb = parseInt((d?.storage || '').toString().replace(/[^0-9]/g, ''), 10) || 0
 
-    const ramClamp = [4, 6, 8, 12]
-    const storageClamp = [64, 128, 256]
-    const nearest = (val, opts, fallback) => (opts.includes(val) ? val : fallback ?? opts[0])
-    const ram_gb_clamped = nearest(ram_gb, ramClamp, 12)
-    const storage_gb_clamped = nearest(storage_gb, storageClamp, 256)
+      const ramClamp = [4, 6, 8, 12]
+      const storageClamp = [64, 128, 256]
+      const nearest = (val, opts, fallback) => (opts.includes(val) ? val : fallback ?? opts[0])
+      const ram_gb_clamped = nearest(ram_gb, ramClamp, 12)
+      const storage_gb_clamped = nearest(storage_gb, storageClamp, 256)
 
-    const battery_power =
-      d?.batteryCondition === 'Good' ? 5250 :
-      d?.batteryCondition === 'Average' ? 4500 :
-      d?.batteryCondition === 'Poor' ? 3500 :
-      4500
+      const battery_power =
+        d?.batteryCondition === 'Good' ? 5250 :
+        d?.batteryCondition === 'Average' ? 4500 :
+        d?.batteryCondition === 'Poor' ? 3500 :
+        4500
 
-    const accessories = Array.isArray(d?.accessories) ? d.accessories : []
-    const original_box = accessories.includes('Original Box with same IMEI') ? 1 : 0
-    const original_charger = accessories.includes('Original Charger') ? 1 : 0
+      const accessories = Array.isArray(d?.accessories) ? d.accessories : []
+      const original_box = accessories.includes('Original Box with same IMEI') ? 1 : 0
+      const original_charger = accessories.includes('Original Charger') ? 1 : 0
 
-    const glass = d?.glassDefects || 'No Defect'
-    let front_glass_status = 'no defect'
-    let back_glass_status = 'no defect'
-    if (glass === 'Minor Scratches') {
-      front_glass_status = 'minor scratches'
-      back_glass_status = 'minor scratches'
-    } else if (glass === 'Major Scratches') {
-      front_glass_status = 'major scratches'
-      back_glass_status = 'major scratches'
-    } else if (glass === 'Front Glass Broken') {
-      front_glass_status = 'broken/cracked'
-    } else if (glass === 'Back Glass Broken') {
-      back_glass_status = 'broken/cracked'
-    } else if (glass === 'Both Broken') {
-      front_glass_status = 'broken/cracked'
-      back_glass_status = 'broken/cracked'
+      const glass = d?.glassDefects || 'No Defect'
+      let front_glass_status = 'no defect'
+      let back_glass_status = 'no defect'
+      if (glass === 'Minor Scratches') {
+        front_glass_status = 'minor scratches'
+        back_glass_status = 'minor scratches'
+      } else if (glass === 'Major Scratches') {
+        front_glass_status = 'major scratches'
+        back_glass_status = 'major scratches'
+      } else if (glass === 'Front Glass Broken') {
+        front_glass_status = 'broken/cracked'
+      } else if (glass === 'Back Glass Broken') {
+        back_glass_status = 'broken/cracked'
+      } else if (glass === 'Both Broken') {
+        front_glass_status = 'broken/cracked'
+        back_glass_status = 'broken/cracked'
+      }
+
+      const displayMap = {
+        'No Defect': 'no defect',
+        'Minor Spots': 'minor spots',
+        'Major Spots': 'major spots',
+        'Display Lines': 'display lines',
+        'Touch Faulty': 'touch faulty',
+        'Display Changed': 'display changes',
+        'Display Faulty': 'display faulty',
+      }
+      const display_defect = displayMap[d?.displayDefects] || 'no defect'
+
+      const bodyMap = {
+        'No Defect': 'no defect',
+        'Minor Scratches': 'minor scratches',
+        'Major Scratches or Dents': 'major scratches',
+        'Major Dents or Cracked': 'major dents',
+        'Body Bend': 'body bend',
+        'Body Deform': 'body damage',
+      }
+      const body_defect = bodyMap[d?.bodyDefects] || 'no defect'
+
+      const faultMap = {
+        'Battery Faulty': 'battery faulty',
+        'Charging Faulty': 'charging faulty',
+        'WiFi Faulty': 'wifi faulty',
+        'Bluetooth Faulty': 'bluetooth faulty',
+        'Front Camera Faulty': 'front camera faulty',
+        'Back Camera Faulty': 'back camera faulty',
+        'Speaker Faulty': 'loud speaker faulty',
+        'Mic Faulty': 'mic faulty',
+        'Buttons Faulty': 'buttons faulty',
+      }
+      const faultPriority = [
+        'Battery Faulty',
+        'Charging Faulty',
+        'WiFi Faulty',
+        'Bluetooth Faulty',
+        'Front Camera Faulty',
+        'Back Camera Faulty',
+        'Speaker Faulty',
+        'Mic Faulty',
+        'Buttons Faulty',
+      ]
+      const selectedFaults = Array.isArray(d?.faults) ? d.faults : []
+      const matchedFaultKey = faultPriority.find((k) => selectedFaults.includes(k))
+      const faults = matchedFaultKey ? faultMap[matchedFaultKey] : 'none'
+
+      // UI does not currently collect these fields, so we assume defaults.
+      const age_years = 2
+
+      return {
+        brand: brandName,
+        age_years,
+        ram_gb: ram_gb_clamped,
+        storage_gb: storage_gb_clamped,
+        battery_power,
+        original_box,
+        original_charger,
+        front_glass_status,
+        back_glass_status,
+        display_defect,
+        body_defect,
+        faults,
+      }
+    } else if (nav.category === 'laptop') {
+      const accessories = Array.isArray(d?.accessories) ? d.accessories : []
+      return {
+        "Brand": brand?.name || "",
+        "Model": nav.variant || "",
+        "Base_Price": nav.variantBase || 20000,
+        "Original_Charger": accessories.includes('Original Charger') ? "Yes" : "No",
+        "Valid_Bill": accessories.includes('Valid Bill with Serial Number') ? "Yes" : "No",
+        "Display": d?.displayCondition || "No Defect",
+        "Body_Condition": d?.bodyCondition || "No Defect",
+        "Faults": Array.isArray(d?.faults) ? d.faults.join("|") : "None"
+      }
+    } else if (nav.category === 'tablet') {
+      return {
+        "Brand": brand?.name || "",
+        "Model": nav.variant || "",
+        "Base_Price": nav.variantBase || 15000,
+        "Working_Status": d?.workingStatus || "Working",
+        "Glass_Defect": d?.glassDefects || "No Defect",
+        "Display_Defect": d?.displayDefects || "No Defect",
+        "Body_Condition": d?.bodyDefects || "No Defect",
+        "Faults": Array.isArray(d?.faults) ? d.faults.join("|") : "None"
+      }
     }
+  }, [nav.category, brand?.name, d, nav.variant, nav.variantBase])
 
-    const displayMap = {
-      'No Defect': 'no defect',
-      'Minor Spots': 'minor spots',
-      'Major Spots': 'major spots',
-      'Display Lines': 'display lines',
-      'Touch Faulty': 'touch faulty',
-      'Display Changed': 'display changes',
-      'Display Faulty': 'display faulty',
-    }
-    const display_defect = displayMap[d?.displayDefects] || 'no defect'
 
-    const bodyMap = {
-      'No Defect': 'no defect',
-      'Minor Scratches': 'minor scratches',
-      'Major Scratches or Dents': 'major scratches',
-      'Major Dents or Cracked': 'major dents',
-      'Body Bend': 'body bend',
-      'Body Deform': 'body damage',
-    }
-    const body_defect = bodyMap[d?.bodyDefects] || 'no defect'
-
-    const faultMap = {
-      'Battery Faulty': 'battery faulty',
-      'Charging Faulty': 'charging faulty',
-      'WiFi Faulty': 'wifi faulty',
-      'Bluetooth Faulty': 'bluetooth faulty',
-      'Front Camera Faulty': 'front camera faulty',
-      'Back Camera Faulty': 'back camera faulty',
-      'Speaker Faulty': 'loud speaker faulty',
-      'Mic Faulty': 'mic faulty',
-      'Buttons Faulty': 'buttons faulty',
-    }
-    const faultPriority = [
-      'Battery Faulty',
-      'Charging Faulty',
-      'WiFi Faulty',
-      'Bluetooth Faulty',
-      'Front Camera Faulty',
-      'Back Camera Faulty',
-      'Speaker Faulty',
-      'Mic Faulty',
-      'Buttons Faulty',
-    ]
-    const selectedFaults = Array.isArray(d?.faults) ? d.faults : []
-    const matchedFaultKey = faultPriority.find((k) => selectedFaults.includes(k))
-    const faults = matchedFaultKey ? faultMap[matchedFaultKey] : 'none'
-
-    // UI does not currently collect these fields, so we assume defaults.
-    const age_years = 2
-
-    return {
-      brand: brandName,
-      age_years,
-      ram_gb: ram_gb_clamped,
-      storage_gb: storage_gb_clamped,
-      battery_power,
-      original_box,
-      original_charger,
-      front_glass_status,
-      back_glass_status,
-      display_defect,
-      body_defect,
-      faults,
-    }
-  }, [nav.category, brand?.name, d])
 
   useEffect(() => {
     if (!predictPayload) return
     setMlLoading(true)
     setMlError(null)
 
-    api.predictMobilePrice(predictPayload)
+    const callApi = nav.category === 'laptop' 
+        ? api.predictLaptopPrice(predictPayload) 
+        : nav.category === 'tablet'
+        ? api.predictTabletPrice(predictPayload)
+        : api.predictMobilePrice(predictPayload)
+
+
+    callApi
       .then((res) => {
         const val = res?.predicted_price
         const num = typeof val === 'number' ? val : parseInt(val, 10)
@@ -153,42 +187,66 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
         setMlError(e?.message || 'Prediction failed')
       })
       .finally(() => setMlLoading(false))
-  }, [predictPayload])
+  }, [predictPayload, nav.category])
+
 
   return (
     <>
     <div className="max-w-[640px] mx-auto px-5 pt-10 pb-20">
       <BackButton goBack={goBack} canGoBack={canGoBack} label="Device Details" />
 
-      {/* Price hero card */}
-      <motion.div
-        className="rounded-2xl px-8 py-11 text-center mb-5 relative overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${catColor}ee, ${catColor}99)`,
-          boxShadow: `0 8px 32px ${catColor}40`,
-        }}
-        initial={{ opacity: 0, scale: 0.94, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.42, ease: [0.22, 0.68, 0, 1.2] }}
-      >
-        <div
-          className="absolute -top-12 -right-12 w-48 h-48 rounded-full pointer-events-none"
-          style={{ background: '#fff', opacity: 0.08, filter: 'blur(30px)' }}
-        />
-        <div className="text-6xl mb-2 relative">💰</div>
-        <p className="text-white/75 text-sm mb-1 relative">Estimated Recycle Value for</p>
-        <p className="font-poppins font-bold text-white text-xl mb-4 relative">{nav.variant}</p>
+        {/* Price hero card */}
         <motion.div
-          className="font-poppins font-black text-white leading-none mb-2.5 relative"
-          style={{ fontSize: '3.5rem' }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.18, duration: 0.45, ease: [0.22, 0.68, 0, 1.2] }}
+          className="rounded-2xl px-8 py-10 text-center mb-5 relative overflow-hidden"
+          style={{
+            background: `linear-gradient(135deg, ${catColor}ee, ${catColor}99)`,
+            boxShadow: `0 8px 32px ${catColor}40`,
+          }}
+          initial={{ opacity: 0, scale: 0.94, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.42, ease: [0.22, 0.68, 0, 1.2] }}
         >
-          ₹{price.toLocaleString()}
+          {/* AI Badge */}
+          {mlPrice && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 flex items-center gap-1.5"
+            >
+              <span className="text-[10px] text-white font-black tracking-widest uppercase">✨ AI Powered</span>
+            </motion.div>
+          )}
+
+          <div
+            className="absolute -top-12 -right-12 w-48 h-48 rounded-full pointer-events-none"
+            style={{ background: '#fff', opacity: 0.08, filter: 'blur(30px)' }}
+          />
+          <div className="text-5xl mb-2 relative">💰</div>
+          <p className="text-white/75 text-sm mb-1 relative">Estimated Recycle Value for</p>
+          <p className="font-poppins font-bold text-white text-xl mb-4 relative">{nav.variant}</p>
+          
+          {mlLoading ? (
+            <div className="h-[3.5rem] flex items-center justify-center mb-2.5">
+              <motion.div 
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-40 h-10 bg-white/20 rounded-2xl"
+              />
+            </div>
+          ) : (
+            <motion.div
+              className="font-poppins font-black text-white leading-none mb-2.5 relative"
+              style={{ fontSize: '3.5rem' }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.18, duration: 0.45, ease: [0.22, 0.68, 0, 1.2] }}
+            >
+              ₹{price.toLocaleString()}
+            </motion.div>
+          )}
+          <p className="text-white/65 text-sm relative">Free pickup · Payment within 24 hours</p>
         </motion.div>
-        <p className="text-white/65 text-sm relative">Free pickup · Payment within 24 hours</p>
-      </motion.div>
+
 
       {/* Device summary */}
       <motion.div

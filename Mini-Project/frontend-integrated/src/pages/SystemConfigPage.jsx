@@ -228,47 +228,56 @@ export default function SystemConfigPage({ nav, go, goBack, canGoBack }) {
         <div className="w-full lg:w-[360px] order-1 lg:order-2">
           <div className="sticky top-10">
             <motion.div
-              className="rounded-[2.5rem] p-8 overflow-hidden relative"
-              style={{ 
-                background: cat?.light || '#ecfdf5', 
-                border: `2px solid ${cc}15`,
-                boxShadow: `0 30px 60px -15px ${cc}15`
-              }}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
-              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: cc }}></div>
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10" style={{ background: cc }}></div>
+              <motion.div
+                className="rounded-[2.5rem] p-8 overflow-hidden relative"
+                style={{ 
+                  background: cat?.light || '#ecfdf5', 
+                  border: `2px solid ${cc}15`,
+                  boxShadow: `0 30px 60px -15px ${cc}15`
+                }}
+                animate={{ y: [0, -12, 0] }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }}
+              >
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: cc }}></div>
+                <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10" style={{ background: cc }}></div>
 
-              <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg bg-white"
-                  style={{ color: cc }}>{cat?.emoji}</div>
-                
-                <p className="text-slate-500 text-[10px] font-bold font-inter tracking-[0.2em] uppercase mb-1 opacity-70">Summary Details</p>
-                <h3 className="font-poppins font-black text-slate-800 text-2xl mb-4 leading-tight">{nav.variant}</h3>
-                
-                <div className="space-y-4 pt-4 border-t border-slate-900/5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Brand</span>
-                    <span className="text-sm font-inter text-slate-800 font-bold">{company?.name}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Category</span>
-                    <span className="text-sm font-inter text-slate-800 font-bold uppercase tracking-wider text-[11px]">{cat?.name}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Condition</span>
-                    <span className="text-[11px] font-inter text-green-600 font-bold uppercase tracking-wider">Verified ✓</span>
-                  </div>
-                  <div className="flex justify-between items-center bg-white/50 p-4 rounded-2xl mt-4">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Starting Value</span>
-                    <span className="text-xl font-poppins text-slate-800 font-black" style={{ color: cc }}>
-                      ₹{(nav.variantBase || 0).toLocaleString()}
-                    </span>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg bg-white"
+                    style={{ color: cc }}>{cat?.emoji}</div>
+                  
+                  <p className="text-slate-500 text-[10px] font-bold font-inter tracking-[0.2em] uppercase mb-1 opacity-70">Summary Details</p>
+                  <h3 className="font-poppins font-black text-slate-800 text-2xl mb-4 leading-tight">{nav.variant}</h3>
+                  
+                  <div className="space-y-4 pt-4 border-t border-slate-900/5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-inter text-slate-500 font-medium">Brand</span>
+                      <span className="text-sm font-inter text-slate-800 font-bold">{company?.name}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-inter text-slate-500 font-medium">Category</span>
+                      <span className="text-sm font-inter text-slate-800 font-bold uppercase tracking-wider text-[11px]">{cat?.name}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-inter text-slate-500 font-medium">Condition</span>
+                      <span className="text-[11px] font-inter text-green-600 font-bold uppercase tracking-wider">Verified ✓</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-white/50 p-4 rounded-2xl mt-4">
+                      <span className="text-sm font-inter text-slate-500 font-medium">Starting Value</span>
+                      <span className="text-xl font-poppins text-slate-800 font-black" style={{ color: cc }}>
+                        ₹{(nav.variantBase || 0).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>

@@ -1,5 +1,0 @@
-train: Dataset/images/train
-val: Dataset/images/val
-
-nc: 1
-names: ["cracked_screen"]

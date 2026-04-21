@@ -25,19 +25,19 @@ secrets.yml
 # ─────────────────────────────────────────────────────────────
 #  FRONTEND  (React + Vite)
 # ─────────────────────────────────────────────────────────────
-Ewaste2/Mini-Project/frontend-integrated/node_modules/
-Ewaste2/Mini-Project/frontend-integrated/dist/
-Ewaste2/Mini-Project/frontend-integrated/.cache/
-Ewaste2/Mini-Project/frontend-integrated/coverage/
-Ewaste2/Mini-Project/frontend-integrated/*.local
+Mini-Project/frontend-integrated/node_modules/
+Mini-Project/frontend-integrated/dist/
+Mini-Project/frontend-integrated/.cache/
+Mini-Project/frontend-integrated/coverage/
+Mini-Project/frontend-integrated/*.local
 
 # ─────────────────────────────────────────────────────────────
 #  BACKEND  (Spring Boot / Maven)
 # ─────────────────────────────────────────────────────────────
-Ewaste2/Mini-Project/Backend/backend-integrated/target/
-Ewaste2/Mini-Project/Backend/backend-integrated/*.class
-Ewaste2/Mini-Project/Backend/backend-integrated/hs_err_pid*
-Ewaste2/Mini-Project/Backend/backend-integrated/.mvn/wrapper/maven-wrapper.jar
+Mini-Project/Backend/backend-integrated/target/
+Mini-Project/Backend/backend-integrated/*.class
+Mini-Project/Backend/backend-integrated/hs_err_pid*
+Mini-Project/Backend/backend-integrated/.mvn/wrapper/maven-wrapper.jar
 
 # Secrets — never commit real credentials
 Mini-Project/Backend/backend-integrated/src/main/resources/application.properties
@@ -47,36 +47,36 @@ Mini-Project/Backend/backend-integrated/src/main/resources/application.propertie
 # ─────────────────────────────────────────────────────────────
 
 # Virtual environments
-Ewaste2/Mini-Project/Image_Prediction/.venv/
-Ewaste2/Mini-Project/Image_Prediction/venv/
-Ewaste2/Mini-Project/Image_Prediction/env/
+Mini-Project/Image_Prediction/.venv/
+Mini-Project/Image_Prediction/venv/
+Mini-Project/Image_Prediction/env/
 
 # Python cache
-Ewaste2/Mini-Project/Image_Prediction/__pycache__/
-Ewaste2/Mini-Project/Image_Prediction/*.pyc
-Ewaste2/Mini-Project/Image_Prediction/*.pyo
-Ewaste2/Mini-Project/Image_Prediction/*.pyd
+Mini-Project/Image_Prediction/__pycache__/
+Mini-Project/Image_Prediction/*.pyc
+Mini-Project/Image_Prediction/*.pyo
+Mini-Project/Image_Prediction/*.pyd
 
 # Datasets & Labels (large — share via Google Drive / Kaggle instead)
-Ewaste2/Mini-Project/Image_Prediction/Dataset/
-Ewaste2/Mini-Project/Image_Prediction/labels/
+Mini-Project/Image_Prediction/Dataset/
+Mini-Project/Image_Prediction/labels/
 
 # YOLO Training output (runs/detect/train/weights/best.pt can be 100s of MB)
-Ewaste2/Mini-Project/Image_Prediction/runs/
+Mini-Project/Image_Prediction/runs/
 
 # Pre-trained base model (download separately — not project code)
-Ewaste2/Mini-Project/Image_Prediction/yolov8n.pt
+Mini-Project/Image_Prediction/yolov8n.pt
 
 # ─────────────────────────────────────────────────────────────
 #  MOBILE PREDICTION  (Python / ML)
 # ─────────────────────────────────────────────────────────────
-Ewaste2/Mini-Project/Mobile_Prediction/
+Mini-Project/Mobile_Prediction/
 # If you DO want Mobile_Prediction folder tracked, comment the line above
 # and instead ignore only large artifacts inside it:
-# Ewaste2/Mini-Project/Mobile_Prediction/.venv/
-# Ewaste2/Mini-Project/Mobile_Prediction/__pycache__/
-# Ewaste2/Mini-Project/Mobile_Prediction/runs/
-# Ewaste2/Mini-Project/Mobile_Prediction/*.pt
+# Mini-Project/Mobile_Prediction/.venv/
+# Mini-Project/Mobile_Prediction/__pycache__/
+# Mini-Project/Mobile_Prediction/runs/
+# Mini-Project/Mobile_Prediction/*.pt
 
 # ─────────────────────────────────────────────────────────────
 #  COMMON ML / DATA  patterns (catch-all)
@@ -108,3 +108,10 @@ yarn-debug.log*
 tmp/
 temp/
 uploads/
+
+# ─────────────────────────────────────────────────────────────
+#  NODE BACKEND
+# ─────────────────────────────────────────────────────────────
+Mini-Project/node-backend/node_modules/
+**/.nycrc
+**/.get-intrinsic/

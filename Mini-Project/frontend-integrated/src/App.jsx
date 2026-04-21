@@ -20,6 +20,7 @@ import DetailsPage   from './pages/DetailsPage'
 import SystemConfigPage from './pages/SystemConfigPage'
 import EstimatePage  from './pages/EstimatePage'
 import CartPage      from './pages/CartPage'
+import EcoloopAdmin  from './pages/EcoloopAdmin'
 
 // ─── ROUTE MAP ───────────────────────────────────────────────────────────────
 const ROUTES = {
@@ -38,6 +39,7 @@ const ROUTES = {
   '/sysconfig':'sysconfig',
   '/estimate': 'estimate',
   '/cart':     'cart',
+  '/admin':    'ecoloopadmin',
 }
 
 function pageToPath(page, nav = {}) {
@@ -46,7 +48,7 @@ function pageToPath(page, nav = {}) {
     home: '/', about: '/about', process: '/process', search: '/search',
     signin: '/login', signup: '/signup', models: '/models',
     variants: '/variants', details: '/details', sysconfig: '/sysconfig', estimate: '/estimate',
-    cart: '/cart',
+    cart: '/cart', ecoloopadmin: '/admin',
   }
   return map[page] || '/'
 }
@@ -103,6 +105,7 @@ export default function App() {
       sysconfig: 'System Configuration — EcoRecycle',
       estimate: 'Price Estimate — EcoRecycle',
       cart: 'My Cart — EcoRecycle',
+      ecoloopadmin: 'Admin Dashboard — EcoRecycle',
     }
     document.title = titles[page] || 'EcoRecycle'
   }, [page, nav])
@@ -194,17 +197,18 @@ export default function App() {
   }
 
   const shared = { go, goBack, canGoBack, nav }
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <Navbar
-        cart={cart} page={page}
-        go={go} goBack={goBack} canGoBack={canGoBack}
-        onSignIn={() => setAuthMode('signin')}
-        onLogout={onLogout}
-        onCart={() => go('cart')}
-        onSearch={(q) => go('search', { searchQuery: q || '' })}
-      />
+      {page !== 'ecoloopadmin' && (
+        <Navbar
+          cart={cart} page={page} nav={nav}
+          go={go} goBack={goBack} canGoBack={canGoBack}
+          onSignIn={() => setAuthMode('signin')}
+          onLogout={onLogout}
+          onCart={() => go('cart')}
+          onSearch={(q) => go('search', { searchQuery: q || '' })}
+        />
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -226,6 +230,7 @@ export default function App() {
           {page === 'sysconfig'&& <SystemConfigPage {...shared} />}
           {page === 'estimate' && <EstimatePage {...shared} addToCart={addToCart} />}
           {page === 'cart'     && <CartPage     {...shared} cart={cart} onRemove={removeFromCart} />}
+          {page === 'ecoloopadmin' && <EcoloopAdmin {...shared} />}
         </motion.div>
       </AnimatePresence>
 

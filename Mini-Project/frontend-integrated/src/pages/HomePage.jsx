@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORIES } from '../data'
 import heroVideo from '../assets/img/Home/ewaste_video - Copy.mp4'
@@ -7,112 +7,154 @@ import Footer from '../components/layout/Footer'
 import ImgF from '../components/ui/ImgF'
 import { staggerContainer, fadeUp, inViewFadeUp } from '../utils/motion'
 
-let typewriterDone = false
-
-function TypeWriter({ text, speed = 38, delay = 900 }) {
-  const [displayed, setDisplayed] = useState(typewriterDone ? text : '')
-  const [done, setDone] = useState(typewriterDone)
+function TypeWriter({ text, speed = 40, delay = 1000 }) {
+  const [displayText, setDisplayText] = useState('')
+  const [isDone, setIsDone] = useState(false)
 
   useEffect(() => {
-    if (typewriterDone) return
+    let timeoutId
+    let intervalId
 
-    let index = 0
-    let intervalId = null
-
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
+      let index = 0
       intervalId = setInterval(() => {
-        index += 1
-        setDisplayed(text.slice(0, index))
-
+        setDisplayText(text.slice(0, index + 1))
+        index++
         if (index >= text.length) {
           clearInterval(intervalId)
-          setDone(true)
-          typewriterDone = true
+          setIsDone(true)
         }
       }, speed)
     }, delay)
 
     return () => {
       clearTimeout(timeoutId)
-      if (intervalId) clearInterval(intervalId)
+      clearInterval(intervalId)
     }
-  }, [delay, speed, text])
+  }, [text, speed, delay])
 
   return (
-    <>
-      {displayed}
-      {!done && (
-        <span
-          className="inline-block w-[2px] h-[1.1em] ml-[1px] align-middle rounded-sm"
-          style={{ background: '#b5ffe4', animation: 'twCaret 0.7s step-end infinite' }}
-        />
-      )}
-      <style>{'@keyframes twCaret{0%,100%{opacity:1}50%{opacity:0}}'}</style>
-    </>
+    <span className="relative whitespace-normal">
+      {displayText}
+      <motion.span
+        initial={{ opacity: 1 }}
+        animate={isDone ? { opacity: 0 } : { opacity: [1, 0, 1] }}
+        transition={{
+          duration: isDone ? 1.0 : 0.8,
+          repeat: isDone ? 0 : Infinity,
+          ease: "linear",
+          times: isDone ? [0, 1] : [0, 0.5, 1]
+        }}
+        className="inline-block w-[2px] h-[1.1em] bg-emerald-400 ml-0.5 align-middle"
+      />
+    </span>
   )
 }
 
 function CategoryCard({ cat, onClick, go }) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  const mouseXSpring = useSpring(x)
+  const mouseYSpring = useSpring(y)
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['17.5deg', '-17.5deg'])
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-17.5deg', '17.5deg'])
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const width = rect.width
+    const height = rect.height
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    const xPct = mouseX / width - 0.5
+    const yPct = mouseY / height - 0.5
+    x.set(xPct)
+    y.set(yPct)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
   return (
-    <motion.div
-      className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow cursor-pointer overflow-hidden w-full transition-colors duration-300"
-      style={{ '--cat-color': cat.color }}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') onClick()
-      }}
-      variants={fadeUp}
-      whileHover={{
-        y: -7,
-        scale: 1.03,
-        boxShadow: '0 18px 42px rgba(0,0,0,0.12)',
-        borderColor: cat.color,
-        transition: { duration: 0.22 },
-      }}
-      whileTap={{ scale: 0.98, y: -2 }}
+    <div
+      style={{ perspective: '1000px' }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      <div
-        className="min-h-[190px] flex items-center justify-center relative p-6"
-        style={{ background: cat.light }}
+      <motion.div
+        className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow cursor-pointer overflow-hidden w-full transition-colors duration-300"
+        style={{
+          '--cat-color': cat.color,
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+        }}
+        onClick={onClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') onClick()
+        }}
+        variants={fadeUp}
+        whileHover={{
+          translateZ: 20,
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          borderColor: cat.color,
+          transition: { duration: 0.2 },
+        }}
+        whileTap={{ scale: 0.98 }}
       >
-        <span
-          className="absolute top-3 right-3 text-white text-[11px] font-bold px-2.5 py-1 rounded-full"
-          style={{ background: cat.color }}
+        <div
+          className="min-h-[190px] flex items-center justify-center relative p-6"
+          style={{ background: cat.light, transform: 'translateZ(50px)' }}
         >
-          {cat.badge}
-        </span>
-
-        <div className="p-2 cursor-pointer z-10" onClick={(e) => { e.stopPropagation(); go('cart') }}>
-          <ImgF
-            src={cat.img}
-            alt={cat.name}
-            style={{ maxWidth: 150, maxHeight: 150, objectFit: 'contain' }}
-            fallback={(
-              <div className="text-center">
-                <div className="text-8xl">{cat.emoji}</div>
-              </div>
-            )}
-          />
-        </div>
-      </div>
-
-      <div className="p-5 pb-6">
-        <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{cat.name}</h3>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">{cat.sub}</p>
-
-        <div className="flex justify-between items-center">
           <span
-            className="text-xs font-bold px-3 py-1 rounded-full"
-            style={{ background: cat.light, color: cat.color }}
+            className="absolute top-3 right-3 text-white text-[11px] font-bold px-2.5 py-1 rounded-full"
+            style={{ background: cat.color, transform: 'translateZ(30px)' }}
           >
-            {cat.count}
+            {cat.badge}
           </span>
-          <span style={{ color: cat.color }}>?</span>
+
+          <div
+            className="p-2 cursor-pointer z-10"
+            onClick={(e) => {
+              e.stopPropagation()
+              go('cart')
+            }}
+            style={{ transform: 'translateZ(60px)' }}
+          >
+            <ImgF
+              src={cat.img}
+              alt={cat.name}
+              style={{ maxWidth: 150, maxHeight: 150, objectFit: 'contain' }}
+              fallback={(
+                <div className="text-center">
+                  <div className="text-8xl">{cat.emoji}</div>
+                </div>
+              )}
+            />
+          </div>
         </div>
-      </div>
-    </motion.div>
+
+        <div className="p-5 pb-6" style={{ transform: 'translateZ(40px)' }}>
+          <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{cat.name}</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">{cat.sub}</p>
+
+          <div className="flex justify-between items-center">
+            <span
+              className="text-xs font-bold px-3 py-1 rounded-full"
+              style={{ background: cat.light, color: cat.color }}
+            >
+              {cat.count}
+            </span>
+            <span style={{ color: cat.color }}>?</span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 
@@ -212,7 +254,6 @@ export default function HomePage({ go }) {
               </motion.button>
             </motion.div>
           </motion.div>
-
         </div>
       </section>
 
@@ -225,7 +266,7 @@ export default function HomePage({ go }) {
       >
         {stats.map((s, i) => (
           <motion.div key={i} className="p-6" variants={fadeUp}>
-            <div className="text-xl font-bold text-green-0 dark:text-eco-400">{s.val}</div>
+            <div className="text-xl font-bold text-eco-600 dark:text-eco-400">{s.val}</div>
             <div className="text-sm text-gray-500 dark:text-slate-400">{s.label}</div>
           </motion.div>
         ))}
