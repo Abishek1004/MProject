@@ -307,11 +307,190 @@ export default function AboutPage({ go }) {
           </motion.div>
         </div>
 
-        {/* Values Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-48">
-          <div className="text-center mb-24">
+        {/* Importance of Recycling Section */}
+        <div className="max-w-7xl mx-auto px-6 mb-60">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={containerVariants}
+            className="space-y-16"
+          >
+            <div className="text-center max-w-3xl mx-auto space-y-6">
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
+                Why Recycling Your Tech <br/> <span className="text-emerald-600 dark:text-emerald-500">Matters Most</span>
+              </h2>
+              <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed text-fit">
+                Electronic waste is the fastest-growing waste stream on the planet. Here’s why your decision to recycle today creates a massive ripple effect for a better tomorrow.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "Resource Conservation",
+                  ic: "💎",
+                  desc: "Your old phones are 'urban mines.' They contain precious metals like gold, silver, and palladium. By recycling, we recover these materials, reducing the need for destructive mining across the globe.",
+                  color: "bg-amber-50 dark:bg-amber-900/20",
+                  text: "text-amber-700 dark:text-amber-400"
+                },
+                {
+                  title: "Toxic Leak Prevention",
+                  ic: "☢️",
+                  desc: "E-waste contains hazardous substances like lead, mercury, and cadmium. When dumped in landfills, these leak into our groundwater and soil. Professional recycling ensures safe containment and treatment.",
+                  color: "bg-red-50 dark:bg-red-900/20",
+                  text: "text-red-700 dark:text-red-400"
+                },
+                {
+                  title: "Energy Efficiency",
+                  ic: "⚡",
+                  desc: "Manufacturing new products from recycled materials consumes significantly less energy than refining raw ores. This efficiency helps stabilize global energy demands and lowers operational costs.",
+                  color: "bg-blue-50 dark:bg-blue-900/20",
+                  text: "text-blue-700 dark:text-blue-400"
+                },
+                {
+                  title: "Climate Mitigation",
+                  ic: "🌍",
+                  desc: "By keeping computers and mobiles in a circular loop, we prevent massive CO2 emissions associated with the production of new electronics, directly tackling the global climate crisis.",
+                  color: "bg-emerald-50 dark:bg-emerald-900/20",
+                  text: "text-emerald-700 dark:text-emerald-400"
+                },
+                {
+                  title: "Economic Incentive",
+                  ic: "💰",
+                  desc: "Recycling isn't just good for the planet—it's good for your wallet. Our platform ensures you get a fair market valuation for your unused devices, turning 'junk' into capital.",
+                  color: "bg-green-50 dark:bg-green-900/20",
+                  text: "text-green-700 dark:text-green-400"
+                },
+                {
+                  title: "Data Security",
+                  ic: "🛡️",
+                  desc: "Simply throwing away a device puts your personal data at risk. Professional recycling includes military-grade data wiping, ensuring your privacy is never compromised.",
+                  color: "bg-indigo-50 dark:bg-indigo-900/20",
+                  text: "text-indigo-700 dark:text-indigo-400"
+                }
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  className="flex flex-col p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group"
+                >
+                  <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl mb-6 ${item.color} shadow-sm group-hover:scale-110 transition-transform`}>
+                    {item.ic}
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className={`text-xl font-bold ${item.text} text-fit`}>{item.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm lg:text-base text-fit">
+                      {item.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Global Impact by the Numbers */}
+            <div className="mt-20 p-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[80px] rounded-full" />
+               <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center lg:text-left">
+                  <div className="space-y-2">
+                    <div className="text-4xl font-black text-slate-800 dark:text-white">53.6M</div>
+                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Metric Tons</p>
+                    <p className="text-sm text-slate-500">Global e-waste generated every single year.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-4xl font-black text-slate-800 dark:text-white">₹7,000Cr</div>
+                    <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">Lost Value</p>
+                    <p className="text-sm text-slate-500">Annual value of gold and copper discarded in e-waste.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-4xl font-black text-slate-800 dark:text-white">10%</div>
+                    <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Global Energy</p>
+                    <p className="text-sm text-slate-500">Energy saved by recycling just one million laptops.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-4xl font-black text-slate-800 dark:text-white">100%</div>
+                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Safe Disposal</p>
+                    <p className="text-sm text-slate-500">Our promise to bridge the gap in sustainable tech.</p>
+                  </div>
+               </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Strategic Partnership Section */}
+        <div className="max-w-7xl mx-auto px-6 mb-60">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="p-12 md:p-20 rounded-[3rem] bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden shadow-2xl"
+          >
+            {/* Animated Glow Background */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
+
+            <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-10">
+                <div className="space-y-4">
+                  <span className="px-4 py-1.5 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full tracking-[0.2em] uppercase">
+                    Official Infrastructure Partner
+                  </span>
+                  <h2 className="text-4xl md:text-5xl font-black font-poppins leading-tight">
+                    Backed by <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">SPAS PVT LTD</span>
+                  </h2>
+                </div>
+                
+                <p className="text-xl text-slate-400 leading-relaxed font-inter text-fit">
+                  We are proud to announce our exclusive tie-up with <span className="text-white font-bold">SPAS PVT LTD</span>, India's #1 e-waste recycling firm. This partnership combines our seamless user technology with their world-class industrial infrastructure.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {[
+                    "Certified R2 & ISO Standards",
+                    "State-of-the-art Metal Recovery",
+                    "Nationwide Logistics Network",
+                    "Zero-Emission Processing"
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="3">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-slate-300 font-medium text-sm font-inter text-fit">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000" />
+                <div className="relative bg-slate-950 rounded-[2rem] p-10 border border-white/5 overflow-hidden">
+                  <div className="flex flex-col items-center text-center space-y-6">
+                    <div className="w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center text-5xl">🏭</div>
+                    <div className="space-y-2">
+                       <h3 className="text-2xl font-black font-poppins tracking-tight text-fit">SPAS PVT LTD</h3>
+                       <p className="text-emerald-500 font-bold uppercase tracking-widest text-[10px] text-fit">India's #1 Recycle Powerhouse</p>
+                    </div>
+                    <p className="text-slate-500 text-sm italic font-inter text-fit">
+                      "Utilizing superior extraction methods to revert e-waste into high-purity raw materials, ensuring a sustainable future for the electronics industry."
+                    </p>
+                    <div className="pt-4 flex gap-4">
+                       <div className="px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400">EPC Certified</div>
+                       <div className="px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400">SPCB Authorized</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Values Section (How It Works) */}
+        <div className="max-w-7xl mx-auto px-6 mb-60">
+          <div className="text-center mb-28">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">How It Works</h2>
-            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">Our simple process ensures your device is recycled responsibly and you get rewarded instantly.</p>
+            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed text-fit">Our simple process ensures your device is recycled responsibly and you get rewarded instantly.</p>
           </div>
 
           <motion.div 
@@ -336,11 +515,11 @@ export default function AboutPage({ go }) {
           </motion.div>
         </div>
 
-        {/* Team Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-48">
-          <div className="text-center mb-24">
+        {/* Team Section (The Visionaries) */}
+        <div className="max-w-7xl mx-auto px-6 mb-60">
+          <div className="text-center mb-28">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">The Visionaries</h2>
-            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">A collective of specialists dedicated to technological sustainability.</p>
+            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed text-fit">A collective of specialists dedicated to technological sustainability.</p>
           </div>
 
           <motion.div 
