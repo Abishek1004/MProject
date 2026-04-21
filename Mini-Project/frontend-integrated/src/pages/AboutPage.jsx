@@ -7,12 +7,12 @@ import PageHeader from '../components/ui/PageHeader';
 
 const MISSION = {
   badge: "Simplified E-Waste Solutions",
-  title: "Your Tech's Second Life Starts Here",
+  title: "Empowering Sustainability Through Innovation",
   description: [
-    "At EcoLoop, we believe every device has value—whether it's powered on or long forgotten. We've built a platform that makes recycling as easy as a few clicks.",
-    "From your old working smartphones to non-functional laptops, we bridge the gap between your drawer and a cleaner planet, putting money back in your pocket along the way."
+    "Our mission is to lead the transition toward a circular economy by making e-waste recycling effortless, secure, and rewarding. We believe that every discarded device represents a responsibility to protect our environment.",
+    "By providing a seamless platform for safe recycling, we ensure that toxic materials are diverted from landfills, reducing the global environmental footprint while returning value to our users."
   ],
-  metric: { val: "5-Step", label: "Seamless Process" }
+  metric: { val: "Eco-Safe", label: "Certified Recycling" }
 };
 
 const VALUES = [
@@ -45,6 +45,16 @@ const VALUES = [
     title: 'Instant Wallet',
     color: '#F59E0B',
     desc: 'No waiting around. Once your device is collected, we add the money directly to your wallet for immediate use.'
+  },
+  { 
+    icon: (
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+      </svg>
+    ),
+    title: 'SPAS Partnership',
+    color: '#059669',
+    desc: 'We are proud to partner with SPAS Recycling Pvt Ltd, a government-certified leader in eco-friendly electronic waste management.'
   }
 ];
 
@@ -120,7 +130,7 @@ function GlassCard({ children, className = "" }) {
   );
 }
 
-export default function AboutPage() {
+export default function AboutPage({ go }) {
   return (
     <div className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 selection:bg-emerald-100 dark:selection:bg-emerald-900/30 font-inter transition-colors duration-300">
       <div className="relative pt-20 overflow-hidden">
@@ -228,6 +238,75 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* Importance of Recycling Section */}
+        <div className="max-w-7xl mx-auto px-6 mb-48">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={containerVariants}
+            className="space-y-16"
+          >
+            <div className="text-center max-w-3xl mx-auto space-y-6">
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
+                Why Recycling Your Tech <br/> <span className="text-emerald-600 dark:text-emerald-500">Matters Most</span>
+              </h2>
+              <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
+                Electronic waste is the fastest-growing waste stream on the planet. Here’s why your decision to recycle today creates a massive ripple effect for a better tomorrow.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              {[
+                {
+                  title: "Resource Conservation",
+                  ic: "💎",
+                  desc: "Your old phones are 'urban mines.' They contain precious metals like gold, silver, and palladium. By recycling, we recover these materials, reducing the need for destructive mining across the globe.",
+                  color: "bg-amber-50 dark:bg-amber-900/20",
+                  text: "text-amber-700 dark:text-amber-400"
+                },
+                {
+                  title: "Toxic Leak Prevention",
+                  ic: "☢️",
+                  desc: "E-waste contains hazardous substances like lead, mercury, and cadmium. When dumped in landfills, these leak into our groundwater and soil. Professional recycling ensures safe containment and treatment.",
+                  color: "bg-red-50 dark:bg-red-900/20",
+                  text: "text-red-700 dark:text-red-400"
+                },
+                {
+                  title: "Energy Efficiency",
+                  ic: "⚡",
+                  desc: "Manufacturing new products from recycled materials consumes significantly less energy than refining raw ores. This efficiency helps stabilize global energy demands and lowers operational costs.",
+                  color: "bg-blue-50 dark:bg-blue-900/20",
+                  text: "text-blue-700 dark:text-blue-400"
+                },
+                {
+                  title: "Climate Change Mitigation",
+                  ic: "🌍",
+                  desc: "By keeping computers and mobiles in a circular loop, we prevent massive CO2 emissions associated with the production of new electronics, directly tackling the global climate crisis.",
+                  color: "bg-emerald-50 dark:bg-emerald-900/20",
+                  text: "text-emerald-700 dark:text-emerald-400"
+                }
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  className="flex flex-col sm:flex-row gap-6 p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group"
+                >
+                  <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl ${item.color} shadow-sm group-hover:scale-110 transition-transform`}>
+                    {item.ic}
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className={`text-xl font-bold ${item.text}`}>{item.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm lg:text-base">
+                      {item.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
         {/* Values Section */}
         <div className="max-w-7xl mx-auto px-6 mb-48">
           <div className="text-center mb-24">
@@ -240,7 +319,7 @@ export default function AboutPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-10"
+            className="grid md:grid-cols-4 gap-10"
           >
             {VALUES.map((v, i) => (
               <GlassCard key={i}>
@@ -311,6 +390,7 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button 
+                  onClick={() => go('home')}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   className="bg-emerald-500 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all"
@@ -318,6 +398,7 @@ export default function AboutPage() {
                   Start Recycling Now
                 </motion.button>
                 <motion.button 
+                  onClick={() => go('process')}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   className="bg-white/5 text-white border border-white/10 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all"

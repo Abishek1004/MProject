@@ -144,9 +144,10 @@ button:active:not(:disabled) {
   }
 }
 
-/* ── Hide Google Translate top bar ─────────────────────────────────────────── */
+/* ── Hide Google Translate Branding / Logos ───────────────────────────────── */
 .goog-te-banner-frame,
-#goog-te-banner-frame {
+#goog-te-banner-frame,
+.goog-te-balloon-frame {
   display: none !important;
 }
 
@@ -158,7 +159,20 @@ body {
   top: 0 !important;
 }
 
-/* Hide the Google Translate widget frame */
+/* Hide the Google Translate widget branding */
+.goog-logo-link {
+   display: none !important;
+}
+
 .goog-te-gadget {
-  display: none !important;
+   color: transparent !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+   color: #334155 !important; /* Re-show the dropdown with slate-700 */
+}
+
+/* Hide Google logo specifically in the gadget */
+.goog-te-gadget span {
+   display: none !important;
 }
