@@ -1,4 +1,7 @@
-const API_BASE = 'http://localhost:8081/api'
+// ─── API Base URLs — read from environment variables for deployment ────────────
+// On Render/Netlify, set VITE_API_BASE_URL and VITE_NODE_API_URL in environment settings
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081/api'
+const NODE_API_BASE = import.meta.env.VITE_NODE_API_URL || 'http://localhost:3000/api'
 
 const request = async (url, options = {}) => {
   const res = await fetch(API_BASE + url, options)
@@ -57,8 +60,9 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
-  predictLaptopPrice: (payload) =>
-    fetch('http://localhost:5002/predict', {
+  predictLaptopPrice: (payload) => {
+    const laptopUrl = import.meta.env.VITE_LAPTOP_PREDICT_URL || 'http://localhost:5002/predict'
+    return fetch(laptopUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -66,10 +70,12 @@ export const api = {
       const data = await res.json().catch(() => ({ error: 'Invalid response' }))
       if (!res.ok) return Promise.reject(data)
       return data
-    }),
+    })
+  },
 
-  predictTabletPrice: (payload) =>
-    fetch('http://localhost:5003/predict', {
+  predictTabletPrice: (payload) => {
+    const tabletUrl = import.meta.env.VITE_TABLET_PREDICT_URL || 'http://localhost:5003/predict'
+    return fetch(tabletUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -77,9 +83,8 @@ export const api = {
       const data = await res.json().catch(() => ({ error: 'Invalid response' }))
       if (!res.ok) return Promise.reject(data)
       return data
-    }),
-
-
+    })
+  },
 
   analyzePhoneImage: (file) => {
     const form = new FormData()
@@ -91,10 +96,10 @@ export const api = {
   },
 
   validatePhoneImage: (file) => {
-    // Posts directly to the Flask YOLO server (port 5000), not the Java backend.
+    const yoloUrl = import.meta.env.VITE_YOLO_URL || 'http://localhost:5000/predict-image'
     const form = new FormData()
     form.append('image', file)
-    return fetch('http://localhost:5000/predict-image', {
+    return fetch(yoloUrl, {
       method: 'POST',
       body: form,
     }).then(async (res) => {
@@ -102,28 +107,26 @@ export const api = {
       if (!res.ok) return Promise.reject(data)
       return data
     }).catch((err) => {
-      // Network error (server not running) → produce clear message
       if (err instanceof TypeError && err.message.includes('fetch')) {
-        return Promise.reject(new Error('Image prediction server is not running (http://localhost:5000). Start "python app.py" in the Image_Prediction folder.'))
+        return Promise.reject(new Error('Image prediction server is not running. Start "python app.py" in the Image_Prediction folder.'))
       }
       return Promise.reject(err)
     })
   },
 
-  // ── Admin Endpoints (Node.js Backend - Port 3000) ──────────────────────────
+  // ── Admin Endpoints (Node.js Backend) ─────────────────────────────────────
   getAllUsers: () =>
-    fetch('http://localhost:3000/api/users').then(res => res.json()),
+    fetch(`${NODE_API_BASE}/users`).then(res => res.json()),
 
   deleteUser: (id) =>
-    fetch(`http://localhost:3000/api/users/${id}`, {
+    fetch(`${NODE_API_BASE}/users/${id}`, {
       method: 'DELETE',
     }).then(res => res.json()),
 
   createUser: (userData) =>
-    fetch('http://localhost:3000/api/users', {
+    fetch(`${NODE_API_BASE}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     }).then(res => res.json()),
 }
-

@@ -98,13 +98,12 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
           })
         })
 
-        const text = await response.text()
+        const data = await response.json().catch(() => ({}))
 
-        if (!response.ok) throw new Error(text)
+        if (!response.ok) throw new Error(data.message || 'Login failed')
 
-        alert(text)
-
-        onSuccess({ email: form.email }, "token")
+        // Pass real JWT token and user info to parent
+        onSuccess(data.user, data.token)
 
       }
 
@@ -124,9 +123,6 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
         const text = await response.text()
 
         if (!response.ok) throw new Error(text)
-
-        alert("OTP sent to email")
-
         setStep("otp")
 
       }

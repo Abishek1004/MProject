@@ -4,7 +4,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    // Redirect all 404s back to index.html so React handles the URL
-    historyApiFallback: true,
+    port: 5173,
+  },
+  preview: {
+    port: 4173,
+  },
+  build: {
+    outDir: 'dist',
+    // Generate source maps for easier debugging in production
+    sourcemap: false,
   },
 })
