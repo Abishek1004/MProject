@@ -36,7 +36,7 @@ function ResultCard({ item, go, isExact }) {
         storageOptions: item.storageOptions,
         modelId:        item.modelId,
       })}
-      className="w-full text-left bg-white rounded-2xl p-4 cursor-pointer border-none"
+      className="w-full text-left bg-white dark:bg-slate-800 rounded-2xl p-5 cursor-pointer border-none transition-colors duration-300"
       style={{ border: '2px solid #e2e8f0' }}
       variants={fadeUp}
       whileHover={{
@@ -48,46 +48,45 @@ function ResultCard({ item, go, isExact }) {
       }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0 mt-0.5"
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 mt-0.5"
           style={{ background: `${item.categoryColor}15` }}>
           {item.categoryEmoji}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <p className="font-poppins font-bold text-[0.95rem] text-slate-800">
+          <div className="flex items-start justify-between gap-2 mb-1.5">
+            <p className="font-poppins font-bold text-[1.05rem] text-slate-800 dark:text-white leading-snug">
               {item.variantName}
               {isExact && (
-                <span className="ml-2 text-[10px] font-inter font-bold px-1.5 py-0.5 rounded-full align-middle"
+                <span className="ml-2 text-[9px] font-inter font-black uppercase tracking-widest px-2 py-0.5 rounded-full align-middle border border-emerald-500/30"
                   style={{ background: `${item.categoryColor}15`, color: item.categoryColor }}>
                   Exact
                 </span>
               )}
             </p>
-            <span className="font-poppins font-bold text-sm flex-shrink-0" style={{ color: item.categoryColor }}>
-              ₹{item.variantBase.toLocaleString()}
-            </span>
           </div>
-          <p className="text-slate-500 text-xs font-inter mb-2">
-            {item.companyEmoji} {item.companyName} · {item.categoryName}
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-inter font-bold uppercase tracking-wider mb-3">
+             {item.companyName} · {item.categoryName}
           </p>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5">
             {item.ramOptions.map((r) => (
-              <span key={r} className="text-[11px] font-medium font-inter px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-500">{r} RAM</span>
+              <span key={r} className="text-[10px] font-bold font-inter px-2 py-0.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 capitalize">{r} RAM</span>
             ))}
             {item.storageOptions.slice(0,3).map((s) => (
-              <span key={s} className="text-[11px] font-medium font-inter px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-500">{s}</span>
+              <span key={s} className="text-[10px] font-bold font-inter px-2 py-0.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">{s}</span>
             ))}
-            {item.storageOptions.length > 3 && (
-              <span className="text-[11px] font-medium font-inter px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-slate-400">+{item.storageOptions.length-3} more</span>
-            )}
           </div>
         </div>
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24"
-          stroke={item.categoryColor} strokeWidth="2"
-          className="flex-shrink-0 mt-1">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
+        <div className="flex flex-col items-end gap-2 h-full justify-between self-stretch">
+          <span className="font-poppins font-black text-base" style={{ color: item.categoryColor }}>
+            ₹{item.variantBase.toLocaleString()}
+          </span>
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"
+            stroke={item.categoryColor} strokeWidth="3"
+            className="flex-shrink-0">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
       </div>
     </motion.button>
   )
@@ -121,23 +120,23 @@ export default function SearchPage({ go, nav = {} }) {
   const suggestions = ['iPhone 15', 'MacBook Air', 'Galaxy S24', 'iPad Pro', 'OnePlus 12', 'ThinkPad X1']
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Hero search */}
       <motion.div
-        className="bg-white border-b border-slate-100 px-5 py-10"
+        className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-5 py-10 md:py-16"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
       >
         <div className="max-w-[800px] mx-auto">
-          <h1 className="font-poppins font-extrabold text-slate-800 text-3xl mb-2 text-center">Search All Devices</h1>
-          <p className="text-slate-500 font-inter text-center mb-7">
-            {SEARCH_INDEX.length.toLocaleString()} devices · Real-time results · Exact match first
+          <h1 className="font-poppins font-black text-slate-800 dark:text-white text-3xl md:text-5xl mb-3 text-center tracking-tight">Search All Devices</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-inter text-center mb-10 text-sm md:text-base">
+            {SEARCH_INDEX.length.toLocaleString()} devices · Real-time results · Instant price quotes
           </p>
 
-          <div className="flex items-center bg-white border-2 border-eco-400 rounded-2xl overflow-hidden shadow-lg shadow-eco-500/10 mb-5">
+          <div className="flex items-center bg-white dark:bg-slate-800 border-2 border-eco-400 dark:border-eco-500/50 rounded-2xl md:rounded-3xl overflow-hidden shadow-xl shadow-eco-500/10 mb-6 transition-all focus-within:ring-4 focus-within:ring-eco-500/10">
             <div className="pl-5 pr-3 flex-shrink-0">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#059569" strokeWidth="2.5">
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#10b981" strokeWidth="3">
                 <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
               </svg>
             </div>
@@ -145,12 +144,12 @@ export default function SearchPage({ go, nav = {} }) {
               ref={inputRef}
               value={query}
               onChange={(e) => { setQuery(e.target.value); setFilter('all') }}
-              placeholder="Type a device name — iPhone 15, MacBook Air M3, Galaxy S24…"
-              className="flex-1 py-4 text-base font-inter bg-transparent outline-none text-slate-800 placeholder-slate-400"
+              placeholder="Search iPhone, MacBook, Pixel..."
+              className="flex-1 py-4 md:py-5 text-base md:text-lg font-inter bg-transparent outline-none text-slate-800 dark:text-white placeholder-slate-400"
             />
             {query && (
               <button onClick={() => { setQuery(''); inputRef.current?.focus() }}
-                className="mr-3 w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center border-none cursor-pointer hover:bg-slate-200 transition-colors text-base flex-shrink-0">×</button>
+                className="mr-3 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300 flex items-center justify-center border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-lg flex-shrink-0">×</button>
             )}
           </div>
 
@@ -161,16 +160,16 @@ export default function SearchPage({ go, nav = {} }) {
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <span className="text-slate-400 text-xs font-inter self-center">Try:</span>
+                <span className="text-slate-400 dark:text-slate-500 text-xs font-inter font-bold uppercase tracking-wider self-center mr-2">Try:</span>
                 {suggestions.map((s, i) => (
                   <motion.button
                     key={s}
                     onClick={() => setQuery(s)}
-                    className="text-xs font-inter font-semibold text-eco-700 bg-eco-50 border border-eco-200 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-eco-100 transition-colors"
+                    className="text-xs md:text-sm font-inter font-bold text-eco-700 dark:text-eco-400 bg-eco-50 dark:bg-eco-500/10 border border-eco-200 dark:border-eco-500/20 px-4 py-2 rounded-xl cursor-pointer hover:bg-eco-100 dark:hover:bg-eco-500/20 transition-all"
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.04, duration: 0.2 }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ y: -2, scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     {s}
@@ -182,7 +181,7 @@ export default function SearchPage({ go, nav = {} }) {
         </div>
       </motion.div>
 
-      <div className="max-w-[900px] mx-auto px-5 py-8">
+      <div className="max-w-[1000px] mx-auto px-5 py-10 md:py-16">
         <AnimatePresence mode="wait">
           {query ? (
             <motion.div
@@ -195,30 +194,31 @@ export default function SearchPage({ go, nav = {} }) {
               {/* Category filter chips */}
               {allResults.length > 0 && (
                 <motion.div
-                  className="flex flex-wrap gap-2 mb-5"
+                  className="flex flex-wrap items-center gap-3 mb-8"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
                 >
                   <button onClick={() => setFilter('all')}
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-inter font-semibold transition-all border-none cursor-pointer"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-inter font-extrabold shadow-sm transition-all border-none cursor-pointer"
                     style={{ background: filter==='all'?'#1e293b':'#f1f5f9', color: filter==='all'?'#fff':'#475569' }}>
                     All
-                    <span className="text-[11px] px-1.5 py-0.5 rounded-full ml-0.5"
+                    <span className="text-[11px] px-2 py-0.5 rounded-full ml-1"
                       style={{ background: filter==='all'?'rgba(255,255,255,0.2)':'#e2e8f0', color: filter==='all'?'#fff':'#64748b' }}>
                       {allResults.length}
                     </span>
                   </button>
                   {CATEGORIES.map((cat) => countByCategory[cat.id] ? (
                     <button key={cat.id} onClick={() => setFilter(filter===cat.id?'all':cat.id)}
-                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-inter font-semibold transition-all border-none cursor-pointer"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-inter font-extrabold shadow-sm transition-all border-none cursor-pointer"
                       style={{
-                        background: filter===cat.id ? cat.color : '#f1f5f9',
+                        background: filter===cat.id ? cat.color : '#fff',
                         color:      filter===cat.id ? '#fff'     : '#475569',
-                        boxShadow:  filter===cat.id ? `0 4px 12px ${cat.color}35` : 'none',
+                        boxShadow:  filter===cat.id ? `0 8px 20px ${cat.color}35` : '0 2px 4px rgba(0,0,0,0.02)',
+                        border: filter===cat.id ? 'none' : '1px solid #e2e8f0'
                       }}>
                       {cat.emoji} {cat.name}
-                      <span className="text-[11px] px-1.5 py-0.5 rounded-full ml-0.5"
-                        style={{ background: filter===cat.id?'rgba(255,255,255,0.2)':'#e2e8f0', color: filter===cat.id?'#fff':'#64748b' }}>
+                      <span className="text-[11px] px-2 py-0.5 rounded-full ml-1"
+                        style={{ background: filter===cat.id?'rgba(255,255,255,0.2)':'#f1f5f9', color: filter===cat.id?'#fff':'#64748b' }}>
                         {countByCategory[cat.id]}
                       </span>
                     </button>
@@ -227,22 +227,22 @@ export default function SearchPage({ go, nav = {} }) {
               )}
 
               {/* Count row */}
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-slate-600 font-inter text-sm">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+                <p className="text-slate-500 dark:text-slate-400 font-inter text-sm md:text-base">
                   {results.length === 0
                     ? 'No results found'
-                    : <><strong className="text-slate-800">{results.length}</strong> result{results.length!==1?'s':''} for <strong className="text-slate-800">"{query}"</strong></>}
+                    : <><span className="text-slate-800 dark:text-white font-bold">{results.length}</span> result{results.length!==1?'s':''} for <span className="text-slate-800 dark:text-white font-bold italic">"{query}"</span></>}
                 </p>
                 {allResults.some((r) => r.variantName.toLowerCase() === exactQuery) && (
-                  <span className="text-xs font-inter font-semibold text-eco-700 bg-eco-50 border border-eco-200 px-2.5 py-1 rounded-full">
-                    ✓ Exact match found
+                  <span className="text-[10px] md:text-xs font-inter font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-3 py-1.5 rounded-full">
+                    ✓ Exact match
                   </span>
                 )}
               </div>
 
               {results.length > 0 ? (
                 <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 gap-3"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
                   variants={staggerContainer}
                   initial="initial"
                   animate="animate"
@@ -258,18 +258,18 @@ export default function SearchPage({ go, nav = {} }) {
                 </motion.div>
               ) : (
                 <motion.div
-                  className="text-center py-20"
+                  className="text-center py-24 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-7xl mb-4">🔍</div>
-                  <p className="font-poppins font-bold text-slate-700 text-xl mb-2">No devices found</p>
-                  <p className="text-slate-400 font-inter mb-6">No results for <strong>"{query}"</strong>. Try a different name.</p>
+                  <div className="text-8xl mb-6">🔍</div>
+                  <p className="font-poppins font-black text-slate-800 dark:text-white text-2xl md:text-3xl mb-3 leading-tight tracking-tight">No devices found</p>
+                  <p className="text-slate-500 dark:text-slate-400 font-inter max-w-xs mx-auto mb-10 text-sm md:text-base leading-relaxed">We couldn't find anything matching <span className="font-bold underline">"{query}"</span>. Try adjusting your search term.</p>
                   <motion.button
                     onClick={() => setQuery('')}
-                    className="bg-eco-600 hover:bg-eco-700 text-white font-poppins font-bold px-6 py-3 rounded-xl border-none cursor-pointer transition-colors"
-                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-poppins font-black text-base px-10 py-5 rounded-2xl border-none cursor-pointer transition-all shadow-xl shadow-emerald-600/30"
+                    whileHover={{ y: -4, scale: 1.04 }} whileTap={{ scale: 0.97 }}
                   >
                     Clear Search
                   </motion.button>
@@ -279,36 +279,43 @@ export default function SearchPage({ go, nav = {} }) {
           ) : (
             <motion.div
               key="empty"
-              className="text-center py-14"
+              className="text-center py-10"
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
             >
-              <div className="text-6xl mb-4">📲</div>
-              <p className="font-poppins font-bold text-slate-700 text-xl mb-2">Start typing to search</p>
-              <p className="text-slate-400 font-inter text-sm mb-8">
-                Search across {SEARCH_INDEX.length} devices — phones, laptops &amp; tablets
+              <div className="text-7xl md:text-8xl mb-8">📲</div>
+              <p className="font-poppins font-black text-slate-800 dark:text-white text-3xl md:text-4xl mb-3 tracking-tight leading-tight">Instant Price Discovery</p>
+              <p className="text-slate-500 dark:text-slate-400 font-inter text-sm md:text-base mb-14 max-w-lg mx-auto leading-relaxed">
+                Start typing to get an instant recycle value for your phone, laptop, or tablet.
               </p>
-              <p className="text-slate-500 font-inter text-sm font-semibold mb-4">Or browse by category</p>
+              
+              <div className="relative mb-16">
+                 <div className="absolute top-1/2 left-0 right-0 h-px bg-slate-200 dark:bg-slate-800 z-0"></div>
+                 <span className="relative z-10 bg-slate-50 dark:bg-slate-950 px-6 text-xs font-inter font-black uppercase tracking-[0.3em] text-slate-400 transition-colors">Browse Categories</span>
+              </div>
+
               <motion.div
-                className="flex flex-wrap justify-center gap-4"
+                className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto"
                 variants={staggerContainer}
                 initial="initial"
-                animate="animate"
+                whileInView="animate"
+                viewport={{ once: true }}
               >
                 {CATEGORIES.map((cat) => (
                   <motion.button
                     key={cat.id}
                     onClick={() => go('category', { category: cat.id })}
-                    className="flex flex-col items-center gap-2 p-5 bg-white rounded-2xl border border-slate-200 cursor-pointer border-none"
-                    style={{ minWidth: 130 }}
+                    className="flex flex-col items-center gap-4 p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 cursor-pointer shadow-sm transition-all group"
                     variants={fadeUp}
-                    whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', borderColor: cat.color, transition: { duration: 0.18 } }}
-                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.12)', borderColor: cat.color }}
+                    whileTap={{ scale: 0.96 }}
                   >
-                    <div className="text-4xl">{cat.emoji}</div>
-                    <p className="font-poppins font-bold text-slate-700 text-sm">{cat.name}</p>
-                    <p className="text-slate-400 text-xs font-inter">{cat.count}</p>
+                    <div className="text-5xl group-hover:scale-110 transition-transform duration-300">{cat.emoji}</div>
+                    <div>
+                      <p className="font-poppins font-black text-slate-800 dark:text-white text-lg mb-1">{cat.name}</p>
+                      <p className="text-slate-400 dark:text-slate-500 text-xs font-bold font-inter tracking-wider uppercase">{cat.count}</p>
+                    </div>
                   </motion.button>
                 ))}
               </motion.div>

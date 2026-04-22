@@ -9,12 +9,18 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
   const [useWallet, setUseWallet] = useState(false)
   const [isScheduled, setIsScheduled] = useState(false)
   const [status, setStatus] = useState('Pending')
+  const [address, setAddress] = useState('')
+  const [phone, setPhone] = useState('')
   
   const subtotal = useMemo(() => cart.reduce((sum, item) => sum + item.price, 0), [cart])
   const walletDeduction = useWallet ? Math.min(subtotal, walletBalance) : 0
   const total = subtotal - walletDeduction
 
   const handleSchedulePickup = () => {
+    if (!address.trim() || !phone.trim()) {
+      alert("Please provide both phone number and address for pickup scheduling.")
+      return
+    }
     setIsScheduled(true)
     setStatus('Pickup Scheduled')
     // In a real app, cart would be cleared or moved to 'orders'
@@ -71,6 +77,17 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
                     </span>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-emerald-500/10 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white/40 dark:bg-white/5 p-4 rounded-2xl">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Pickup Contact</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{phone}</p>
+              </div>
+              <div className="bg-white/40 dark:bg-white/5 p-4 rounded-2xl">
+                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Pickup Address</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-200 line-clamp-2">{address}</p>
               </div>
             </div>
           </motion.div>
@@ -135,6 +152,47 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
                     </div>
                   </motion.div>
                 ))}
+
+                {/* Pickup Address Section */}
+                {!isScheduled && (
+                  <motion.div 
+                    variants={fadeUp}
+                    className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 mt-4"
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-[#037252]/10 flex items-center justify-center text-xl text-[#037252]">
+                        📍
+                      </div>
+                      <div>
+                        <h3 className="font-poppins font-bold text-slate-800 dark:text-slate-100">Pickup Details</h3>
+                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Where should we collect the items?</p>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="md:col-span-1">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Contact Number</label>
+                        <input 
+                          type="tel" 
+                          placeholder="+91 98765 43210" 
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-bold placeholder:font-normal"
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Full Pickup Address</label>
+                        <textarea 
+                          placeholder="Building No, Street Name, Landmark, City, Pincode" 
+                          rows="3"
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 resize-none font-medium placeholder:font-normal"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </div>

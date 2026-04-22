@@ -132,9 +132,9 @@ export default function Navbar({ cart, page, nav, go, onSignIn, onLogout, onCart
           <div className="px-5 flex items-center justify-between h-14 gap-3">
 
             {/* Logo */}
-            <button onClick={() => go('home')} className="flex items-center gap-2 bg-transparent border-none cursor-pointer flex-shrink-1 min-w-0 max-w-[180px]">
-              <ImgF src={ecologo} fallback="♻️" alt="logo" style={{ width: 40, height: 30, objectFit: 'contain', fontSize: '1.2rem', flexShrink: 0 }} />
-              <span className="font-montserrat font-extrabold text-lg tracking-tight hidden sm:inline truncate">
+            <button onClick={() => go('home')} className="flex items-center gap-1.5 sm:gap-2 bg-transparent border-none cursor-pointer flex-shrink-1 min-w-0 max-w-[140px] sm:max-w-[180px]">
+              <ImgF src={ecologo} fallback="♻️" alt="logo" style={{ width: 32, height: 24, smWidth: 40, smHeight: 30, objectFit: 'contain', fontSize: '1.2rem', flexShrink: 0 }} />
+              <span className="font-montserrat font-extrabold text-base sm:text-lg tracking-tight hidden xs:inline truncate">
                 <span style={{ color: cc }}>Eco</span><span className="text-slate-800 dark:text-slate-100">Loop</span>
               </span>
             </button>
@@ -348,7 +348,7 @@ export default function Navbar({ cart, page, nav, go, onSignIn, onLogout, onCart
               ) : (
                 /* Auth — signed out */
                 <button onClick={onSignIn}
-                  className="text-white font-poppins font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl border-none cursor-pointer transition-all duration-150 hover:shadow-md whitespace-nowrap flex-shrink-0"
+                  className="text-white font-poppins font-bold text-[11px] xs:text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl border-none cursor-pointer transition-all duration-150 hover:shadow-md whitespace-nowrap flex-shrink-0"
                   style={{ backgroundColor: cc }}>
                   Sign In
                 </button>

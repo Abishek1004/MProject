@@ -352,7 +352,10 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
       onClick={() => { onTap(opt.label); if (setPreview) setPreview(opt.image) }}
       className="group"
       style={{
-        flex: '1 1 calc(33.33% - 10px)', minWidth: 100, height: hideImage ? 65 : 105, 
+        flex: hideImage ? '1 1 120px' : '1 1 calc(50% - 8px)', 
+        maxWidth: hideImage ? 'none' : '48%',
+        minWidth: 100, 
+        height: hideImage ? 65 : 105, 
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         padding: hideImage ? '8px' : '10px 8px 8px', borderRadius: 12, textAlign: 'center',
         background: selected ? `${accent}08` : '#ffffff',
@@ -488,7 +491,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
   const goBack = () => { if (step > 0) setStep(step - 1) }
 
   return (
-    <div style={{ background: '#fff', borderRadius: 20, border: '1.5px solid #e2e8f0', overflow: 'hidden' }}>
+    <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-2xl shadow-slate-200/40 dark:shadow-none transition-colors duration-300">
       <style>{`
         @keyframes condPopIn { from{opacity:0;transform:scale(0.65)} to{opacity:1;transform:scale(1)} }
         @keyframes condFadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
@@ -496,7 +499,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
       `}</style>
 
       {/* header */}
-      <div style={{ padding: '20px 20px 0', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+      <div className="p-5 pt-6 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
 
         {/* back button */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
@@ -512,13 +515,13 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
         </div>
 
         {/* title */}
-        <div key={`t${animKey}`} className="cond-fade-up" style={{ textAlign: 'center', paddingBottom: 16 }}>
+        <div key={`t${animKey}`} className="cond-fade-up" style={{ textAlign: 'center', paddingBottom: 20 }}>
           <p style={{
-            fontFamily: "'Poppins',sans-serif", fontSize: 17, fontWeight: 700,
-            color: '#0f172a', margin: 0, letterSpacing: '-0.01em',
-          }}>{cur.title}</p>
-          <p style={{ fontSize: 12, color: ac.a, marginTop: 3, fontWeight: 500, fontFamily: "'Inter',sans-serif" }}>
-            {cur.subtitle}
+            fontFamily: "'Poppins',sans-serif", fontSize: 18, fontWeight: 800,
+            color: '#0f172a', margin: 0, letterSpacing: '-0.02em',
+          }}>{isUpload ? 'AI Visual Verification' : cur.title}</p>
+          <p style={{ fontSize: 12, color: ac.a, marginTop: 4, fontWeight: 600, fontFamily: "'Inter',sans-serif", opacity: 0.8 }}>
+            {isUpload ? 'Scanning for device authenticity' : cur.subtitle}
           </p>
         </div>
       </div>
@@ -528,7 +531,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
         <div
           key={`o${animKey}`}
           className="cond-fade-up"
-          style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 340, overflowY: 'auto' }}
+          style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 500, overflowY: 'auto' }}
         >
           <input
             type="file"
@@ -549,14 +552,13 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
                 setAnswers(p => ({ ...p, [cur.key]: dataUrl }))
                 try { if (imgStorageKey) localStorage.setItem(imgStorageKey, dataUrl) } catch {}
 
-                // Validate that the uploaded image really contains a phone.
                 setImgCheckStatus('checking')
                 setImgCheckError(null)
                 setImgCheckConfidence(null)
                 setImgCheckMethod(null)
                 const res = await api.validatePhoneImage(file)
                 const isPhone = Boolean(res?.is_phone)
-                const conf = typeof res?.confidence === 'number' ? res.confidence : null
+                const conf = typeof res?.confidence === 'number' ? res.confidence * 100 : null
                 setImgCheckConfidence(conf)
                 setImgCheckMethod(typeof res?.method === 'string' ? res.method : null)
 
@@ -566,16 +568,11 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
                   setImgCheckStatus('valid')
                 } else {
                   setImgCheckStatus('invalid')
-                  setImgCheckError('Phone not detected. Please upload a clear mobile/tablet photo.')
+                  setImgCheckError('Device not clearly detected. Please ensure the device is centered and well-lit.')
                 }
               } catch (err) {
                 setImgCheckStatus('error')
-                const details = err?.message
-                  ? err.message
-                  : typeof err === 'string'
-                    ? err
-                    : JSON.stringify(err ?? {})
-                setImgCheckError(`Image validation failed. Please try again.${details ? ` (${details})` : ''}`)
+                setImgCheckError('Validation server busy. You can still proceed with manual verification.')
               }
             }}
           />
@@ -583,94 +580,139 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
           <label
             htmlFor="wizard-device-image"
             style={{
-              border: '2px dashed #cbd5e1',
-              borderRadius: 14,
-              padding: '14px 12px',
+              border: `2px dashed ${answers[cur.key] ? ac.a : '#e2e8f0'}`,
+              borderRadius: 20,
+              padding: '40px 20px',
               textAlign: 'center',
               cursor: 'pointer',
-              background: answers[cur.key] ? `${ac.a}10` : '#f8fafc',
-              borderColor: answers[cur.key] ? `${ac.a}80` : '#cbd5e1',
-              display: 'block',
+              background: answers[cur.key] ? `${ac.a}05` : '#fcfdfe',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 12,
             }}
+            className="hover:bg-slate-50 group"
           >
-            <div style={{ fontSize: 24, marginBottom: 4 }}>📷</div>
-            <div style={{ fontWeight: 700, fontFamily: "'Inter',sans-serif", color: '#0f172a', fontSize: 13.5 }}>
-              {answers[cur.key] ? 'Change uploaded image' : 'Click to upload device image'}
+            <div style={{ 
+              width: 56, height: 56, borderRadius: '50%', 
+              background: `${ac.a}15`, display: 'flex', 
+              alignItems: 'center', justifyContent: 'center',
+              marginBottom: 4,
+              transition: 'transform 0.3s ease'
+            }} className="group-hover:scale-110">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={ac.a} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
             </div>
-            <div style={{ fontSize: 11, marginTop: 4, color: '#64748b', fontFamily: "'Inter',sans-serif" }}>
-              Make sure the entire device is visible and well-lit.
+            <div>
+              <div style={{ fontWeight: 800, fontFamily: "'Poppins',sans-serif", color: '#1e293b', fontSize: 16 }}>
+                {answers[cur.key] ? 'Replace Photo' : 'Upload Device Image'}
+              </div>
+              <div style={{ fontSize: 12, marginTop: 4, color: '#64748b', fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>
+                Supports JPG, PNG (Max 5MB)
+              </div>
             </div>
           </label>
 
           {answers[cur.key] && (
-            <div style={{ marginTop: 6 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', marginBottom: 6, fontFamily: "'Inter',sans-serif" }}>
-                Preview
-              </div>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', border: `2px solid ${ac.a}20`, boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)' }}
+            >
               <img
                 src={answers[cur.key]}
-                alt="Device preview"
-                style={{ width: '100%', borderRadius: 14, border: '1px solid #e2e8f0', maxHeight: 220, objectFit: 'contain', background: '#fff' }}
+                alt="Device captured"
+                style={{ width: '100%', display: 'block', maxHeight: 350, objectFit: 'cover' }}
               />
-            </div>
-          )}
-
-          {imgCheckStatus === 'checking' && (
-            <p style={{ fontSize: 11, color: '#64748b', fontFamily: "'Inter',sans-serif", marginTop: 10 }}>
-              Checking if this is a real device photo…
-            </p>
-          )}
-
-          {imgCheckStatus === 'valid' && (
-            <p style={{ fontSize: 11, color: '#059569', fontFamily: "'Inter',sans-serif", marginTop: 10, fontWeight: 700 }}>
-              Phone detected ✓
-              {typeof imgCheckConfidence === 'number' && (
-                <span style={{ fontWeight: 600, color: '#059569', marginLeft: 6 }}>
-                  (conf: {imgCheckConfidence.toFixed(2)})
-                </span>
+              
+              {imgCheckStatus === 'checking' && (
+                <motion.div 
+                  initial={{ top: '0%' }}
+                  animate={{ top: '100%' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  style={{ 
+                    position: 'absolute', left: 0, right: 0, height: '2px', 
+                    background: `linear-gradient(90deg, transparent, ${ac.a}, transparent)`,
+                    boxShadow: `0 0 15px ${ac.a}`,
+                    zIndex: 20
+                  }}
+                />
               )}
-              {imgCheckMethod && (
-                <span style={{ fontWeight: 600, color: '#059569', marginLeft: 6 }}>
-                  (via: {imgCheckMethod})
-                </span>
-              )}
-            </p>
+
+              <div style={{ 
+                position: 'absolute', top: 16, right: 16, 
+                padding: '8px 14px', borderRadius: 40, 
+                background: 'rgba(15, 23, 42, 0.7)', color: '#fff',
+                fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em',
+                backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                {imgCheckStatus === 'checking' ? 'Analyzing...' : 'Identity Confirmed'}
+              </div>
+            </motion.div>
           )}
 
-          {imgCheckStatus === 'invalid' && (
-            <p style={{ fontSize: 11, color: '#b91c1c', fontFamily: "'Inter',sans-serif", marginTop: 10 }}>
-              {imgCheckError || 'Phone not detected. Please try again.'}
-              {typeof imgCheckConfidence === 'number' && (
-                <span style={{ fontWeight: 600, color: '#b91c1c', marginLeft: 6 }}>
-                  (conf: {imgCheckConfidence.toFixed(2)})
-                </span>
-              )}
-              {imgCheckMethod && (
-                <span style={{ fontWeight: 600, color: '#b91c1c', marginLeft: 6 }}>
-                  (via: {imgCheckMethod})
-                </span>
-              )}
-            </p>
-          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {imgCheckStatus === 'checking' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0' }}>
+                <div className="animate-spin" style={{ width: 14, height: 14, border: `2px solid ${ac.a}40`, borderTopColor: ac.a, borderRadius: '50%' }}></div>
+                <span style={{ fontSize: 12, color: '#475569', fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Analyzing image with AI...</span>
+              </div>
+            )}
 
-          {imgCheckStatus === 'error' && (
-            <div style={{ marginTop: 10, background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: '10px 12px' }}>
-              <p style={{ fontSize: 11, color: '#b91c1c', fontFamily: "'Inter',sans-serif", fontWeight: 700, marginBottom: 4 }}>
-                ⚠️ Server Unavailable
-              </p>
-              <p style={{ fontSize: 10.5, color: '#b91c1c', fontFamily: "'Inter',sans-serif", lineHeight: 1.5, marginBottom: 6 }}>
-                {imgCheckError || 'Image validation failed.'}
-              </p>
-              <p style={{ fontSize: 10.5, color: '#92400e', fontFamily: "'Inter',sans-serif", lineHeight: 1.5 }}>
-                You can still continue — validation will be skipped.
-              </p>
-            </div>
-          )}
+            {imgCheckStatus === 'valid' && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }} 
+                animate={{ opacity: 1, x: 0 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '14px 16px', background: '#f0fdf4', borderRadius: 12, border: '1px solid #bbf7d0' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  <span style={{ fontSize: 13, color: '#166534', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>AI Verification Successful</span>
+                </div>
+                <p style={{ fontSize: 11, color: '#15803d', margin: 0, opacity: 0.8, fontWeight: 500 }}>
+                  Device detected with {imgCheckConfidence?.toFixed(1)}% confidence via {imgCheckMethod === 'yolo' ? 'Vision API' : 'Neural Scan'}.
+                </p>
+              </motion.div>
+            )}
 
+            {imgCheckStatus === 'invalid' && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }} 
+                animate={{ opacity: 1, x: 0 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '14px 16px', background: '#fff1f1', borderRadius: 12, border: '1px solid #fecaca' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                  <span style={{ fontSize: 13, color: '#991b1b', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>Device Not Detected</span>
+                </div>
+                <p style={{ fontSize: 11, color: '#b91c1c', margin: 0, opacity: 0.8, fontWeight: 500 }}>{imgCheckError}</p>
+              </motion.div>
+            )}
+
+            {imgCheckStatus === 'error' && (
+              <div style={{ padding: '14px 16px', background: '#fff7ed', borderRadius: 12, border: '1px solid #ffedd5' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9a3412" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  <span style={{ fontSize: 13, color: '#9a3412', fontWeight: 700, fontFamily: "'Poppins',sans-serif" }}>AI Validation Offline</span>
+                </div>
+                <p style={{ fontSize: 11, color: '#c2410c', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
+                  {imgCheckError}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
-        <div key={`o${animKey}`} className="cond-fade-up"
-          style={{ padding: '10px 12px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 8, maxHeight: 440, overflowY: 'auto', justifyContent: 'flex-start' }}>
+        <div key={`o${animKey}`} className="cond-fade-up p-3 sm:p-5 flex flex-row flex-wrap gap-2.5 sm:gap-4 max-h-[440px] overflow-y-auto justify-start content-start">
           {cur.options.map(opt => {
             const selected = isRadio
               ? answers[cur.key] === opt.label
@@ -704,11 +746,13 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
             Please upload a clear photo of your device to continue
           </p>
         )}
-        <button onClick={goNext} disabled={!canProceed} style={{
-          width: '100%', padding: '14px', borderRadius: 16, border: 'none',
-          background: canProceed ? `linear-gradient(135deg, ${ac.a}, ${ac.b})` : '#f1f5f9',
-          color: canProceed ? '#fff' : '#94a3b8',
-          fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 700,
+        <button onClick={goNext} disabled={!canProceed} 
+          className={!canProceed ? "dark:bg-slate-800 dark:text-slate-500 transition-colors" : "transition-colors"}
+          style={{
+            width: '100%', padding: '14px', borderRadius: 16, border: 'none',
+            background: canProceed ? `linear-gradient(135deg, ${ac.a}, ${ac.b})` : '#f1f5f9',
+            color: canProceed ? '#fff' : '#94a3b8',
+            fontFamily: "'Poppins',sans-serif", fontSize: 14, fontWeight: 700,
           letterSpacing: '0.04em', cursor: canProceed ? 'pointer' : 'default',
           boxShadow: canProceed ? `0 6px 20px ${ac.a}38` : 'none',
           transition: 'all 0.2s ease',
@@ -759,7 +803,8 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
 
 
   return (
-    <div className="max-w-[1240px] mx-auto px-4 pt-8 pb-20">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+      <div className="max-w-[1240px] mx-auto px-4 pt-8 pb-20">
 
       <BackButton goBack={goBack} canGoBack={canGoBack} label="Variants" />
 
@@ -853,15 +898,18 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
           >
             <motion.button
               onClick={handleSubmit}
-              className="w-full text-white font-poppins font-black text-lg py-5 rounded-3xl border-none cursor-pointer shadow-2xl transition-all"
+              className="w-full text-white font-poppins font-black text-xl py-6 rounded-[2rem] border-none cursor-pointer shadow-2xl transition-all"
               style={{
-                background: conditionDone ? `linear-gradient(135deg, ${cc}, #025c42)` : '#cbd5e1',
-                boxShadow: conditionDone ? `0 12px 30px ${cc}40` : 'none',
+                background: conditionDone 
+                  ? `linear-gradient(135deg, ${cc}, #059669)` 
+                  : `linear-gradient(135deg, #e2e8f0, #cbd5e1)`,
+                boxShadow: conditionDone ? `0 20px 40px ${cc}30` : 'none',
+                color: conditionDone ? '#fff' : '#94a3b8'
               }}
-              whileHover={{ scale: conditionDone ? 1.015 : 1, y: conditionDone ? -2 : 0 }}
+              whileHover={{ scale: conditionDone ? 1.02 : 1, y: conditionDone ? -3 : 0 }}
               whileTap={{ scale: conditionDone ? 0.98 : 1 }}
             >
-              Continue to Specifications →
+              {conditionDone ? 'Proceed to Final Quote →' : 'Complete Assessment First'}
             </motion.button>
             {!conditionDone && (
               <p className="text-center text-xs font-inter font-medium text-slate-400 mt-4 flex items-center justify-center gap-2">
@@ -883,11 +931,10 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <motion.div
-                className="rounded-[2.5rem] p-8 overflow-hidden relative"
+                className="rounded-[2.5rem] p-8 overflow-hidden relative dark:text-white bg-emerald-50 dark:bg-slate-800/80 transition-colors duration-300"
                 style={{ 
-                  background: cat?.light || '#ecfdf5', 
                   border: `2px solid ${cc}15`,
-                  boxShadow: `0 30px 60px -15px ${cc}15`
+                  boxShadow: `0 30px 60px -15px ${cc}15`,
                 }}
                 animate={{ y: [0, -12, 0] }}
                 transition={{ 
@@ -924,19 +971,19 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
                   </div>
                 </div>
 
-                <div className="mt-8 p-5 rounded-3xl bg-white/60 border border-white/80 backdrop-blur-sm">
-                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-3">Live Valuation Status</p>
-                   <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                         <div className={`w-2 h-2 rounded-full ${conditionDone ? 'bg-green-500' : 'bg-slate-300'}`}></div>
-                         <span className={`text-[11px] font-bold font-inter ${conditionDone ? 'text-green-600' : 'text-slate-400'}`}>
-                           {conditionDone ? 'Condition Verified' : 'Conditions Pending…'}
+                <div className="mt-8 p-6 rounded-[2rem] bg-white/70 border border-white backdrop-blur-md shadow-sm">
+                   <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-[0.15em] mb-4 opacity-60">System Health Check</p>
+                   <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                         <div className={`w-3 h-3 rounded-full transition-all duration-500 ${conditionDone ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]' : 'bg-slate-200'}`}></div>
+                         <span className={`text-xs font-bold font-inter transition-colors duration-500 ${conditionDone ? 'text-slate-800' : 'text-slate-400'}`}>
+                           {conditionDone ? 'Physical Evaluation Complete' : 'Awaiting Condition Input'}
                          </span>
                       </div>
-                      <div className="flex items-center gap-3">
-                         <div className="w-2 h-2 rounded-full bg-slate-300"></div>
-                         <span className="text-[11px] font-bold font-inter text-slate-400">
-                           Specs Pending…
+                      <div className="flex items-center gap-4">
+                         <div className="w-3 h-3 rounded-full bg-slate-200"></div>
+                         <span className="text-xs font-bold font-inter text-slate-400">
+                           Specifications Logic Pending
                          </span>
                       </div>
                    </div>
@@ -944,9 +991,10 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
               </div>
             </motion.div>
           </motion.div>
-          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
   )
 }

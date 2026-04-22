@@ -281,7 +281,7 @@ export default function HomePage({ go }) {
         </motion.h2>
 
         <motion.div
-          className="grid sm:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
           variants={staggerContainer}
           initial="initial"
           whileInView="animate"
@@ -298,16 +298,16 @@ export default function HomePage({ go }) {
         </motion.div>
       </section>
 
-      <section className="px-5 py-20 bg-gray-50 dark:bg-slate-800/60 transition-colors duration-300">
+      <section className="px-5 py-24 bg-gray-50 dark:bg-slate-800/40 transition-colors duration-300">
         <motion.h2
-          className="text-center text-2xl font-bold mb-10 text-slate-800 dark:text-slate-100"
+          className="text-center text-3xl md:text-4xl font-poppins font-black mb-16 text-slate-800 dark:text-slate-100"
           {...inViewFadeUp}
         >
           Why Choose Us?
         </motion.h2>
 
         <motion.div
-          className="grid md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
           variants={staggerContainer}
           initial="initial"
           whileInView="animate"
