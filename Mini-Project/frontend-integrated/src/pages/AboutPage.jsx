@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Footer from '../components/layout/Footer';
-import PageHeader from '../components/ui/PageHeader';
+
 
 // --- Premium Content Definitions ---
 
@@ -238,74 +238,6 @@ export default function AboutPage({ go }) {
           </div>
         </div>
 
-        {/* Importance of Recycling Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-48">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={containerVariants}
-            className="space-y-16"
-          >
-            <div className="text-center max-w-3xl mx-auto space-y-6">
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
-                Why Recycling Your Tech <br/> <span className="text-emerald-600 dark:text-emerald-500">Matters Most</span>
-              </h2>
-              <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
-                Electronic waste is the fastest-growing waste stream on the planet. Here’s why your decision to recycle today creates a massive ripple effect for a better tomorrow.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-              {[
-                {
-                  title: "Resource Conservation",
-                  ic: "💎",
-                  desc: "Your old phones are 'urban mines.' They contain precious metals like gold, silver, and palladium. By recycling, we recover these materials, reducing the need for destructive mining across the globe.",
-                  color: "bg-amber-50 dark:bg-amber-900/20",
-                  text: "text-amber-700 dark:text-amber-400"
-                },
-                {
-                  title: "Toxic Leak Prevention",
-                  ic: "☢️",
-                  desc: "E-waste contains hazardous substances like lead, mercury, and cadmium. When dumped in landfills, these leak into our groundwater and soil. Professional recycling ensures safe containment and treatment.",
-                  color: "bg-red-50 dark:bg-red-900/20",
-                  text: "text-red-700 dark:text-red-400"
-                },
-                {
-                  title: "Energy Efficiency",
-                  ic: "⚡",
-                  desc: "Manufacturing new products from recycled materials consumes significantly less energy than refining raw ores. This efficiency helps stabilize global energy demands and lowers operational costs.",
-                  color: "bg-blue-50 dark:bg-blue-900/20",
-                  text: "text-blue-700 dark:text-blue-400"
-                },
-                {
-                  title: "Climate Change Mitigation",
-                  ic: "🌍",
-                  desc: "By keeping computers and mobiles in a circular loop, we prevent massive CO2 emissions associated with the production of new electronics, directly tackling the global climate crisis.",
-                  color: "bg-emerald-50 dark:bg-emerald-900/20",
-                  text: "text-emerald-700 dark:text-emerald-400"
-                }
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  className="flex flex-col sm:flex-row gap-6 p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group"
-                >
-                  <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl ${item.color} shadow-sm group-hover:scale-110 transition-transform`}>
-                    {item.ic}
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className={`text-xl font-bold ${item.text}`}>{item.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm lg:text-base">
-                      {item.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
 
         {/* Importance of Recycling Section */}
         <div className="max-w-7xl mx-auto px-6 mb-60">

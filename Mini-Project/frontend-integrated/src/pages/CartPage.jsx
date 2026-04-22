@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { staggerContainer, fadeUp } from '../utils/motion'
 import BackButton from '../components/ui/BackButton'
 import Footer from '../components/layout/Footer'
+import { useEffect } from 'react'
 
 export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
   const [walletBalance, setWalletBalance] = useState(0) // Initial balance is 0 as requested
@@ -11,24 +12,54 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
   const [status, setStatus] = useState('Pending')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
+  const [state, setState] = useState('')
+  const [city, setCity] = useState('')
+  const [pincode, setPincode] = useState('')
+  const [isAddressSaved, setIsAddressSaved] = useState(false)
+
+  // Persistence: Load saved details on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('eco_pickup_details')
+      if (saved) {
+        const data = JSON.parse(saved)
+        if (data.address) setAddress(data.address)
+        if (data.phone) setPhone(data.phone)
+        if (data.state) setState(data.state)
+        if (data.city) setCity(data.city)
+        if (data.pincode) setPincode(data.pincode)
+      }
+    } catch (e) { console.error("Failed to load saved address") }
+  }, [])
+
+  // Persistence: Save details on change
+  useEffect(() => {
+    const data = { address, phone, state, city, pincode }
+    localStorage.setItem('eco_pickup_details', JSON.stringify(data))
+  }, [address, phone, state, city, pincode])
   
   const subtotal = useMemo(() => cart.reduce((sum, item) => sum + item.price, 0), [cart])
   const walletDeduction = useWallet ? Math.min(subtotal, walletBalance) : 0
   const total = subtotal - walletDeduction
 
   const handleSchedulePickup = () => {
-    if (!address.trim() || !phone.trim()) {
-      alert("Please provide both phone number and address for pickup scheduling.")
+    if (!isAddressSaved) {
+      alert("Please save and confirm your pickup address first.")
       return
     }
     setIsScheduled(true)
     setStatus('Pickup Scheduled')
-    // In a real app, cart would be cleared or moved to 'orders'
-    // Here we'll just show the status for the user
+  }
+
+  const handleSaveAddress = () => {
+    if (!address.trim() || !phone.trim() || !city.trim() || !state.trim() || !pincode.trim()) {
+      alert("Please provide complete pickup details (Phone, Address, State, City, and Pincode).")
+      return
+    }
+    setIsAddressSaved(true)
   }
 
   const handleAddMoney = () => {
-    // Mock functionality to add money for testing
     const amount = prompt("Enter amount to add to wallet:", "1000")
     if (amount && !isNaN(amount)) {
       setWalletBalance(prev => prev + parseInt(amount))
@@ -87,14 +118,15 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
               </div>
               <div className="bg-white/40 dark:bg-white/5 p-4 rounded-2xl">
                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Pickup Address</p>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-200 line-clamp-2">{address}</p>
+                <p className="text-sm font-bold text-slate-700 dark:text-slate-200 line-clamp-2">
+                  {address}, {city}, {state} - {pincode}
+                </p>
               </div>
             </div>
           </motion.div>
         )}
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Cart Items */}
           <div className="lg:col-span-2">
             {cart.length === 0 ? (
               <motion.div 
@@ -152,44 +184,123 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
                     </div>
                   </motion.div>
                 ))}
+              </motion.div>
+            )}
 
-                {/* Pickup Address Section */}
-                {!isScheduled && (
-                  <motion.div 
-                    variants={fadeUp}
-                    className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 mt-4"
-                  >
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-[#037252]/10 flex items-center justify-center text-xl text-[#037252]">
-                        📍
-                      </div>
-                      <div>
-                        <h3 className="font-poppins font-bold text-slate-800 dark:text-slate-100">Pickup Details</h3>
-                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Where should we collect the items?</p>
-                      </div>
+            {/* Pickup Address Section - Phase 1: Input or Phase 2: Saved Box */}
+            {!isScheduled && (
+              <motion.div 
+                variants={fadeUp}
+                initial="initial"
+                animate="animate"
+                className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 mt-6"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-[#037252]/10 flex items-center justify-center text-xl text-[#037252]">📍</div>
+                    <div>
+                      <h3 className="font-poppins font-bold text-slate-800 dark:text-slate-100">Pickup Details</h3>
+                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                        {isAddressSaved ? 'Verified Address Information' : 'Where should we collect the items?'}
+                      </p>
                     </div>
+                  </div>
+                  {isAddressSaved && (
+                    <button 
+                      onClick={() => setIsAddressSaved(false)}
+                      className="text-[10px] font-bold text-[#037252] hover:underline uppercase tracking-widest border-none bg-transparent cursor-pointer"
+                    >
+                      Change Address
+                    </button>
+                  )}
+                </div>
 
-                    <div className="grid md:grid-cols-3 gap-6">
-                      <div className="md:col-span-1">
+                {!isAddressSaved ? (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
                         <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Contact Number</label>
                         <input 
                           type="tel" 
-                          placeholder="+91 98765 43210" 
+                          placeholder="e.g. +91 98765 43210" 
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-bold placeholder:font-normal"
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-bold placeholder:font-normal placeholder:opacity-50"
                         />
                       </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Full Pickup Address</label>
-                        <textarea 
-                          placeholder="Building No, Street Name, Landmark, City, Pincode" 
-                          rows="3"
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Building & Street</label>
+                        <input 
+                          type="text"
+                          placeholder="e.g. Flat 402, Green Fields, MG Road" 
                           value={address}
                           onChange={(e) => setAddress(e.target.value)}
-                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 resize-none font-medium placeholder:font-normal"
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-bold placeholder:font-normal placeholder:opacity-50"
                         />
                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">City</label>
+                        <input 
+                          type="text"
+                          placeholder="e.g. Mumbai" 
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-medium placeholder:font-normal placeholder:opacity-50"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">State</label>
+                        <input 
+                          type="text"
+                          placeholder="e.g. Maharashtra" 
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-medium placeholder:font-normal placeholder:opacity-50"
+                        />
+                      </div>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Pincode</label>
+                        <input 
+                          type="text"
+                          placeholder="e.g. 400001" 
+                          maxLength="6"
+                          value={pincode}
+                          onChange={(e) => setPincode(e.target.value.replace(/\D/g,''))}
+                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-bold placeholder:font-normal placeholder:opacity-50"
+                        />
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={handleSaveAddress}
+                      className="w-full py-4 rounded-2xl border-none font-poppins font-bold text-sm cursor-pointer transition-all bg-[#037252] text-white shadow-xl shadow-emerald-900/10 hover:opacity-90"
+                    >
+                      💾 Save & Confirm Address
+                    </button>
+                  </div>
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-6 rounded-[2rem] bg-emerald-50/50 dark:bg-[#037252]/5 border-2 border-emerald-500/20"
+                  >
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Contact Phone</p>
+                        <p className="text-lg font-poppins font-black text-[#037252]">{phone}</p>
+                      </div>
+                      <div className="bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                        Verified
+                      </div>
+                    </div>
+                    <div className="pt-4 border-t border-emerald-500/10">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pickup Address</p>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">
+                        {address}, {city}, {state} - {pincode}
+                      </p>
                     </div>
                   </motion.div>
                 )}
@@ -197,9 +308,7 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
             )}
           </div>
 
-          {/* Sidebar / Wallet & Summary */}
           <div className="flex flex-col gap-6">
-            {/* Wallet Card */}
             <motion.div 
               className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 shadow-xl shadow-slate-900/20 text-white relative overflow-hidden"
               initial={{ opacity: 0, x: 20 }}
@@ -237,7 +346,6 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
               </div>
             </motion.div>
 
-            {/* Summary Card */}
             <motion.div 
               className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700"
               initial={{ opacity: 0, x: 20 }}
@@ -267,10 +375,10 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
               {!isScheduled ? (
                 <button 
                   onClick={handleSchedulePickup}
-                  disabled={cart.length === 0}
-                  className={`w-full font-poppins font-bold py-4 rounded-2xl border-none shadow-lg transition-all ${cart.length > 0 ? 'bg-[#037252] hover:bg-[#025c42] text-white shadow-[#037252]/25 cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                  disabled={cart.length === 0 || !isAddressSaved}
+                  className={`w-full font-poppins font-bold py-4 rounded-2xl border-none shadow-lg transition-all ${cart.length > 0 && isAddressSaved ? 'bg-[#037252] hover:bg-[#025c42] text-white shadow-[#037252]/25 cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                 >
-                  Schedule Pickup →
+                  {isAddressSaved ? 'Schedule Pickup →' : 'Confirm Address First'}
                 </button>
               ) : (
                 <div className="w-full font-poppins font-bold py-4 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-500 text-center border border-slate-200 dark:border-slate-600">

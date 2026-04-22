@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import BackButton from '../components/ui/BackButton'
+import Footer from '../components/layout/Footer'
 import { CATEGORIES, getCompany } from '../data'
 
 function FieldLabel({ label, error }) {
@@ -69,7 +70,8 @@ export default function SystemConfigPage({ nav, go, goBack, canGoBack }) {
   ]), [])
 
   return (
-    <div className="max-w-[1240px] mx-auto px-4 pt-8 pb-20">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+      <div className="max-w-[1240px] mx-auto px-4 pt-8 pb-20">
       <BackButton goBack={goBack} canGoBack={canGoBack} label="Condition Assessment" />
 
       <div className="flex flex-col lg:flex-row gap-10 mt-8 items-start">
@@ -282,6 +284,8 @@ export default function SystemConfigPage({ nav, go, goBack, canGoBack }) {
           </div>
         </div>
       </div>
+      </div>
+      <Footer />
     </div>
   )
 }

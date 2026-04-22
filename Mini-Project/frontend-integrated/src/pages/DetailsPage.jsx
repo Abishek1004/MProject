@@ -6,6 +6,7 @@ import box from '../assets/img/original_box.svg'
 import charger from '../assets/img/charger.svg'
 import { api } from '../utils/api'
 import { staggerContainer, fadeUp } from '../utils/motion'
+import Footer from '../components/layout/Footer'
 import bill from '../assets/img/validbill.svg'
 import i1 from '../assets/img/glass/i1.svg';
 import i2 from '../assets/img/glass/i2.svg';
@@ -994,6 +995,7 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
         </div>
       </div>
     </div>
+    <Footer />
   </div>
 </div>
   )

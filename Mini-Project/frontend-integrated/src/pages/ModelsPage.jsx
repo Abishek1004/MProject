@@ -4,6 +4,7 @@ import { CATEGORIES, getCompany, getDevices } from '../data'
 import BackButton from '../components/ui/BackButton'
 import ImgF from '../components/ui/ImgF'
 import { staggerContainer, fadeUp } from '../utils/motion'
+import Footer from '../components/layout/Footer'
 
 function ModelCard({ model, catColor, onClick }) {
   const min = Math.min(...model.variants.map((v) => v.base))
@@ -98,6 +99,7 @@ export default function ModelsPage({ nav, go, goBack, canGoBack }) {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

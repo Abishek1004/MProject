@@ -5,6 +5,7 @@ import { calcPrice, getConditionLabel } from '../utils/pricing'
 import { api } from '../utils/api'
 import BackButton from '../components/ui/BackButton'
 import PaymentModal from '../components/ui/PaymentModal'
+import Footer from '../components/layout/Footer'
 import { staggerContainer, fadeUp } from '../utils/motion'
 
 export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) {
@@ -379,6 +380,8 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
         />
       )}
     </AnimatePresence>
+    <Footer />
+    <Footer />
     </>
   )
 }
