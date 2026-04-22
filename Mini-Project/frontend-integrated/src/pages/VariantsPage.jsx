@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { CATEGORIES, getCompany, getDevices, SEARCH_INDEX } from '../data'
 import BackButton from '../components/ui/BackButton'
+import Footer from '../components/layout/Footer'
 import { staggerContainer, fadeUp } from '../utils/motion'
 
 // ── Mini search scoped to this brand ─────────────────────────────────────────
