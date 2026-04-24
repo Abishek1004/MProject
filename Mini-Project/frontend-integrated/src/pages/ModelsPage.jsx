@@ -51,7 +51,7 @@ export default function ModelsPage({ nav, go, goBack, canGoBack }) {
   const models  = getDevices(nav.category, nav.company)
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-transparent transition-colors duration-300">
       <motion.div
         className="px-5 py-10 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 shadow-sm"
         initial={{ opacity: 0, y: -10 }}

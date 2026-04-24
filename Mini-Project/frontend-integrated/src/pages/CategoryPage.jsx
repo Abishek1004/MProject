@@ -176,7 +176,7 @@ export default function CategoryPage({ nav, go, goBack, canGoBack }) {
       </div>
 
       {/* Content */}
-      <div className="max-w-[1200px] mx-auto px-5 pt-7 pb-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+      <div className="max-w-[1200px] mx-auto px-5 pt-7 pb-20 transition-colors duration-300" style={{ backgroundColor: '#eff5e6' }}>
         <div className="flex items-center justify-between mb-6">
           <BackButton goBack={goBack} canGoBack={canGoBack} label="Home" />
         </div>

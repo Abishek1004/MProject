@@ -357,11 +357,11 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
         minWidth: 100, 
         height: hideImage ? 65 : 105, 
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: hideImage ? '8px' : '10px 8px 8px', borderRadius: 12, textAlign: 'center',
+        padding: hideImage ? '6px' : '8px 6px 6px', borderRadius: 10, textAlign: 'center',
         background: selected ? `${accent}08` : '#ffffff',
-        border: `1.5px solid ${selected ? accent : '#eef2f6'}`,
-        boxShadow: selected ? `0 4px 12px ${accent}20` : '0 2px 4px rgba(0,0,0,0.02)',
-        cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        border: `1.5px solid ${selected ? accent : '#f1f5f9'}`,
+        boxShadow: selected ? `0 4px 10px ${accent}15` : '0 1px 2px rgba(0,0,0,0.01)',
+        cursor: 'pointer', transition: 'all 0.15s ease',
         position: 'relative', overflow: 'hidden',
         WebkitTapHighlightColor: 'transparent', outline: 'none',
       }}
@@ -402,11 +402,11 @@ function OptionRow({ opt, selected, onTap, isRadio, accent, setPreview, hideImag
 
       {/* label below */}
       <span style={{
-        fontSize: isLargeText ? 15 : 10.5, 
-        fontWeight: isLargeText ? 800 : 700, 
-        lineHeight: 1.25,
+        fontSize: isLargeText ? 14 : 10, 
+        fontWeight: isLargeText ? 700 : 600, 
+        lineHeight: 1.2,
         color: selected ? '#0f172a' : '#64748b', 
-        fontFamily: isLargeText ? "'Poppins',sans-serif" : "'Inter',sans-serif",
+        fontFamily: "'Inter',sans-serif",
         display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
         overflow: 'hidden', height: isLargeText ? 'auto' : 24,
       }}>{opt.label}</span>
@@ -427,7 +427,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
   const [animKey, setAnimKey] = useState(0)
 
   const cur     = steps[step]
-  const ac      = ACCENTS[step % ACCENTS.length]
+  const ac      = { a: cc, b: cc } 
   const isRadio = cur.type === 'radio'
   const isUpload = cur.type === 'upload'
 
@@ -499,28 +499,28 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
       `}</style>
 
       {/* header */}
-      <div className="p-5 pt-6 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+      <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
 
         {/* back button */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
           <button onClick={goBack} disabled={step === 0} style={{
-            width: 30, height: 30, borderRadius: 8, border: '1.5px solid #e2e8f0',
+            width: 28, height: 28, borderRadius: 6, border: '1.5px solid #e2e8f0',
             background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: step === 0 ? 'default' : 'pointer', opacity: step === 0 ? 0.3 : 1,
           }}>
-            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth={2.5}>
+            <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
         </div>
 
         {/* title */}
-        <div key={`t${animKey}`} className="cond-fade-up" style={{ textAlign: 'center', paddingBottom: 20 }}>
+        <div key={`t${animKey}`} className="cond-fade-up" style={{ textAlign: 'center', paddingBottom: 12 }}>
           <p style={{
-            fontFamily: "'Poppins',sans-serif", fontSize: 18, fontWeight: 800,
+            fontFamily: "'Poppins',sans-serif", fontSize: 16, fontWeight: 800,
             color: '#0f172a', margin: 0, letterSpacing: '-0.02em',
           }}>{isUpload ? 'AI Visual Verification' : cur.title}</p>
-          <p style={{ fontSize: 12, color: ac.a, marginTop: 4, fontWeight: 600, fontFamily: "'Inter',sans-serif", opacity: 0.8 }}>
+          <p style={{ fontSize: 11, color: ac.a, marginTop: 2, fontWeight: 600, fontFamily: "'Inter',sans-serif", opacity: 0.8 }}>
             {isUpload ? 'Scanning for device authenticity' : cur.subtitle}
           </p>
         </div>
@@ -712,7 +712,7 @@ function ConditionWizard({ cc, steps, persistKey, onComplete }) {
           </div>
         </div>
       ) : (
-        <div key={`o${animKey}`} className="cond-fade-up p-3 sm:p-5 flex flex-row flex-wrap gap-2.5 sm:gap-4 max-h-[440px] overflow-y-auto justify-start content-start">
+        <div key={`o${animKey}`} className="cond-fade-up p-3 sm:p-4 flex flex-row flex-wrap gap-2 sm:gap-3 max-h-[380px] overflow-y-auto justify-start content-start">
           {cur.options.map(opt => {
             const selected = isRadio
               ? answers[cur.key] === opt.label
@@ -799,83 +799,83 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
     go('sysconfig', { conditionData })
   }
 
-  const cc = '#037252'
+  const cc = cat?.color || '#059669'
+  const cl = cat?.light || '#f0fdf4'
 
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-[1240px] mx-auto px-4 pt-8 pb-20">
+    <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: cl }}>
+      <div className="max-w-[1200px] mx-auto px-4 pt-6 pb-12">
 
       <BackButton goBack={goBack} canGoBack={canGoBack} label="Variants" />
 
-      <div className="flex flex-col lg:flex-row gap-10 mt-8 items-start">
+      <div className="flex flex-col lg:flex-row gap-16 mt-6 items-start">
         {/* ── Left Column: Interaction ── */}
         <div className="flex-1 min-w-0 order-2 lg:order-1">
           {/* Phone Type Header Section */}
           <motion.div
-            className="mb-10"
+            className="mb-6"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-8 h-[2px] rounded-full" style={{ background: cc }}></span>
-              <p className="text-slate-400 dark:text-slate-500 text-xs font-inter font-bold uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-6 h-[2px] rounded-full" style={{ background: cc }}></span>
+              <p className="text-slate-400 dark:text-slate-500 text-[10px] font-inter font-bold uppercase tracking-[0.2em]">
                 {company?.name} · {cat?.name}
               </p>
             </div>
-            <h1 className="font-poppins font-black text-slate-800 dark:text-slate-100 text-4xl lg:text-5xl mb-3 leading-tight tracking-tight">
+            <h1 className="font-poppins font-black text-slate-800 dark:text-slate-100 text-3xl lg:text-4xl mb-2 leading-tight tracking-tight">
               {nav.variant}
             </h1>
-            <div className="h-1.5 w-20 rounded-full mb-8" style={{ background: `linear-gradient(90deg, ${cc}, ${cc}40)` }}></div>
+            <div className="h-1 w-16 rounded-full mb-6" style={{ background: `linear-gradient(90deg, ${cc}, ${cc}40)` }}></div>
             
-            <h2 className="font-poppins font-extrabold text-slate-800 dark:text-slate-100 text-2xl mb-1 mt-10">Tell Us About Your Device</h2>
-            <p className="text-slate-500 dark:text-slate-400 font-inter text-sm max-w-lg">These details determine your accurate recycle value. Please answer honestly for the best price.</p>
+            <h2 className="font-poppins font-extrabold text-slate-800 dark:text-slate-100 text-xl mb-1 mt-6">Tell Us About Your Device</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-inter text-xs max-w-md">These details determine your accurate recycle value. Please answer honestly.</p>
           </motion.div>
 
-          {/* ── Condition Wizard (Working Status First) ── */}
+          {/* ── Condition Wizard ── */}
           <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: 14 }}
+            className="mb-6"
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
           >
-            <p className="text-slate-400 text-[11px] font-inter font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px]" style={{ color: cc }}>1</span>
-              Device Condition Assessment
-            </p>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-[11px] font-bold" style={{ color: cc, border: `1px solid ${cc}30` }}>1</div>
+              <p className="text-slate-500 dark:text-slate-400 text-[10px] font-inter font-bold uppercase tracking-wider">
+                Condition Assessment
+              </p>
+            </div>
 
             {conditionDone ? (
               /* ── summary card after completion ── */
-              <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
-                      style={{ background: '#10b98120', border: '1.5px solid #10b98133' }}>
-                      <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth={3}>
+              <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-lg shadow-slate-200/30 dark:shadow-none">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20">
+                      <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                     <div>
-                      <span className="font-poppins font-bold text-slate-800 dark:text-slate-100 text-base block">Conditions Recorded</span>
-                      <span className="text-slate-500 text-[10px] font-medium uppercase font-inter tracking-wider">Verification Complete</span>
+                      <span className="font-poppins font-bold text-slate-800 dark:text-slate-100 text-sm block leading-none">Assessment Complete</span>
                     </div>
                   </div>
                   <button onClick={() => setConditionDone(false)}
-                    className="text-xs font-inter font-bold px-4 py-2 rounded-xl transition-all active:scale-95"
-                    style={{ background: `${cc}12`, color: cc, border: `1.5px solid ${cc}25` }}>
-                    Edit Assessment
+                    className="text-[10px] font-inter font-bold px-3 py-1.5 rounded-lg transition-all active:scale-95 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                    Edit
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   {Object.entries(conditionData).map(([key, val]) => {
                     const step = steps.find(s => s.key === key)
                     if (!step) return null
                     const display = Array.isArray(val) ? (val.length ? val.join(', ') : 'None') : val || '—'
                     return (
-                      <div key={key} className="rounded-2xl p-4 transition-colors" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                        <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-1">{step.title}</p>
-                        <p className="text-xs font-inter font-bold text-slate-700 leading-snug">{display}</p>
+                      <div key={key} className="rounded-xl p-2.5 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                        <p className="text-[9px] font-inter font-bold text-slate-400 uppercase tracking-tight mb-0.5">{step.title}</p>
+                        <p className="text-[10px] font-inter font-bold text-slate-700 dark:text-slate-300 truncate">{display}</p>
                       </div>
                     )
                   })}
@@ -898,16 +898,17 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
           >
             <motion.button
               onClick={handleSubmit}
-              className="w-full text-white font-poppins font-black text-xl py-6 rounded-[2rem] border-none cursor-pointer shadow-2xl transition-all"
+              className="w-full text-white font-poppins font-bold text-base py-4 rounded-xl border-none cursor-pointer transition-all"
               style={{
                 background: conditionDone 
                   ? `linear-gradient(135deg, ${cc}, #059669)` 
-                  : `linear-gradient(135deg, #e2e8f0, #cbd5e1)`,
-                boxShadow: conditionDone ? `0 20px 40px ${cc}30` : 'none',
-                color: conditionDone ? '#fff' : '#94a3b8'
+                  : `linear-gradient(135deg, #f8fafc, #f1f5f9)`,
+                boxShadow: conditionDone ? `0 8px 16px ${cc}20` : 'none',
+                color: conditionDone ? '#fff' : '#94a3b8',
+                border: conditionDone ? 'none' : '1px solid #e2e8f0'
               }}
-              whileHover={{ scale: conditionDone ? 1.02 : 1, y: conditionDone ? -3 : 0 }}
-              whileTap={{ scale: conditionDone ? 0.98 : 1 }}
+              whileHover={{ scale: conditionDone ? 1.01 : 1, y: conditionDone ? -1 : 0 }}
+              whileTap={{ scale: conditionDone ? 0.99 : 1 }}
             >
               {conditionDone ? 'Proceed to Final Quote →' : 'Complete Assessment First'}
             </motion.button>
@@ -923,67 +924,68 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
         </div>
 
         {/* ── Right Column: Persistent Device Summary ── */}
-        <div className="w-full lg:w-[360px] order-1 lg:order-2">
-          <div className="sticky top-10">
+        <div className="w-full lg:w-[320px] order-1 lg:order-2 mt-4 lg:mt-32">
+          <div className="lg:sticky lg:top-48">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <motion.div
-                className="rounded-[2.5rem] p-8 overflow-hidden relative dark:text-white bg-emerald-50 dark:bg-slate-800/80 transition-colors duration-300"
+                className="rounded-[2rem] p-6 overflow-hidden relative dark:text-white transition-colors duration-300"
                 style={{ 
-                  border: `2px solid ${cc}15`,
-                  boxShadow: `0 30px 60px -15px ${cc}15`,
+                  backgroundColor: cl,
+                  border: `1.5px solid ${cc}15`,
+                  boxShadow: `0 35px 70px -15px ${cc}30`,
                 }}
-                animate={{ y: [0, -12, 0] }}
+                animate={{ y: [0, -8, 0] }}
                 transition={{ 
-                  duration: 4, 
+                  duration: 5, 
                   repeat: Infinity, 
                   ease: "easeInOut" 
                 }}
               >
               {/* Glass decorations */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: cc }}></div>
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10" style={{ background: cc }}></div>
+              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10" style={{ background: cc }}></div>
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full blur-3xl opacity-5" style={{ background: cc }}></div>
 
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-lg bg-white"
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-3xl mb-4 shadow-sm bg-white"
                   style={{ color: cc }}>{cat?.emoji}</div>
                 
-                <p className="text-slate-500 text-[10px] font-bold font-inter tracking-[0.2em] uppercase mb-1 opacity-70">Summary Details</p>
-                <h3 className="font-poppins font-black text-slate-800 text-2xl mb-4 leading-tight">{nav.variant}</h3>
+                <p className="text-slate-400 text-[9px] font-bold font-inter tracking-[0.2em] uppercase mb-1 opacity-70">Summary Details</p>
+                <h3 className="font-poppins font-black text-slate-800 text-xl mb-3 leading-tight">{nav.variant}</h3>
                 
-                <div className="space-y-4 pt-4 border-t border-slate-900/5">
+                <div className="space-y-3 pt-3 border-t border-slate-900/5">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Brand</span>
-                    <span className="text-sm font-inter text-slate-800 font-bold">{company?.name}</span>
+                    <span className="text-xs font-inter text-slate-500 font-medium">Brand</span>
+                    <span className="text-xs font-inter text-slate-800 font-bold">{company?.name}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Category</span>
-                    <span className="text-sm font-inter text-slate-800 font-bold uppercase tracking-wider text-[11px]">{cat?.name}</span>
+                    <span className="text-xs font-inter text-slate-500 font-medium">Category</span>
+                    <span className="text-xs font-inter text-slate-800 font-bold uppercase tracking-wider text-[10px]">{cat?.name}</span>
                   </div>
-                  <div className="flex justify-between items-center bg-white/50 p-4 rounded-2xl mt-4">
-                    <span className="text-sm font-inter text-slate-500 font-medium">Starting Value</span>
-                    <span className="text-xl font-poppins text-slate-800 font-black" style={{ color: cc }}>
+                  <div className="flex justify-between items-center bg-white/50 p-3 rounded-xl mt-3">
+                    <span className="text-xs font-inter text-slate-500 font-medium">Starting Value</span>
+                    <span className="text-lg font-poppins text-slate-800 font-black" style={{ color: cc }}>
                       ₹{(nav.variantBase || 0).toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-8 p-6 rounded-[2rem] bg-white/70 border border-white backdrop-blur-md shadow-sm">
-                   <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-[0.15em] mb-4 opacity-60">System Health Check</p>
-                   <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                         <div className={`w-3 h-3 rounded-full transition-all duration-500 ${conditionDone ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]' : 'bg-slate-200'}`}></div>
-                         <span className={`text-xs font-bold font-inter transition-colors duration-500 ${conditionDone ? 'text-slate-800' : 'text-slate-400'}`}>
-                           {conditionDone ? 'Physical Evaluation Complete' : 'Awaiting Condition Input'}
+                <div className="mt-6 p-4 rounded-[1.5rem] bg-white/70 border border-white backdrop-blur-md shadow-sm">
+                   <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-[0.15em] mb-3 opacity-60">Health Check</p>
+                   <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                         <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${conditionDone ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-200'}`}></div>
+                         <span className={`text-[10px] font-bold font-inter transition-colors duration-500 ${conditionDone ? 'text-slate-800' : 'text-slate-400'}`}>
+                           {conditionDone ? 'Evaluation Complete' : 'Awaiting Input'}
                          </span>
                       </div>
-                      <div className="flex items-center gap-4">
-                         <div className="w-3 h-3 rounded-full bg-slate-200"></div>
-                         <span className="text-xs font-bold font-inter text-slate-400">
-                           Specifications Logic Pending
+                      <div className="flex items-center gap-3">
+                         <div className="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                         <span className="text-[10px] font-bold font-inter text-slate-400">
+                           Logic Pending
                          </span>
                       </div>
                    </div>

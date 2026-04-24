@@ -120,7 +120,7 @@ export default function SearchPage({ go, nav = {} }) {
   const suggestions = ['iPhone 15', 'MacBook Air', 'Galaxy S24', 'iPad Pro', 'OnePlus 12', 'ThinkPad X1']
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="min-h-screen bg-transparent transition-colors duration-300">
       {/* Hero search */}
       <motion.div
         className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-5 py-10 md:py-16"

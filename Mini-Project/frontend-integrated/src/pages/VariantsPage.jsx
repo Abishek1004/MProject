@@ -137,7 +137,7 @@ export default function VariantsPage({ nav, go, goBack, canGoBack }) {
   if (!model) return null
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-transparent transition-colors duration-300">
       <div className="max-w-[1200px] mx-auto px-5 pt-8 pb-20">
         <motion.div
           initial={{ opacity: 0, x: -10 }}

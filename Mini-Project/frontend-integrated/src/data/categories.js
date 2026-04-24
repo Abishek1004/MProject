@@ -13,8 +13,8 @@ export const CATEGORIES = [
     emoji: '📱',
     sub:   'Smartphones & feature phones',
     count: '2,400+ models',
-    color: '#059569',
-    light: '#ecfdf5',
+    color: '#059669', // Green
+    light: '#f0fdf4',
     badge: 'Most Popular',
   },
   {
@@ -24,8 +24,8 @@ export const CATEGORIES = [
     emoji: '💻',
     sub:   'Notebooks & ultrabooks',
     count: '1,800+ models',
-    color: '#0891b2',
-    light: '#ecfeff',
+    color: '#2563eb', // Blue
+    light: '#eff6ff',
     badge: 'High Value',
   },
   {
@@ -35,8 +35,8 @@ export const CATEGORIES = [
     emoji: '📟',
     sub:   'Tablets & e-readers',
     count: '900+ models',
-    color: '#65a30d',
-    light: '#f7fee7',
+    color: '#eab308', // Yellow
+    light: '#fefce8',
     badge: 'Quick Quote',
   },
 ]

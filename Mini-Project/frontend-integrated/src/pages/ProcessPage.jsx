@@ -44,7 +44,7 @@ export default function ProcessPage({ go }) {
   });
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
+    <div ref={containerRef} className="min-h-screen transition-colors duration-300" style={{ backgroundColor: 'transparent' }}>
       <PageHeader
         badge="How It Works"
         title="The EcoLoop Recycling Process"

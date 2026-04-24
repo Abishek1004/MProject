@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import Footer from '../components/layout/Footer';
 import PageHeader from '../components/ui/PageHeader';
 
@@ -16,45 +16,41 @@ const MISSION = {
 };
 
 const VALUES = [
-  { 
+  {
+    photo: '/src/assets/img/body/ai_eval.png',
+    gradient: 'from-emerald-50 to-teal-100',
+    iconColor: '#10B981',
     icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="#10B981" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
       </svg>
     ),
     title: 'Smart AI Eval',
-    color: '#10B981',
     desc: 'Our advanced AI instantly analyzes your device condition (working or not) to give you the most accurate and fair price.'
   },
-  { 
+  {
+    photo: '/src/assets/img/body/data_shield.png',
+    gradient: 'from-sky-50 to-blue-100',
+    iconColor: '#0EA5E9',
     icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="#0EA5E9" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
     ),
     title: 'Data Shield',
-    color: '#0EA5E9',
     desc: 'Your privacy is our priority. We use military-grade encryption to wipe and protect your data before any recycling happens.'
   },
-  { 
+  {
+    photo: '/src/assets/img/body/instant_wallet.png',
+    gradient: 'from-amber-50 to-orange-100',
+    iconColor: '#F59E0B',
     icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="#F59E0B" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
       </svg>
     ),
     title: 'Instant Wallet',
-    color: '#F59E0B',
     desc: 'No waiting around. Once your device is collected, we add the money directly to your wallet for immediate use.'
-  },
-  { 
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-      </svg>
-    ),
-    title: 'SPAS Partnership',
-    color: '#059669',
-    desc: 'We are proud to partner with SPAS Recycling Pvt Ltd, a government-certified leader in eco-friendly electronic waste management.'
   }
 ];
 
@@ -62,7 +58,7 @@ const TEAM = [
   { name: 'Akash S', role: 'Frontend Developer', initial: 'AS', color: '#10B981', bio: 'Driving the vision of a cleaner tomorrow.' },
   { name: 'Abishek N R', role: 'Backend Developer', initial: 'ANR', color: '#0EA5E9', bio: 'Sculpting high-impact digital experiences.' },
   { name: 'Jaysuriya P', role: 'Documentation', initial: 'JP', color: '#8B5CF6', bio: 'Optimizing valuation through neural logic.' },
-  ];
+];
 
 const STATS = [
   { val: '100%', label: 'Data Privacy' },
@@ -92,8 +88,8 @@ const itemVariants = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
   }
@@ -106,11 +102,11 @@ function FloatingElement({ className = "", delay = 0 }) {
     <motion.div
       initial={{ y: 0 }}
       animate={{ y: [-15, 15, -15] }}
-      transition={{ 
-        duration: 6, 
-        repeat: Infinity, 
+      transition={{
+        duration: 6,
+        repeat: Infinity,
         delay: delay,
-        ease: "easeInOut" 
+        ease: "easeInOut"
       }}
       className={`absolute pointer-events-none ${className}`}
     />
@@ -131,19 +127,20 @@ function GlassCard({ children, className = "" }) {
 }
 
 export default function AboutPage({ go }) {
+  const logoControls = useAnimation();
   return (
-    <div className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 selection:bg-emerald-100 dark:selection:bg-emerald-900/30 font-inter transition-colors duration-300">
+    <div className="dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 selection:bg-emerald-100 dark:selection:bg-emerald-900/30 font-inter transition-colors duration-300" style={{ backgroundColor: 'transparent' }}>
       <div className="relative pt-20 overflow-hidden">
         {/* Abstract Background Ornaments */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-50/40 dark:bg-emerald-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 -z-10" />
         <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-blue-50/30 dark:bg-blue-500/5 blur-[100px] rounded-full -translate-x-1/2 -z-10" />
-        
-        <FloatingElement 
-          className="top-[15%] right-[10%] w-24 h-24 bg-emerald-100/50 dark:bg-emerald-500/10 rounded-full blur-xl" 
+
+        <FloatingElement
+          className="top-[15%] right-[10%] w-24 h-24 bg-emerald-100/50 dark:bg-emerald-500/10 rounded-full blur-xl"
           delay={0}
         />
-        <FloatingElement 
-          className="top-[40%] left-[5%] w-32 h-32 bg-blue-100/40 dark:bg-blue-500/10 rounded-full blur-2xl" 
+        <FloatingElement
+          className="top-[40%] left-[5%] w-32 h-32 bg-blue-100/40 dark:bg-blue-500/10 rounded-full blur-2xl"
           delay={2}
         />
 
@@ -155,20 +152,20 @@ export default function AboutPage({ go }) {
             variants={containerVariants}
             className="space-y-6"
           >
-            <motion.span 
+            <motion.span
               variants={fadeUp}
               className="px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm font-semibold rounded-full tracking-wide uppercase"
             >
               Our Vision
             </motion.span>
-            <motion.h1 
+            <motion.h1
               variants={fadeUp}
               className="font-bold tracking-tight text-slate-900 dark:text-white"
               style={{ fontSize: 'var(--fs-h1)' }}
             >
               Turning old tech into <span className="text-emerald-600 dark:text-emerald-500">New Value</span>
             </motion.h1>
-            <motion.p 
+            <motion.p
               variants={fadeUp}
               className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
             >
@@ -179,7 +176,7 @@ export default function AboutPage({ go }) {
 
         {/* Impact Stats */}
         <div className="max-w-7xl mx-auto px-6 mb-40">
-          <motion.div 
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -202,7 +199,7 @@ export default function AboutPage({ go }) {
         {/* Narrative Section */}
         <div className="max-w-7xl mx-auto px-6 mb-48">
           <div className="grid lg:grid-cols-2 gap-24 items-center">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -222,7 +219,7 @@ export default function AboutPage({ go }) {
               </div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -238,279 +235,293 @@ export default function AboutPage({ go }) {
           </div>
         </div>
 
-        {/* Importance of Recycling Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-48">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={containerVariants}
-            className="space-y-16"
-          >
-            <div className="text-center max-w-3xl mx-auto space-y-6">
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
-                Why Recycling Your Tech <br/> <span className="text-emerald-600 dark:text-emerald-500">Matters Most</span>
-              </h2>
-              <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
-                Electronic waste is the fastest-growing waste stream on the planet. Here’s why your decision to recycle today creates a massive ripple effect for a better tomorrow.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-              {[
-                {
-                  title: "Resource Conservation",
-                  ic: "💎",
-                  desc: "Your old phones are 'urban mines.' They contain precious metals like gold, silver, and palladium. By recycling, we recover these materials, reducing the need for destructive mining across the globe.",
-                  color: "bg-amber-50 dark:bg-amber-900/20",
-                  text: "text-amber-700 dark:text-amber-400"
-                },
-                {
-                  title: "Toxic Leak Prevention",
-                  ic: "☢️",
-                  desc: "E-waste contains hazardous substances like lead, mercury, and cadmium. When dumped in landfills, these leak into our groundwater and soil. Professional recycling ensures safe containment and treatment.",
-                  color: "bg-red-50 dark:bg-red-900/20",
-                  text: "text-red-700 dark:text-red-400"
-                },
-                {
-                  title: "Energy Efficiency",
-                  ic: "⚡",
-                  desc: "Manufacturing new products from recycled materials consumes significantly less energy than refining raw ores. This efficiency helps stabilize global energy demands and lowers operational costs.",
-                  color: "bg-blue-50 dark:bg-blue-900/20",
-                  text: "text-blue-700 dark:text-blue-400"
-                },
-                {
-                  title: "Climate Change Mitigation",
-                  ic: "🌍",
-                  desc: "By keeping computers and mobiles in a circular loop, we prevent massive CO2 emissions associated with the production of new electronics, directly tackling the global climate crisis.",
-                  color: "bg-emerald-50 dark:bg-emerald-900/20",
-                  text: "text-emerald-700 dark:text-emerald-400"
-                }
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  className="flex flex-col sm:flex-row gap-6 p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group"
-                >
-                  <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl ${item.color} shadow-sm group-hover:scale-110 transition-transform`}>
-                    {item.ic}
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className={`text-xl font-bold ${item.text}`}>{item.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm lg:text-base">
-                      {item.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Importance of Recycling Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-60">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={containerVariants}
-            className="space-y-16"
-          >
-            <div className="text-center max-w-3xl mx-auto space-y-6">
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
-                Why Recycling Your Tech <br/> <span className="text-emerald-600 dark:text-emerald-500">Matters Most</span>
-              </h2>
-              <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed text-fit">
-                Electronic waste is the fastest-growing waste stream on the planet. Here’s why your decision to recycle today creates a massive ripple effect for a better tomorrow.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Resource Conservation",
-                  ic: "💎",
-                  desc: "Your old phones are 'urban mines.' They contain precious metals like gold, silver, and palladium. By recycling, we recover these materials, reducing the need for destructive mining across the globe.",
-                  color: "bg-amber-50 dark:bg-amber-900/20",
-                  text: "text-amber-700 dark:text-amber-400"
-                },
-                {
-                  title: "Toxic Leak Prevention",
-                  ic: "☢️",
-                  desc: "E-waste contains hazardous substances like lead, mercury, and cadmium. When dumped in landfills, these leak into our groundwater and soil. Professional recycling ensures safe containment and treatment.",
-                  color: "bg-red-50 dark:bg-red-900/20",
-                  text: "text-red-700 dark:text-red-400"
-                },
-                {
-                  title: "Energy Efficiency",
-                  ic: "⚡",
-                  desc: "Manufacturing new products from recycled materials consumes significantly less energy than refining raw ores. This efficiency helps stabilize global energy demands and lowers operational costs.",
-                  color: "bg-blue-50 dark:bg-blue-900/20",
-                  text: "text-blue-700 dark:text-blue-400"
-                },
-                {
-                  title: "Climate Mitigation",
-                  ic: "🌍",
-                  desc: "By keeping computers and mobiles in a circular loop, we prevent massive CO2 emissions associated with the production of new electronics, directly tackling the global climate crisis.",
-                  color: "bg-emerald-50 dark:bg-emerald-900/20",
-                  text: "text-emerald-700 dark:text-emerald-400"
-                },
-                {
-                  title: "Economic Incentive",
-                  ic: "💰",
-                  desc: "Recycling isn't just good for the planet—it's good for your wallet. Our platform ensures you get a fair market valuation for your unused devices, turning 'junk' into capital.",
-                  color: "bg-green-50 dark:bg-green-900/20",
-                  text: "text-green-700 dark:text-green-400"
-                },
-                {
-                  title: "Data Security",
-                  ic: "🛡️",
-                  desc: "Simply throwing away a device puts your personal data at risk. Professional recycling includes military-grade data wiping, ensuring your privacy is never compromised.",
-                  color: "bg-indigo-50 dark:bg-indigo-900/20",
-                  text: "text-indigo-700 dark:text-indigo-400"
-                }
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  className="flex flex-col p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group"
-                >
-                  <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-3xl mb-6 ${item.color} shadow-sm group-hover:scale-110 transition-transform`}>
-                    {item.ic}
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className={`text-xl font-bold ${item.text} text-fit`}>{item.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm lg:text-base text-fit">
-                      {item.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Global Impact by the Numbers */}
-            <div className="mt-20 p-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[80px] rounded-full" />
-               <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center lg:text-left">
-                  <div className="space-y-2">
-                    <div className="text-4xl font-black text-slate-800 dark:text-white">53.6M</div>
-                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Metric Tons</p>
-                    <p className="text-sm text-slate-500">Global e-waste generated every single year.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-4xl font-black text-slate-800 dark:text-white">₹7,000Cr</div>
-                    <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">Lost Value</p>
-                    <p className="text-sm text-slate-500">Annual value of gold and copper discarded in e-waste.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-4xl font-black text-slate-800 dark:text-white">10%</div>
-                    <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Global Energy</p>
-                    <p className="text-sm text-slate-500">Energy saved by recycling just one million laptops.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-4xl font-black text-slate-800 dark:text-white">100%</div>
-                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Safe Disposal</p>
-                    <p className="text-sm text-slate-500">Our promise to bridge the gap in sustainable tech.</p>
-                  </div>
-               </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Strategic Partnership Section */}
-        <div className="max-w-7xl mx-auto px-6 mb-60">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="p-12 md:p-20 rounded-[3rem] bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden shadow-2xl"
-          >
-            {/* Animated Glow Background */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
-
-            <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
-              <div className="space-y-10">
-                <div className="space-y-4">
-                  <span className="px-4 py-1.5 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full tracking-[0.2em] uppercase">
-                    Official Infrastructure Partner
-                  </span>
-                  <h2 className="text-4xl md:text-5xl font-black font-poppins leading-tight">
-                    Backed by <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">SPAS PVT LTD</span>
-                  </h2>
-                </div>
-                
-                <p className="text-xl text-slate-400 leading-relaxed font-inter text-fit">
-                  We are proud to announce our exclusive tie-up with <span className="text-white font-bold">SPAS PVT LTD</span>, India's #1 e-waste recycling firm. This partnership combines our seamless user technology with their world-class industrial infrastructure.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {[
-                    "Certified R2 & ISO Standards",
-                    "State-of-the-art Metal Recovery",
-                    "Nationwide Logistics Network",
-                    "Zero-Emission Processing"
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="3">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-slate-300 font-medium text-sm font-inter text-fit">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000" />
-                <div className="relative bg-slate-950 rounded-[2rem] p-10 border border-white/5 overflow-hidden">
-                  <div className="flex flex-col items-center text-center space-y-6">
-                    <div className="w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center text-5xl">🏭</div>
-                    <div className="space-y-2">
-                       <h3 className="text-2xl font-black font-poppins tracking-tight text-fit">SPAS PVT LTD</h3>
-                       <p className="text-emerald-500 font-bold uppercase tracking-widest text-[10px] text-fit">India's #1 Recycle Powerhouse</p>
-                    </div>
-                    <p className="text-slate-500 text-sm italic font-inter text-fit">
-                      "Utilizing superior extraction methods to revert e-waste into high-purity raw materials, ensuring a sustainable future for the electronics industry."
-                    </p>
-                    <div className="pt-4 flex gap-4">
-                       <div className="px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400">EPC Certified</div>
-                       <div className="px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400">SPCB Authorized</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Values Section (How It Works) */}
-        <div className="max-w-7xl mx-auto px-6 mb-60">
-          <div className="text-center mb-28">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">How It Works</h2>
-            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed text-fit">Our simple process ensures your device is recycled responsibly and you get rewarded instantly.</p>
+        {/* ── Importance of Recycling Section (Eco-Tree Design) ── */}
+        <div className="max-w-7xl mx-auto px-6 mb-40 relative">
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+              Why Recycling Your Tech <br /> <span className="text-emerald-600 dark:text-emerald-500">Matters Most</span>
+            </h2>
+            <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
+              Electronic waste is the fastest-growing waste stream on the planet. Here’s why your decision to recycle today creates a massive ripple effect for a better tomorrow.
+            </p>
           </div>
 
-          <motion.div 
+          <div className="grid lg:grid-cols-3 items-start gap-10 mb-32">
+            {/* Left Column */}
+            <div className="flex flex-col gap-20 items-center lg:items-end pt-12">
+              {/* Resource Conservation */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="flex flex-col items-center lg:items-end text-center lg:text-right max-w-[280px]"
+              >
+                <div className="relative w-24 h-24 flex items-center justify-center mb-8 group">
+                  {/* Custom SVG Cup Shape */}
+                  <div className="absolute inset-0 drop-shadow-[0_15px_15px_rgba(0,0,0,0.15)] transition-transform duration-500 group-hover:scale-110">
+                    <svg viewBox="0 0 100 100" className="w-full h-full fill-white dark:fill-slate-800">
+                      <path d="M5,15 L95,15 Q100,15 98,20 L85,85 Q80,100 50,100 Q20,100 15,85 L2,20 Q0,15 5,15" />
+                      <rect x="0" y="10" width="100" height="7" rx="3.5" fill="#f1f5f9" className="dark:fill-slate-600" />
+                    </svg>
+                  </div>
+                  {/* Icon Container - Shifted down for visual centering */}
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative z-10 w-14 h-14 flex items-center justify-center transform translate-y-2 cursor-pointer"
+                  >
+                    <img
+                      src="/src/assets/img/body/conservation.png"
+                      alt="Resource Conservation"
+                      className="w-full h-full object-contain drop-shadow-sm"
+                    />
+                  </motion.div>
+                </div>
+                <div className="min-h-[180px] flex flex-col items-center lg:items-end">
+                  <h3 className="text-xl font-poppins font-black text-amber-700 dark:text-amber-400 mb-3">Resource Conservation</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-inter">
+                    Your old phones are 'urban mines.' They contain precious metals like gold, silver, and palladium. By recycling, we recover these materials, reducing the need for destructive mining across the globe.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Energy Efficiency */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex flex-col items-center lg:items-end text-center lg:text-right max-w-[280px]"
+              >
+                <div className="relative w-24 h-24 flex items-center justify-center mb-8 group">
+                  <div className="absolute inset-0 drop-shadow-[0_15px_15px_rgba(0,0,0,0.15)] transition-transform duration-500 group-hover:scale-110">
+                    <svg viewBox="0 0 100 100" className="w-full h-full fill-white dark:fill-slate-800">
+                      <path d="M5,15 L95,15 Q100,15 98,20 L85,85 Q80,100 50,100 Q20,100 15,85 L2,20 Q0,15 5,15" />
+                      <rect x="0" y="10" width="100" height="7" rx="3.5" fill="#f1f5f9" className="dark:fill-slate-600" />
+                    </svg>
+                  </div>
+                  {/* Icon Container - Shifted down for visual centering */}
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative z-10 w-14 h-14 flex items-center justify-center transform translate-y-2 cursor-pointer"
+                  >
+                    <img
+                      src="/src/assets/img/body/energy.png"
+                      alt="Energy Efficiency"
+                      className="w-full h-full object-contain drop-shadow-sm"
+                    />
+                  </motion.div>
+                </div>
+                <h3 className="text-xl font-poppins font-black text-blue-700 dark:text-blue-400 mb-3">Energy Efficiency</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-inter">
+                  Manufacturing new products from recycled materials consumes significantly less energy than refining raw ores. This efficiency helps stabilize global energy demands and lowers operational costs.
+                </p>
+              </motion.div>
+            </div>
+
+            {/* Center Column: The Tree */}
+            <div className="relative flex justify-center pt-32 lg:pt-40 pb-12">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{
+                  opacity: 1,
+                  scale: 1,
+                  y: [0, -15, 0]
+                }}
+                viewport={{ once: true }}
+                transition={{
+                  opacity: { duration: 1 },
+                  scale: { duration: 1 },
+                  y: {
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }}
+                className="relative z-10 w-full max-w-[450px]"
+              >
+                <img
+                  src="/src/assets/img/body/tree.png"
+                  alt="Eco Recycling Tree"
+                  className="w-full h-auto drop-shadow-[0_20px_50px_rgba(16,185,129,0.2)]"
+                />
+                <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -z-10" />
+              </motion.div>
+            </div>
+
+            {/* Right Column */}
+            <div className="flex flex-col gap-20 items-center lg:items-start pt-12">
+              {/* Toxic Leak Prevention */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-[280px]"
+              >
+                <div className="relative w-24 h-24 flex items-center justify-center mb-8 group">
+                  <div className="absolute inset-0 drop-shadow-[0_15px_15px_rgba(0,0,0,0.15)] transition-transform duration-500 group-hover:scale-110">
+                    <svg viewBox="0 0 100 100" className="w-full h-full fill-white dark:fill-slate-800">
+                      <path d="M5,15 L95,15 Q100,15 98,20 L85,85 Q80,100 50,100 Q20,100 15,85 L2,20 Q0,15 5,15" />
+                      <rect x="0" y="10" width="100" height="7" rx="3.5" fill="#f1f5f9" className="dark:fill-slate-600" />
+                    </svg>
+                  </div>
+                  {/* Icon Container - Shifted down for visual centering */}
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative z-10 w-14 h-14 flex items-center justify-center transform translate-y-2 cursor-pointer"
+                  >
+                    <img
+                      src="/src/assets/img/body/toxic.webp"
+                      alt="Toxic Leak Prevention"
+                      className="w-full h-full object-contain drop-shadow-sm"
+                    />
+                  </motion.div>
+                </div>
+                <div className="min-h-[180px] flex flex-col items-center lg:items-start">
+                  <h3 className="text-xl font-poppins font-black text-red-700 dark:text-red-400 mb-3">Toxic Leak Prevention</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-inter">
+                    E-waste contains hazardous substances like lead, mercury, and cadmium. When dumped in landfills, these leak into our groundwater and soil. Professional recycling ensure safe containment and treatment.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Climate Change Mitigation */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-[280px]"
+              >
+                <div className="relative w-24 h-24 flex items-center justify-center mb-8 group">
+                  <div className="absolute inset-0 drop-shadow-[0_15px_15px_rgba(0,0,0,0.15)] transition-transform duration-500 group-hover:scale-110">
+                    <svg viewBox="0 0 100 100" className="w-full h-full fill-white dark:fill-slate-800">
+                      <path d="M5,15 L95,15 Q100,15 98,20 L85,85 Q80,100 50,100 Q20,100 15,85 L2,20 Q0,15 5,15" />
+                      <rect x="0" y="10" width="100" height="7" rx="3.5" fill="#f1f5f9" className="dark:fill-slate-600" />
+                    </svg>
+                  </div>
+                  {/* Icon Container - Shifted down for visual centering */}
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative z-10 w-14 h-14 flex items-center justify-center transform translate-y-2 cursor-pointer"
+                  >
+                    <img
+                      src="/src/assets/img/body/climate.png"
+                      alt="Climate Change Mitigation"
+                      className="w-full h-full object-contain drop-shadow-sm"
+                    />
+                  </motion.div>
+                </div>
+                <h3 className="text-xl font-poppins font-black text-emerald-700 dark:text-emerald-500 mb-3">Climate Mitigation</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-inter">
+                  By keeping computers and mobiles in a circular loop, we prevent massive CO2 emissions associated with the production of new electronics, directly tackling the global climate crisis.
+                </p>
+              </motion.div>
+            </div>
+
+          </div>
+
+
+
+
+
+
+
+
+          {/* Global Impact by the Numbers */}
+          <div className="p-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[80px] rounded-full" />
+            <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center lg:text-left">
+              <div className="space-y-2">
+                <div className="text-4xl font-black text-slate-800 dark:text-white">53.6M</div>
+                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Metric Tons</p>
+                <p className="text-sm text-slate-500">Global e-waste generated every single year.</p>
+              </div>
+              <div className="space-y-2">
+                <div className="text-4xl font-black text-slate-800 dark:text-white">₹7,000Cr</div>
+                <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">Lost Value</p>
+                <p className="text-sm text-slate-500">Annual value of gold and copper discarded in e-waste.</p>
+              </div>
+              <div className="space-y-2">
+                <div className="text-4xl font-black text-slate-800 dark:text-white">10%</div>
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Global Energy</p>
+                <p className="text-sm text-slate-500">Energy saved by recycling just one million laptops.</p>
+              </div>
+              <div className="space-y-2">
+                <div className="text-4xl font-black text-slate-800 dark:text-white">100%</div>
+                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Safe Disposal</p>
+                <p className="text-sm text-slate-500">Our promise to bridge the gap in sustainable tech.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        {/* Values Section (Recycling Services) */}
+        <div className="max-w-7xl mx-auto px-6 mb-60">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">Our Recycling Services</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">We responsibly recycle a wide range of electronic waste, turning it into valuable raw materials for a greener tomorrow.</p>
+          </div>
+
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid md:grid-cols-4 gap-10"
+            className="grid md:grid-cols-3 gap-8"
           >
             {VALUES.map((v, i) => (
-              <GlassCard key={i}>
-                <div 
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-8 bg-slate-50 dark:bg-slate-800/50"
-                  style={{ color: v.color }}
-                >
-                  {v.icon}
+              <motion.div
+                key={i}
+                variants={itemVariants}
+                className="bg-white dark:bg-slate-800 rounded-t-3xl rounded-b-[50px] shadow-lg hover:shadow-2xl transition-all duration-500 group p-4 pb-8"
+              >
+                {/* Photo with rounded corners */}
+                <div className={`relative rounded-3xl overflow-hidden h-56 mb-10 bg-gradient-to-br ${v.gradient}`}>
+                  <img
+                    src={v.photo}
+                    alt={v.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  {/* Cup SVG Icon Badge - overlapping image bottom */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10 w-20 h-20">
+                    <svg viewBox="0 0 100 100" className="w-full h-full fill-white dark:fill-slate-800 drop-shadow-lg">
+                      <path d="M5,15 L95,15 Q100,15 98,20 L85,85 Q80,100 50,100 Q20,100 15,85 L2,20 Q0,15 5,15" />
+                      <rect x="0" y="10" width="100" height="7" rx="3.5" fill="#f1f5f9" />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center translate-y-2">
+                      {v.icon}
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-white mb-4 text-fit"  style={{ fontSize: 'var(--fs-h3)' }}>{v.title}</h3>
-                <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{v.desc}</p>
-              </GlassCard>
+
+                {/* Card Body */}
+                <div className="pt-4 pb-4 px-4 text-center">
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">{v.title}</h3>
+                  <p className="text-slate-400 dark:text-slate-400 text-sm leading-relaxed mb-8">{v.desc}</p>
+                  {/* Arrow Button */}
+                  <div className="flex justify-center">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-emerald-500 hover:text-white transition-all duration-300"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
@@ -522,7 +533,7 @@ export default function AboutPage({ go }) {
             <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed text-fit">A collective of specialists dedicated to technological sustainability.</p>
           </div>
 
-          <motion.div 
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -530,12 +541,12 @@ export default function AboutPage({ go }) {
             className="flex flex-wrap justify-center gap-8"
           >
             {TEAM.map((m, i) => (
-              <motion.div 
-                key={i} 
+              <motion.div
+                key={i}
                 variants={itemVariants}
                 className="group p-8 rounded-3xl border border-transparent hover:border-slate-100 dark:hover:border-slate-800 hover:bg-slate-50/30 dark:hover:bg-slate-900/30 transition-all duration-300 text-center"
               >
-                <div 
+                <div
                   className="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-2xl font-bold mb-6 transition-transform duration-500 group-hover:scale-110"
                   style={{ backgroundColor: `${m.color}10`, color: m.color }}
                 >
@@ -551,7 +562,7 @@ export default function AboutPage({ go }) {
 
         {/* CTA Section */}
         <div className="max-w-7xl mx-auto px-6 mb-32">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -559,16 +570,16 @@ export default function AboutPage({ go }) {
             className="bg-slate-950 dark:bg-slate-900 rounded-[3rem] p-16 md:p-24 text-center relative overflow-hidden border border-white/5 shadow-2xl"
           >
             <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
-            
+
             <div className="relative z-10 space-y-10">
               <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight">
-                Ready to clear your <br/> tech clutter?
+                Ready to clear your <br /> tech clutter?
               </h2>
               <p className="text-slate-400 dark:text-slate-500 text-xl max-w-2xl mx-auto font-light leading-relaxed">
                 Turn your old devices into cash in minutes. It's good for your wallet and great for the planet.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.button 
+                <motion.button
                   onClick={() => go('home')}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
@@ -576,7 +587,7 @@ export default function AboutPage({ go }) {
                 >
                   Start Recycling Now
                 </motion.button>
-                <motion.button 
+                <motion.button
                   onClick={() => go('process')}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
