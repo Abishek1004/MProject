@@ -116,13 +116,13 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
             name: form.name,
             email: form.email,
             password: form.password,
-            phone: form.phone
+            mobileNo: form.phone
           })
         })
 
-        const text = await response.text()
+        const data = await response.json().catch(() => ({}))
 
-        if (!response.ok) throw new Error(text)
+        if (!response.ok) throw new Error(data.message || 'Registration failed')
         setStep("otp")
 
       }
@@ -145,7 +145,8 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
 
   const verifyOtp = async () => {
 
-    if (form.otp.length !== 6) {
+    const otp = form.otp.trim()
+    if (otp.length !== 6) {
       setApiErr("Enter 6 digit OTP")
       return
     }
@@ -154,7 +155,7 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
 
     try {
 
-      const response = await fetch(`${OTP_API}/verify?email=${form.email}&otp=${form.otp}`, {
+      const response = await fetch(`${OTP_API}/verify?email=${encodeURIComponent(form.email)}&otp=${encodeURIComponent(otp)}`, {
         method: "POST"
       })
 

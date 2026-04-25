@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @RestController
 @RequestMapping("/api/otp")
 public class OtpController {
@@ -21,6 +23,7 @@ public class OtpController {
     @Autowired private JwtUtil jwtUtil;
 
     @PostMapping("/verify")
+    @Transactional
     public ResponseEntity<?> verifyOtp(@RequestParam String email, @RequestParam String otp) {
 
         PendingUser pending = pendingRepo.findByEmail(email).orElse(null);
