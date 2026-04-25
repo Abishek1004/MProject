@@ -6,6 +6,9 @@ import heroVideo from '../assets/img/Home/ewaste_video - Copy.mp4'
 import Footer from '../components/layout/Footer'
 import ImgF from '../components/ui/ImgF'
 import { staggerContainer, fadeUp, inViewFadeUp } from '../utils/motion'
+import priceIcon from '../assets/price.png'
+import pickupIcon from '../assets/schedule_pickup.jpg'
+import paidIcon from '../assets/paid.png'
 
 function TypeWriter({ text, speed = 40, delay = 1000 }) {
   const [displayText, setDisplayText] = useState('')
@@ -169,14 +172,14 @@ export default function HomePage({ go }) {
   const stats = [
     { val: '50,000+', label: 'Happy Customers' },
     { val: '15', label: 'Cities Served' },
-    { val: '?2 Cr+', label: 'Paid to Users' },
+    { val: '12 Cr+', label: 'Paid to Users' },
     { val: '99%', label: 'Recycled Safely' },
   ]
 
   const features = [
-    { icon: '', title: 'Instant Price Quote', desc: 'Get price in 2 minutes.' },
-    { icon: '??', title: 'Free Pickup', desc: 'Doorstep pickup available.' },
-    { icon: '??', title: 'Data Safety', desc: 'Certified data wiping.' },
+    { icon: priceIcon, title: 'Check Price', desc: 'Provide device details and get the best price through our advanced AI.' },
+    { icon: pickupIcon, title: 'Schedule Pickup', desc: 'Free pickup from your home or office address.' },
+    { icon: paidIcon, title: 'Get Paid', desc: 'Instant and 100% secure payment at the time of pickup.' },
   ]
 
   return (
@@ -298,7 +301,7 @@ export default function HomePage({ go }) {
         </motion.div>
       </section>
 
-      <section className="px-5 py-24 bg-gray-50 dark:bg-slate-800/40 transition-colors duration-300">
+      <section className="px-5 py-24 transition-colors duration-300">
         <motion.h2
           className="text-center text-3xl md:text-4xl font-poppins font-black mb-16 text-slate-800 dark:text-slate-100"
           {...inViewFadeUp}
@@ -313,20 +316,45 @@ export default function HomePage({ go }) {
           whileInView="animate"
           viewport={{ once: true, margin: '-40px' }}
         >
-          {features.map((f) => (
+          {features.map((f, i) => (
             <motion.div
               key={f.title}
-              className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow dark:shadow-slate-900/50 transition-colors duration-300"
+              className="p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.18)] border border-slate-100/50 dark:border-slate-700 transition-all duration-500 text-center flex flex-col items-center relative overflow-hidden group"
+              style={{
+                WebkitBoxReflect: 'below 1px linear-gradient(transparent, rgba(0,0,0,0.04))',
+              }}
               variants={fadeUp}
               whileHover={{
-                y: -5,
-                boxShadow: '0 12px 32px rgba(0,0,0,0.10)',
-                transition: { duration: 0.2 },
+                y: -20,
+                transition: { duration: 0.4 },
               }}
             >
-              <div className="text-3xl mb-3">{f.icon}</div>
-              <h3 className="font-bold text-slate-800 dark:text-slate-100">{f.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-slate-400">{f.desc}</p>
+              {/* Glossy Shine Effect */}
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out skew-x-[-25deg] z-20 pointer-events-none" />
+              
+              <div className="h-28 w-full flex items-center justify-center mb-8">
+                {f.icon && typeof f.icon === 'string' && f.icon.length > 10 ? (
+                  <ImgF
+                    src={f.icon}
+                    alt={f.title}
+                    className="h-full w-auto object-contain"
+                    fallback={<span className="text-6xl">💰</span>}
+                  />
+                ) : (
+                  <span className="text-7xl">{f.icon || '✨'}</span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3 mb-4">
+                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#037252] text-white text-xs font-bold">
+                  {i + 1}
+                </span>
+                <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100">{f.title}</h3>
+              </div>
+
+              <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed max-w-[250px]">
+                {f.desc}
+              </p>
             </motion.div>
           ))}
         </motion.div>
