@@ -69,7 +69,7 @@ export default function SignInPage({ go, goBack, onSuccess }) {
 
       {/* Form area */}
       <div className="flex-1 flex items-center justify-center px-5 py-12">
-        <div className="w-full max-w-[420px]">
+        <div className="w-full max-w-[500px]">
 
           {/* Header */}
           <div className="text-center mb-8">
@@ -85,6 +85,20 @@ export default function SignInPage({ go, goBack, onSuccess }) {
 
           {/* Card */}
           <div className="bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100 p-8">
+            <button
+              onClick={() => window.location.href = 'http://localhost:8081/oauth2/authorization/google'}
+              className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-full border border-slate-700 bg-[#131314] hover:bg-black transition-all mb-6 font-inter font-medium text-white shadow-sm active:scale-[0.98] group"
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span className="text-[15px]">Sign in with Google</span>
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex-1 h-px bg-slate-100" />
+              <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">OR</span>
+              <div className="flex-1 h-px bg-slate-100" />
+            </div>
+
             {apiErr && (
               <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm mb-5 font-inter">{apiErr}</div>
             )}

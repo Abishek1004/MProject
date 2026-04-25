@@ -211,23 +211,31 @@ export default function LanguageSelector({ themeColor, themeLight }) {
         .goog-te-floating-widget,
         #goog-gt-tt, 
         .goog-tooltip, 
-        .goog-tooltip:hover {
+        .goog-tooltip:hover,
+        .goog-te-balloon-frame {
           display: none !important;
           visibility: hidden !important;
           opacity: 0 !important;
           pointer-events: none !important;
         }
 
-        /* Hide the bar at the top */
-        body { top: 0 !important; }
+        /* 2. FORCE BODY & HTML TO IGNORE GOOGLE'S MARGINS */
+        body { 
+          top: 0 !important; 
+          position: static !important;
+        }
         
-        /* Hide the 'Original Text' tooltip that appears on hover */
+        html {
+          margin-top: 0 !important;
+        }
+        
+        /* 3. Hide the 'Original Text' tooltip that appears on hover */
         .goog-text-highlight {
           background-color: transparent !important;
           box-shadow: none !important;
         }
 
-        /* Hide the standard google translate bar entirely */
+        /* 4. Hide the standard google translate bar entirely */
         .skiptranslate {
           display: none !important;
         }

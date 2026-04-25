@@ -10,39 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/google")
 public class GoogleAuthController {
-
-    @Autowired private GoogleUserRepository googleRepo;
-    @Autowired private UserRepository userRepo;
-    @Autowired private JwtUtil jwtUtil;
-
-    @GetMapping("/success")
-    public ResponseEntity<?> googleLogin(@AuthenticationPrincipal OAuth2User principal) {
-
-        String email = principal.getAttribute("email");
-        String name  = principal.getAttribute("name");
-
-        googleRepo.findByEmail(email).orElseGet(() -> {
-            GoogleUser g = new GoogleUser();
-            g.setEmail(email);
-            g.setVerified(true);
-            return googleRepo.save(g);
-        });
-
-        User user = userRepo.findByEmail(email).orElseGet(() -> {
-            User u = new User();
-            u.setEmail(email);
-            u.setName(name);
-            u.setVerified(true);
-            return userRepo.save(u);
-        });
-
-        String token = jwtUtil.generateToken(email);
-
-        return ResponseEntity.ok(new AuthResponse(token,
-                new AuthResponse.UserInfo(user.getId(), user.getName(), user.getEmail(), user.getMobileNo())));
-    }
+    // Logic moved to SecurityConfig.java successHandler
 }

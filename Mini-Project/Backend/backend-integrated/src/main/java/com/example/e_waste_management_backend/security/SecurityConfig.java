@@ -13,6 +13,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import com.example.e_waste_management_backend.entity.*;
+import com.example.e_waste_management_backend.repository.*;
+import com.example.e_waste_management_backend.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Configuration
 @EnableMethodSecurity
@@ -22,6 +30,10 @@ public class SecurityConfig {
     // e.g. "https://my-frontend.onrender.com,http://localhost:5173"
     @Value("${allowed.origins:http://localhost:5173,http://localhost:5174}")
     private String allowedOrigins;
+
+    @Autowired private GoogleUserRepository googleRepo;
+    @Autowired private UserRepository userRepo;
+    @Autowired private JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,7 +58,39 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                .oauth2Login(Customizer.withDefaults());
+                .oauth2Login(oauth -> oauth
+                        .successHandler((request, response, authentication) -> {
+                            OAuth2User principal = (OAuth2User) authentication.getPrincipal();
+                            String email = principal.getAttribute("email");
+                            String name = principal.getAttribute("name");
+
+                            googleRepo.findByEmail(email).orElseGet(() -> {
+                                GoogleUser g = new GoogleUser();
+                                g.setEmail(email);
+                                g.setVerified(true);
+                                return googleRepo.save(g);
+                            });
+
+                            User user = userRepo.findByEmail(email).orElseGet(() -> {
+                                User u = new User();
+                                u.setEmail(email);
+                                u.setName(name);
+                                u.setVerified(true);
+                                return userRepo.save(u);
+                            });
+
+                            String token = jwtUtil.generateToken(email);
+                            String encodedName = URLEncoder.encode(name != null ? name : "", StandardCharsets.UTF_8);
+                            String encodedEmail = URLEncoder.encode(email != null ? email : "", StandardCharsets.UTF_8);
+                            
+                            // Redirect to frontend
+                            String frontendUrl = allowedOrigins.split(",")[0]; // Use the first origin (localhost:5173)
+                            String redirectUrl = String.format("%s/?token=%s&id=%d&name=%s&email=%s",
+                                    frontendUrl, token, user.getId(), encodedName, encodedEmail);
+                            
+                            response.sendRedirect(redirectUrl);
+                        })
+                );
 
         return http.build();
     }

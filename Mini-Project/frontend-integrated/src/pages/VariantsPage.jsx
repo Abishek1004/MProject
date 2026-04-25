@@ -68,7 +68,7 @@ function BrandSearch({ categoryId, companyId, go }) {
             >
               <div className="flex-1 min-w-0">
                 <p className="font-inter font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">{item.variantName}</p>
-                <p className="text-slate-400 dark:text-slate-500 text-xs font-inter">Base ₹{item.variantBase.toLocaleString()} {item.ramOptions && item.ramOptions[0] ? `· ${item.ramOptions[0]} RAM` : ''}</p>
+                <p className="text-slate-400 dark:text-slate-500 text-xs font-inter">Base ₹{item.variantBase.toLocaleString()} · {item.ramOptions[0]} RAM</p>
               </div>
               <span className="text-xs font-bold font-inter flex-shrink-0" style={{ color }}>→</span>
             </button>
@@ -110,13 +110,13 @@ function VariantCard({ variant, catColor, onClick }) {
         <span className="flex-shrink-0" style={{ color: catColor }}>→</span>
       </div>
       <div className="flex flex-wrap gap-1.5 mb-4">
-        {(variant.ramOptions || []).map((r) => (
+        {variant.ramOptions.map((r) => (
           <span key={r} className="text-[10px] sm:text-[11px] font-medium font-inter px-2.5 py-0.5 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 tracking-tight">{r} RAM</span>
         ))}
-        {(variant.storageOptions || []).slice(0,3).map((s) => (
+        {variant.storageOptions.slice(0,3).map((s) => (
           <span key={s} className="text-[10px] sm:text-[11px] font-medium font-inter px-2.5 py-0.5 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 tracking-tight">{s}</span>
         ))}
-        {variant.storageOptions && variant.storageOptions.length > 3 && (
+        {variant.storageOptions.length > 3 && (
           <span className="text-[10px] sm:text-[11px] font-medium font-inter px-2 py-0.5 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400">+{variant.storageOptions.length-3} more</span>
         )}
       </div>

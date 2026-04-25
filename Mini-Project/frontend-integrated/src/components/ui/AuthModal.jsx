@@ -116,13 +116,13 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
             name: form.name,
             email: form.email,
             password: form.password,
-            mobileNo: form.phone
+            phone: form.phone
           })
         })
 
-        const data = await response.json().catch(() => ({}))
+        const text = await response.text()
 
-        if (!response.ok) throw new Error(data.message || 'Registration failed')
+        if (!response.ok) throw new Error(text)
         setStep("otp")
 
       }
@@ -145,8 +145,7 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
 
   const verifyOtp = async () => {
 
-    const otp = form.otp.trim()
-    if (otp.length !== 6) {
+    if (form.otp.length !== 6) {
       setApiErr("Enter 6 digit OTP")
       return
     }
@@ -155,7 +154,7 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
 
     try {
 
-      const response = await fetch(`${OTP_API}/verify?email=${encodeURIComponent(form.email)}&otp=${encodeURIComponent(otp)}`, {
+      const response = await fetch(`${OTP_API}/verify?email=${form.email}&otp=${form.otp}`, {
         method: "POST"
       })
 
@@ -204,7 +203,7 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
       exit="exit"
     >
       <motion.div
-        className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-[440px] overflow-hidden"
+        className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-[500px] overflow-hidden"
         variants={scaleIn}
         initial="initial"
         animate="animate"
@@ -289,7 +288,7 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
         )}
 
         {/* ── Form body ────────────────────────────────── */}
-        <div className="px-7 pb-6 pt-4" style={{ minHeight: 260 }}>
+        <div className="px-7 pb-6 pt-4 overflow-y-auto" style={{ maxHeight: '400px' }}>
 
           {apiErr && (
             <motion.div
@@ -337,6 +336,21 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
                 animate="animate"
                 exit="exit"
               >
+                <button
+                  type="button"
+                  onClick={() => window.location.href = 'http://localhost:8081/oauth2/authorization/google'}
+                  className="w-full flex items-center justify-center gap-3 py-2.5 px-5 rounded-full border border-slate-700 bg-[#131314] hover:bg-black transition-all mb-6 font-inter font-medium text-white shadow-sm active:scale-[0.98] group"
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="text-[15px]">Sign in with Google</span>
+                </button>
+
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex-1 h-[1.5px] bg-slate-100" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">OR</span>
+                  <div className="flex-1 h-[1.5px] bg-slate-100" />
+                </div>
+
                 <AuthField label="Email Address" type="email" value={form.email} onChange={(v) => set('email', v)} placeholder="you@example.com" error={errs.email} />
                 <AuthField label="Password" type="password" value={form.password} onChange={(v) => set('password', v)} placeholder="Minimum 6 characters" error={errs.password} />
 
@@ -366,6 +380,21 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
                 animate="animate"
                 exit="exit"
               >
+                <button
+                  type="button"
+                  onClick={() => window.location.href = 'http://localhost:8081/oauth2/authorization/google'}
+                  className="w-full flex items-center justify-center gap-3 py-2.5 px-5 rounded-full border border-slate-700 bg-[#131314] hover:bg-black transition-all mb-6 font-inter font-medium text-white shadow-sm active:scale-[0.98] group"
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="text-[15px]">Sign in with Google</span>
+                </button>
+
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex-1 h-[1.5px] bg-slate-100" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">OR</span>
+                  <div className="flex-1 h-[1.5px] bg-slate-100" />
+                </div>
+
                 <AuthField label="Full Name" type="text" value={form.name} onChange={(v) => set('name', v)} placeholder="Your full name" error={errs.name} />
                 <AuthField label="Email Address" type="email" value={form.email} onChange={(v) => set('email', v)} placeholder="you@example.com" error={errs.email} />
                 <AuthField label="Password" type="password" value={form.password} onChange={(v) => set('password', v)} placeholder="Minimum 6 characters" error={errs.password} />

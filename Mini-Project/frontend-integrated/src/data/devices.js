@@ -29,25 +29,25 @@ export const DEVICES = {
     },
     {
       id: 'ip14', name: 'iPhone 14 Series', base: 40000, variants: [
-        { name: 'iPhone 14', base: 40000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB'] },
-        { name: 'iPhone 14 Plus', base: 48000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB'] },
-        { name: 'iPhone 14 Pro', base: 60000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB', '1TB'] },
-        { name: 'iPhone 14 Pro Max', base: 70000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB', '1TB'] },
+        { name: 'iPhone 14', base: 40000 },
+        { name: 'iPhone 14 Plus', base: 48000 },
+        { name: 'iPhone 14 Pro', base: 60000 },
+        { name: 'iPhone 14 Pro Max', base: 70000 },
       ]
     },
     {
       id: 'ip13', name: 'iPhone 13 Series', base: 30000, variants: [
-        { name: 'iPhone 13', base: 30000, ramOptions: ['4GB'], storageOptions: ['128GB', '256GB', '512GB'] },
-        { name: 'iPhone 13 Mini', base: 25000, ramOptions: ['4GB'], storageOptions: ['128GB', '256GB', '512GB'] },
-        { name: 'iPhone 13 Pro', base: 45000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB', '1TB'] },
-        { name: 'iPhone 13 Pro Max', base: 55000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB', '1TB'] },
+        { name: 'iPhone 13', base: 30000 },
+        { name: 'iPhone 13 Mini', base: 25000 },
+        { name: 'iPhone 13 Pro', base: 45000 },
+        { name: 'iPhone 13 Pro Max', base: 55000 },
       ]
     },
     {
       id: 'ip12', name: 'iPhone 12 Series', base: 20000, variants: [
-        { name: 'iPhone 12', base: 20000, ramOptions: ['4GB'], storageOptions: ['64GB', '128GB', '256GB'] },
-        { name: 'iPhone 12 Mini', base: 18000, ramOptions: ['4GB'], storageOptions: ['64GB', '128GB', '256GB'] },
-        { name: 'iPhone 12 Pro', base: 28000, ramOptions: ['6GB'], storageOptions: ['128GB', '256GB', '512GB'] },
+        { name: 'iPhone 12', base: 20000 },
+        { name: 'iPhone 12 Mini', base: 18000 },
+        { name: 'iPhone 12 Pro', base: 28000 },
       ]
     },
   ],
@@ -56,16 +56,16 @@ export const DEVICES = {
   mobile_samsung: [
     {
       id: 's24', name: 'Galaxy S24 Series', base: 50000, variants: [
-        { name: 'Galaxy S24', base: 50000, ramOptions: ['8GB'], storageOptions: ['128GB', '256GB'] },
-        { name: 'Galaxy S24+', base: 65000, ramOptions: ['12GB'], storageOptions: ['256GB', '512GB'] },
-        { name: 'Galaxy S24 Ultra', base: 90000, ramOptions: ['12GB'], storageOptions: ['256GB', '512GB', '1TB'] },
+        { name: 'Galaxy S24', base: 50000 },
+        { name: 'Galaxy S24+', base: 65000 },
+        { name: 'Galaxy S24 Ultra', base: 90000 },
       ]
     },
     {
       id: 's23', name: 'Galaxy S23 Series', base: 35000, variants: [
-        { name: 'Galaxy S23', base: 35000, ramOptions: ['8GB'], storageOptions: ['128GB', '256GB'] },
-        { name: 'Galaxy S23+', base: 45000, ramOptions: ['8GB'], storageOptions: ['256GB', '512GB'] },
-        { name: 'Galaxy S23 Ultra', base: 65000, ramOptions: ['8GB', '12GB'], storageOptions: ['256GB', '512GB', '1TB'] },
+        { name: 'Galaxy S23', base: 35000 },
+        { name: 'Galaxy S23+', base: 45000 },
+        { name: 'Galaxy S23 Ultra', base: 65000 },
       ]
     },
     {

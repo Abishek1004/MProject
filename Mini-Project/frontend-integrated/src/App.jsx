@@ -123,6 +123,21 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePop)
   }, [])
 
+  // Handle Google Login redirect success
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const t = params.get('token')
+    if (t) {
+      const u = {
+        id:    params.get('id'),
+        name:  params.get('name'),
+        email: params.get('email')
+      }
+      onLoginSuccess(u, t)
+      window.history.replaceState({}, '', '/')
+    }
+  }, [])
+
   // ── Navigation with fade transition ────────────────────────────────────────
   const go = useCallback((p, extra = {}) => {
     setVisible(false)
