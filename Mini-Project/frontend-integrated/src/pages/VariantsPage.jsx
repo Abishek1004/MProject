@@ -18,9 +18,9 @@ function BrandSearch({ categoryId, companyId, go }) {
     for (const item of SEARCH_INDEX) {
       if (item.categoryId !== categoryId || item.companyId !== companyId) continue
       const name = item.variantName.toLowerCase()
-      if (name === t)             exact.push(item)
+      if (name === t) exact.push(item)
       else if (name.startsWith(t)) starts.push(item)
-      else if (name.includes(t))   rest.push(item)
+      else if (name.includes(t)) rest.push(item)
     }
     return [...exact, ...starts, ...rest].slice(0, 6)
   }, [q, categoryId, companyId])
@@ -31,7 +31,7 @@ function BrandSearch({ categoryId, companyId, go }) {
         style={{ borderColor: q ? color : '#e2e8f0' }}>
         <div className="pl-4 pr-2 flex-shrink-0">
           <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke={q ? color : '#94a3b8'} strokeWidth="2.5">
-            <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
+            <circle cx="11" cy="11" r="8" /><path strokeLinecap="round" d="m21 21-4.35-4.35" />
           </svg>
         </div>
         <input
@@ -56,10 +56,12 @@ function BrandSearch({ categoryId, companyId, go }) {
           {results.map((item, i) => (
             <button key={i}
               onClick={() => {
+                const isLap = item.categoryId === 'laptop'
                 go('details', {
                   category: item.categoryId, company: item.companyId,
                   variant: item.variantName, variantBase: item.variantBase,
-                  ramOptions: item.ramOptions, storageOptions: item.storageOptions,
+                  ramOptions: item.ramOptions || (isLap ? ['8GB', '16GB'] : ['4GB', '6GB', '8GB']),
+                  storageOptions: item.storageOptions || (isLap ? ['256GB SSD', '512GB SSD'] : ['64GB', '128GB', '256GB']),
                   modelId: item.modelId,
                 })
                 setQ('')
@@ -68,7 +70,7 @@ function BrandSearch({ categoryId, companyId, go }) {
             >
               <div className="flex-1 min-w-0">
                 <p className="font-inter font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">{item.variantName}</p>
-                <p className="text-slate-400 dark:text-slate-500 text-xs font-inter">Base ₹{item.variantBase.toLocaleString()} · {item.ramOptions[0]} RAM</p>
+                <p className="text-slate-400 dark:text-slate-500 text-xs font-inter">Base ₹{(item.variantBase || 0).toLocaleString()} · {(item.ramOptions?.[0] || 'Std')} RAM</p>
               </div>
               <span className="text-xs font-bold font-inter flex-shrink-0" style={{ color }}>→</span>
             </button>
@@ -89,7 +91,7 @@ function BrandSearch({ categoryId, companyId, go }) {
 }
 
 // ── Variant card ──────────────────────────────────────────────────────────────
-function VariantCard({ variant, catColor, onClick }) {
+function VariantCard({ variant, catColor, categoryId, onClick }) {
   return (
     <motion.button
       onClick={onClick}
@@ -109,20 +111,19 @@ function VariantCard({ variant, catColor, onClick }) {
         <span className="font-poppins font-semibold text-[0.95rem] text-slate-800 dark:text-white capitalize">{variant.name}</span>
         <span className="flex-shrink-0" style={{ color: catColor }}>→</span>
       </div>
+
       <div className="flex flex-wrap gap-1.5 mb-4">
-        {variant.ramOptions.map((r) => (
+        {(variant.ramOptions || (categoryId === 'laptop' ? ['8GB', '16GB'] : ['4GB', '6GB', '8GB'])).map((r) => (
           <span key={r} className="text-[10px] sm:text-[11px] font-medium font-inter px-2.5 py-0.5 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 tracking-tight">{r} RAM</span>
         ))}
-        {variant.storageOptions.slice(0,3).map((s) => (
+        {(variant.storageOptions || (categoryId === 'laptop' ? ['256GB SSD', '512GB SSD'] : ['64GB', '128GB', '256GB'])).slice(0, 3).map((s) => (
           <span key={s} className="text-[10px] sm:text-[11px] font-medium font-inter px-2.5 py-0.5 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 tracking-tight">{s}</span>
         ))}
-        {variant.storageOptions.length > 3 && (
-          <span className="text-[10px] sm:text-[11px] font-medium font-inter px-2 py-0.5 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400">+{variant.storageOptions.length-3} more</span>
-        )}
       </div>
+
       <div className="flex items-center justify-between">
         <span className="text-slate-400 dark:text-slate-500 text-xs font-inter">Base value</span>
-        <span className="font-poppins font-bold text-sm" style={{ color: catColor }}>Up to ₹{variant.base.toLocaleString()}</span>
+        <span className="font-poppins font-bold text-sm" style={{ color: catColor }}>Up to ₹{(variant.base || 0).toLocaleString()}</span>
       </div>
     </motion.button>
   )
@@ -130,11 +131,10 @@ function VariantCard({ variant, catColor, onClick }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function VariantsPage({ nav, go, goBack, canGoBack }) {
-  const cat     = CATEGORIES.find((c) => c.id === nav.category)
-  const company = getCompany(nav.category, nav.company)
-  const models  = getDevices(nav.category, nav.company)
-  const model   = models.find((m) => m.id === nav.model)
-  if (!model) return null
+  const cat = CATEGORIES.find((c) => c.id === (nav.category || 'mobile'))
+  const company = getCompany(nav.category || 'mobile', nav.company || 'apple')
+  const models = getDevices(nav.category || 'mobile', nav.company || 'apple')
+  const model = models.find((m) => m.id === nav.model) || models[0] || { name: 'Device Models', variants: [] }
 
   return (
     <div className="min-h-screen bg-transparent transition-colors duration-300">
@@ -154,12 +154,12 @@ export default function VariantsPage({ nav, go, goBack, canGoBack }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 }}
         >
-          <p className="text-slate-400 dark:text-slate-500 text-xs font-inter font-semibold uppercase tracking-widest mb-1.5">Select Variant</p>
+          <p className="text-slate-400 dark:text-slate-500 text-xs font-inter font-semibold uppercase tracking-widest mb-1.5">{company?.name || 'Device'} Models</p>
           <h1 className="font-poppins font-extrabold text-slate-800 dark:text-white text-3xl md:text-4xl mb-2">{model.name}</h1>
           <p className="text-slate-500 dark:text-slate-400 font-inter text-sm md:text-base">Compare prices for different RAM &amp; storage configurations.</p>
         </motion.div>
 
-        <BrandSearch categoryId={nav.category} companyId={nav.company} go={go} />
+        <BrandSearch categoryId={nav.category || 'mobile'} companyId={nav.company || 'apple'} go={go} />
 
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6"
@@ -167,18 +167,22 @@ export default function VariantsPage({ nav, go, goBack, canGoBack }) {
           initial="initial"
           animate="animate"
         >
-          {model.variants.map((variant, i) => (
+          {(model.variants || []).map((variant, i) => (
             <VariantCard
               key={i}
               variant={variant}
-              catColor={cat?.color}
-              onClick={() => go('details', {
-                variant:        variant.name,
-                variantBase:    variant.base,
-                ramOptions:     variant.ramOptions,
-                storageOptions: variant.storageOptions,
-                modelId:        model.id,
-              })}
+              catColor={cat?.color || '#059669'}
+              categoryId={nav.category || 'mobile'}
+              onClick={() => {
+                const isLap = nav.category === 'laptop'
+                go('details', {
+                  variant: variant.name,
+                  variantBase: variant.base,
+                  ramOptions: variant.ramOptions || (isLap ? ['8GB', '16GB'] : ['4GB', '6GB', '8GB']),
+                  storageOptions: variant.storageOptions || (isLap ? ['256GB SSD', '512GB SSD'] : ['64GB', '128GB', '256GB']),
+                  modelId: model.id,
+                })
+              }}
             />
           ))}
         </motion.div>

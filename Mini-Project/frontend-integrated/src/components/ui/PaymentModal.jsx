@@ -8,12 +8,12 @@ export default function PaymentModal({ price, deviceVariant, catColor, onClose }
   const { user } = useAuth()
 
   const [step, setStep] = useState('form')   // form | success
-  const [name,    setName]    = useState(user?.name    || '')
-  const [email,   setEmail]   = useState(user?.email   || '')
+  const [name, setName] = useState(user?.name || '')
+  const [email, setEmail] = useState(user?.email || '')
   const [contact, setContact] = useState(user?.mobileNo || '')
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
-  const [refId,   setRefId]   = useState('')
+  const [refId, setRefId] = useState('')
 
   const accent = catColor || '#059669'
 
@@ -38,17 +38,17 @@ export default function PaymentModal({ price, deviceVariant, catColor, onClose }
   const isFormValid = name.trim() && email.trim() && contact.trim() && address.trim()
 
   const fields = [
-    { label: 'Your Name',      value: name,    setValue: setName,    type: 'text',  placeholder: 'Full Name' },
-    { label: 'Email Address',  value: email,   setValue: setEmail,   type: 'email', placeholder: 'email@example.com' },
-    { label: 'Mobile Number',  value: contact, setValue: setContact, type: 'tel',   placeholder: '+91 99999 99999' },
-    { label: 'Pickup Address', value: address, setValue: setAddress, type: 'text',  placeholder: 'Street, City, PIN code' },
+    { label: 'Your Name', value: name, setValue: setName, type: 'text', placeholder: 'Full Name' },
+    { label: 'Email Address', value: email, setValue: setEmail, type: 'email', placeholder: 'email@example.com' },
+    { label: 'Mobile Number', value: contact, setValue: setContact, type: 'tel', placeholder: '+91 99999 99999' },
+    { label: 'Pickup Address', value: address, setValue: setAddress, type: 'text', placeholder: 'Street, City, PIN code' },
   ]
 
   return (
     <AnimatePresence>
       {/* Backdrop */}
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-[100] flex items-start justify-center p-4 overflow-y-auto pt-24"
         style={{ backdropFilter: 'blur(8px)', background: 'rgba(0,0,0,0.65)' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -57,7 +57,7 @@ export default function PaymentModal({ price, deviceVariant, catColor, onClose }
       >
         {/* Card */}
         <motion.div
-          className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl"
+          className="relative w-full max-w-3xl rounded-[2.5rem] overflow-hidden shadow-2xl"
           style={{ background: '#0f172a', border: `1px solid ${accent}30` }}
           initial={{ opacity: 0, scale: 0.9, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -80,71 +80,78 @@ export default function PaymentModal({ price, deviceVariant, catColor, onClose }
             {step === 'form' && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 {/* Header */}
-                <div className="text-center mb-5">
+                <div className="text-center mb-8">
                   <div className="text-4xl mb-2">📦</div>
-                  <h2 className="text-white font-poppins font-bold text-xl mb-1">Schedule Free Pickup</h2>
+                  <h2 className="text-white font-poppins font-bold text-2xl mb-1">Schedule Free Pickup</h2>
                   <p className="text-slate-400 text-sm font-inter">We'll collect your device & pay you within 24 hrs</p>
                 </div>
 
-                {/* Price summary card */}
-                <div
-                  className="rounded-2xl p-4 mb-5 text-center"
-                  style={{ background: `${accent}12`, border: `1px solid ${accent}28` }}
-                >
-                  <p className="text-slate-400 text-xs font-inter mb-0.5">Device</p>
-                  <p className="text-white font-semibold text-sm font-poppins mb-2">{deviceVariant}</p>
-                  <div className="text-3xl font-black font-poppins" style={{ color: accent }}>
-                    ₹{price?.toLocaleString()}
-                  </div>
-                  <p className="text-slate-500 text-xs mt-1 font-inter">Recycle Value · Free Pickup · Paid within 24 hrs</p>
-                </div>
-
-                {/* Contact fields */}
-                <div className="space-y-3 mb-5">
-                  {fields.map(({ label, value, setValue, type, placeholder }) => (
-                    <div key={label}>
-                      <label className="block text-slate-400 text-xs mb-1.5 font-inter">{label}</label>
-                      <input
-                        type={type}
-                        value={value}
-                        onChange={(e) => setValue(e.target.value)}
-                        placeholder={placeholder}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder-slate-600 outline-none transition-all font-inter"
-                        onFocus={(e)  => { e.target.style.borderColor = `${accent}80` }}
-                        onBlur={(e)   => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
-                      />
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  {/* Left: Price summary card */}
+                  <div
+                    className="w-full md:w-[320px] rounded-3xl p-8 flex flex-col items-center justify-center text-center"
+                    style={{ background: `${accent}12`, border: `1px solid ${accent}28`, minHeight: '340px' }}
+                  >
+                    <p className="text-slate-400 text-xs font-inter mb-1 uppercase tracking-widest font-bold">Estimated Value</p>
+                    <div className="text-5xl font-black font-poppins mb-4" style={{ color: accent }}>
+                      ₹{price?.toLocaleString()}
                     </div>
-                  ))}
+                    <div className="h-[1px] w-12 bg-white/10 mb-4" />
+                    <p className="text-white font-semibold text-lg font-poppins mb-1">{deviceVariant}</p>
+                    <p className="text-slate-500 text-xs font-inter leading-relaxed max-w-[200px]">
+                      Recycle Value · Free Pickup · Paid within 24 hrs
+                    </p>
+                  </div>
+
+                  {/* Right: Contact fields & Action */}
+                  <div className="flex-1 w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                      {fields.map(({ label, value, setValue, type, placeholder }) => (
+                        <div key={label} className={label === 'Pickup Address' ? 'sm:col-span-2' : ''}>
+                          <label className="block text-slate-400 text-[11px] mb-2 font-inter uppercase tracking-wider font-bold">{label}</label>
+                          <input
+                            type={type}
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            placeholder={placeholder}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-slate-600 outline-none transition-all font-inter focus:bg-white/[0.08]"
+                            onFocus={(e) => { e.target.style.borderColor = `${accent}80` }}
+                            onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Confirm button */}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={handleConfirm}
+                      disabled={!isFormValid || loading}
+                      className="w-full py-4 rounded-2xl text-white font-poppins font-bold text-base cursor-pointer border-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        background: `linear-gradient(135deg, ${accent}, ${accent}bb)`,
+                        boxShadow: `0 10px 30px ${accent}30`,
+                      }}
+                    >
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Scheduling…</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>🚛</span>
+                          <span>Confirm Pickup</span>
+                        </>
+                      )}
+                    </motion.button>
+
+                    <p className="text-center text-slate-500 text-[10px] mt-4 font-inter uppercase tracking-widest">
+                      Free service · No hidden charges
+                    </p>
+                  </div>
                 </div>
-
-                {/* Confirm button */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={handleConfirm}
-                  disabled={!isFormValid || loading}
-                  className="w-full py-4 rounded-2xl text-white font-poppins font-bold text-base cursor-pointer border-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    background: `linear-gradient(135deg, ${accent}, ${accent}bb)`,
-                    boxShadow: `0 6px 24px ${accent}38`,
-                  }}
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Scheduling…</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>🚛</span>
-                      <span>Confirm Pickup</span>
-                    </>
-                  )}
-                </motion.button>
-
-                <p className="text-center text-slate-500 text-xs mt-3 font-inter">
-                  Free service · No hidden charges
-                </p>
               </motion.div>
             )}
 
@@ -176,9 +183,9 @@ export default function PaymentModal({ price, deviceVariant, catColor, onClose }
                 >
                   <p className="text-slate-400 text-xs font-inter mb-3 font-semibold uppercase tracking-wide">Booking Summary</p>
                   {[
-                    ['Device',    deviceVariant],
-                    ['Value',     `₹${price?.toLocaleString()}`],
-                    ['Contact',   contact],
+                    ['Device', deviceVariant],
+                    ['Value', `₹${price?.toLocaleString()}`],
+                    ['Contact', contact],
                     ['Reference', refId],
                   ].map(([k, v]) => (
                     <div key={k} className="flex justify-between items-center mb-2">

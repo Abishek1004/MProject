@@ -331,7 +331,7 @@ export default function HomePage({ go }) {
             >
               {/* Glossy Shine Effect */}
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out skew-x-[-25deg] z-20 pointer-events-none" />
-              
+
               <div className="h-28 w-full flex items-center justify-center mb-8">
                 {f.icon && typeof f.icon === 'string' && f.icon.length > 10 ? (
                   <ImgF

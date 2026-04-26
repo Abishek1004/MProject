@@ -7,11 +7,10 @@
     box-sizing: border-box;
   }
 
-  /* Global text colour — light: gray-800, dark: gray-200 */
+  /* ── Root / HTML ─────────────────────────────────────────────────── */
   html {
-    color: #1e293b; /* slate-800 */
-    transition: background-color 0.3s ease, color 0.3s ease;
-    
+    color: #1e293b;
+
     /* Fluid Typography Variables */
     --fs-nav: clamp(9px, 1vw, 13px);
     --fs-h1: clamp(2.5rem, 8vw, 4.5rem);
@@ -19,26 +18,19 @@
     --fs-h3: clamp(1.25rem, 3vw, 1.75rem);
   }
 
-  .dark html {
-    color: #e2e8f0; /* slate-200 */
-  }
-
+  /* ── Body ────────────────────────────────────────────────────────── */
   body {
     font-family: 'Inter', 'Segoe UI', sans-serif;
     background: #f8fafc;
+    color: #0f172a;
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
   }
 
-  .dark body {
-    background: #0f172a;
-    color: #e2e8f0; /* also set on body as a second anchor */
-  }
-
+  /* ── Typography ──────────────────────────────────────────────────── */
   h1, h2, h3, h4 {
     font-family: 'Poppins', sans-serif;
-    text-wrap: balance; /* Prevents awkward single-word lines in translations */
+    text-wrap: balance;
     overflow-wrap: break-word;
     hyphens: auto;
   }
@@ -46,14 +38,8 @@
   button {
     font-family: 'Inter', sans-serif;
   }
-  
-  /* Global width adjustment for long translations */
-  .text-fit {
-    overflow-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-  }
 
+  /* ── Scrollbar ───────────────────────────────────────────────────── */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -62,17 +48,22 @@
     background: #f1f5f9;
   }
 
-  .dark ::-webkit-scrollbar-track {
-    background: #1e293b;
-  }
-
   ::-webkit-scrollbar-thumb {
-    background: #10b981;
+    background: linear-gradient(to bottom, #10b981, #059669);
     border-radius: 99px;
   }
 
-  .dark ::-webkit-scrollbar-thumb {
-    background: #059569;
+  /* ── Selection ───────────────────────────────────────────────────── */
+  ::selection {
+    background: rgba(5, 150, 105, 0.25);
+    color: inherit;
+  }
+
+  /* ── Word Wrap Helper ────────────────────────────────────────────── */
+  .text-fit {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
   }
 }
 
@@ -82,7 +73,7 @@
   }
 }
 
-/* ── Global Micro-interactions ─────────────────────────────────────────────── */
+/* ── Global Micro-interactions ───────────────────────────────────────── */
 
 /* Input / textarea focus glow */
 input:focus,
@@ -95,13 +86,14 @@ select:focus {
 
 /* Button press scale */
 button {
-  transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition: transform 0.12s ease, box-shadow 0.15s ease,
+              background-color 0.15s ease, color 0.15s ease;
 }
 button:active:not(:disabled) {
   transform: scale(0.96);
 }
 
-/* Card hover helper class */
+/* ── Card hover helper ───────────────────────────────────────────────── */
 .eco-card {
   transition: transform 0.22s cubic-bezier(0.22, 0.68, 0, 1.2),
               box-shadow 0.22s ease,
@@ -116,7 +108,7 @@ button:active:not(:disabled) {
   transform: translateY(-2px) scale(1.00);
 }
 
-/* Skeleton loader shimmer */
+/* ── Skeleton loader shimmer ─────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -400px 0; }
   100% { background-position: 400px 0; }
@@ -127,12 +119,8 @@ button:active:not(:disabled) {
   animation: shimmer 1.4s ease-in-out infinite;
   border-radius: 6px;
 }
-.dark .skeleton {
-  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-  background-size: 800px 100%;
-}
 
-/* ── Reduced Motion ─────────────────────────────────────────────────────────── */
+/* ── Reduced Motion ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -144,11 +132,20 @@ button:active:not(:disabled) {
   }
 }
 
-/* ── Hide Google Translate Branding / Logos ───────────────────────────────── */
+/* ── Google Translate Suppression ────────────────────────────────────── */
 .goog-te-banner-frame,
 #goog-te-banner-frame,
-.goog-te-balloon-frame {
+.goog-te-balloon-frame,
+iframe.goog-te-banner-frame,
+.goog-te-floating-widget,
+.goog-te-gadget-icon,
+.goog-te-menu-value img,
+.goog-logo-link,
+#goog-gt-tt,
+.goog-tooltip {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .skiptranslate {
@@ -157,22 +154,26 @@ button:active:not(:disabled) {
 
 body {
   top: 0 !important;
+  position: static !important;
 }
 
-/* Hide the Google Translate widget branding */
-.goog-logo-link {
-   display: none !important;
+html {
+  margin-top: 0 !important;
 }
 
 .goog-te-gadget {
-   color: transparent !important;
+  color: transparent !important;
 }
 
 .goog-te-gadget .goog-te-combo {
-   color: #334155 !important; /* Re-show the dropdown with slate-700 */
+  color: #334155 !important;
 }
 
-/* Hide Google logo specifically in the gadget */
 .goog-te-gadget span {
-   display: none !important;
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
 }

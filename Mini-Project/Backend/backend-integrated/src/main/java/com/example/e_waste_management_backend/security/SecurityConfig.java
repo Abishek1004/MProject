@@ -3,7 +3,6 @@ package com.example.e_waste_management_backend.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,7 +27,7 @@ public class SecurityConfig {
 
     // Reads comma-separated origins from env var ALLOWED_ORIGINS
     // e.g. "https://my-frontend.onrender.com,http://localhost:5173"
-    @Value("${allowed.origins:http://localhost:5173,http://localhost:5174}")
+    @Value("${allowed.origins:http://localhost:5173,http://localhost:5174,http://localhost:5175}")
     private String allowedOrigins;
 
     @Autowired private GoogleUserRepository googleRepo;

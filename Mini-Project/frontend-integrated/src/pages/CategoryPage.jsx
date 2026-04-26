@@ -18,7 +18,7 @@ function CategorySearch({ categoryId, go }) {
     for (const item of SEARCH_INDEX) {
       if (item.categoryId !== categoryId) continue
       const name = item.variantName.toLowerCase()
-      if (name === trimmed)         exact.push(item)
+      if (name === trimmed) exact.push(item)
       else if (name.startsWith(trimmed)) starts.push(item)
       else if (name.includes(trimmed) || item.companyName.toLowerCase().includes(trimmed)) contains.push(item)
     }
@@ -31,7 +31,7 @@ function CategorySearch({ categoryId, go }) {
         style={{ borderColor: q ? catColor : '#e2e8f0' }}>
         <div className="pl-4 pr-2 flex-shrink-0">
           <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke={q ? catColor : '#94a3b8'} strokeWidth="2.5">
-            <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/>
+            <circle cx="11" cy="11" r="8" /><path strokeLinecap="round" d="m21 21-4.35-4.35" />
           </svg>
         </div>
         <input
@@ -53,10 +53,12 @@ function CategorySearch({ categoryId, go }) {
             <button
               key={i}
               onClick={() => {
+                const isLap = item.categoryId === 'laptop'
                 go('details', {
                   category: item.categoryId, company: item.companyId,
                   variant: item.variantName, variantBase: item.variantBase,
-                  ramOptions: item.ramOptions, storageOptions: item.storageOptions,
+                  ramOptions: item.ramOptions || (isLap ? ['8GB', '16GB'] : ['4GB', '6GB', '8GB']),
+                  storageOptions: item.storageOptions || (isLap ? ['256GB SSD', '512GB SSD'] : ['64GB', '128GB', '256GB']),
                   modelId: item.modelId,
                 })
                 setQ('')
@@ -104,10 +106,10 @@ function CompanyCard({ company, catColor, catLight, onClick, go }) {
       }}
       whileTap={{ scale: 0.97, y: -2 }}
     >
-      <div className="z-10 cursor-pointer p-1" onClick={(e) => { e.stopPropagation(); go('cart') }}>
+      <div className="z-10 p-1">
         <ImgF src={company.logo} alt={company.name}
-          style={{ width:48, height:48, objectFit:'contain' }}
-          fallback={<span style={{ fontSize:'2.2rem' }}>{company.emoji}</span>} />
+          style={{ width: 48, height: 48, objectFit: 'contain' }}
+          fallback={<span style={{ fontSize: '2.2rem' }}>{company.emoji}</span>} />
       </div>
       <div>
         <p className="font-poppins font-bold text-base text-slate-800 dark:text-slate-100">
@@ -124,7 +126,7 @@ function CompanyCard({ company, catColor, catLight, onClick, go }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function CategoryPage({ nav, go, goBack, canGoBack }) {
-  const cat      = CATEGORIES.find((c) => c.id === nav.category)
+  const cat = CATEGORIES.find((c) => c.id === nav.category)
   const companies = getCompanies(nav.category)
 
   if (!cat) return null
@@ -142,19 +144,19 @@ export default function CategoryPage({ nav, go, goBack, canGoBack }) {
       <div className="relative overflow-hidden px-5 py-14"
         style={{ background: `linear-gradient(135deg,${cat.color}ee,${cat.color}88)` }}>
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full pointer-events-none"
-          style={{ background:'#fff', opacity:0.05, filter:'blur(50px)' }} />
+          style={{ background: '#fff', opacity: 0.05, filter: 'blur(50px)' }} />
         <div className="max-w-[1200px] mx-auto relative">
           <div className="flex items-center gap-6 mb-8">
             <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl flex-shrink-0"
-              style={{ background:'rgba(255,255,255,0.2)', border:'2px solid rgba(255,255,255,0.3)' }}>
+              style={{ background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.3)' }}>
               <img src={cat.img} alt={cat.name} className="w-10 h-10 object-contain" />
             </div>
             <div>
               <span className="inline-block mb-2 text-xs font-bold font-inter tracking-widest uppercase px-3 py-1 rounded-full"
-                style={{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'1px solid rgba(255,255,255,0.3)' }}>
+                style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
                 {cat.badge}
               </span>
-              <h1 className="font-poppins font-extrabold text-white mb-1" style={{ fontSize:'clamp(1.8rem,4vw,2.8rem)' }}>
+              <h1 className="font-poppins font-extrabold text-white mb-1" style={{ fontSize: 'clamp(1.8rem,4vw,2.8rem)' }}>
                 Recycle Your {cat.name}
               </h1>
               <p className="text-white/70 font-inter text-sm">{cat.sub} — instant price estimate</p>
@@ -164,9 +166,9 @@ export default function CategoryPage({ nav, go, goBack, canGoBack }) {
           <CategorySearch categoryId={nav.category} go={go} />
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 mt-6 max-w-sm">
-            {[[companies.length,'Brands'],[totalModels,'Series'],[totalVariants,'Variants']].map(([v,l]) => (
+            {[[companies.length, 'Brands'], [totalModels, 'Series'], [totalVariants, 'Variants']].map(([v, l]) => (
               <div key={l} className="rounded-2xl px-3 py-2.5 text-center"
-                style={{ background:'rgba(255,255,255,0.15)', border:'1px solid rgba(255,255,255,0.2)' }}>
+                style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)' }}>
                 <div className="font-poppins font-extrabold text-white text-xl">{v}</div>
                 <div className="text-white/65 text-[11px] font-inter">{l}</div>
               </div>

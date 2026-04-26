@@ -5,16 +5,12 @@ import BackButton from '../components/ui/BackButton'
 import Footer from '../components/layout/Footer'
 
 export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
-  const [walletBalance, setWalletBalance] = useState(0) // Initial balance is 0 as requested
-  const [useWallet, setUseWallet] = useState(false)
   const [isScheduled, setIsScheduled] = useState(false)
   const [status, setStatus] = useState('Pending')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   
-  const subtotal = useMemo(() => cart.reduce((sum, item) => sum + item.price, 0), [cart])
-  const walletDeduction = useWallet ? Math.min(subtotal, walletBalance) : 0
-  const total = subtotal - walletDeduction
+  const total = useMemo(() => cart.reduce((sum, item) => sum + item.price, 0), [cart])
 
   const handleSchedulePickup = () => {
     if (!address.trim() || !phone.trim()) {
@@ -25,14 +21,6 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
     setStatus('Pickup Scheduled')
     // In a real app, cart would be cleared or moved to 'orders'
     // Here we'll just show the status for the user
-  }
-
-  const handleAddMoney = () => {
-    // Mock functionality to add money for testing
-    const amount = prompt("Enter amount to add to wallet:", "1000")
-    if (amount && !isNaN(amount)) {
-      setWalletBalance(prev => prev + parseInt(amount))
-    }
   }
 
   const steps = [
@@ -197,45 +185,8 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
             )}
           </div>
 
-          {/* Sidebar / Wallet & Summary */}
+          {/* Sidebar / Summary */}
           <div className="flex flex-col gap-6">
-            {/* Wallet Card */}
-            <motion.div 
-              className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 shadow-xl shadow-slate-900/20 text-white relative overflow-hidden"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-              <div className="relative z-10">
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Eco Wallet</p>
-                    <h3 className="font-poppins font-black text-3xl">₹{walletBalance.toLocaleString()}</h3>
-                  </div>
-                  <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl">💳</div>
-                </div>
-                
-                <div 
-                  onClick={() => !isScheduled && walletBalance > 0 && setUseWallet(!useWallet)}
-                  className={`flex items-center gap-3 p-3 rounded-2xl transition-all border-2 ${useWallet ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-white/5 border-white/5'} ${walletBalance === 0 || isScheduled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'}`}
-                >
-                  <div className={`w-5 h-5 rounded-md flex items-center justify-center transition-all ${useWallet ? 'bg-emerald-500' : 'bg-slate-700'}`}>
-                    {useWallet && <span className="text-[10px] text-white">✓</span>}
-                  </div>
-                  <span className="text-xs font-bold font-inter tracking-wide">Use wallet balance</span>
-                </div>
-
-                {!isScheduled && (
-                  <button 
-                    onClick={handleAddMoney}
-                    className="w-full mt-4 bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold py-2 rounded-xl border-none cursor-pointer transition-all uppercase tracking-widest"
-                  >
-                    + Add Money (Mock)
-                  </button>
-                )}
-              </div>
-            </motion.div>
 
             {/* Summary Card */}
             <motion.div 
@@ -249,14 +200,8 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
               <div className="flex flex-col gap-3 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Subtotal</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-100">₹{subtotal.toLocaleString()}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">₹{total.toLocaleString()}</span>
                 </div>
-                {useWallet && (
-                  <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
-                    <span>Wallet Deduction</span>
-                    <span className="font-bold">-₹{walletDeduction.toLocaleString()}</span>
-                  </div>
-                )}
                 <div className="h-px bg-slate-100 dark:bg-slate-700 my-1" />
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-slate-800 dark:text-slate-100">Total Payable</span>

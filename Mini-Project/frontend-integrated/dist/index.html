@@ -19,167 +19,68 @@
     /* ===== COMPREHENSIVE GOOGLE TRANSLATE HIDING ===== */
     
     /* 1. Banner Frame - All variants */
-    .goog-te-banner-frame {
+    .goog-te-banner-frame,
+    #goog-te-banner-frame,
+    .goog-te-balloon-frame {
       display: none !important;
       visibility: hidden !important;
       height: 0 !important;
       margin: 0 !important;
       padding: 0 !important;
-      position: fixed !important;
-      top: -9999px !important;
-      z-index: -9999 !important;
+      opacity: 0 !important;
     }
 
-    body .goog-te-banner-frame,
-    body.goog-te-banner-frame {
+    /* 2. Hide Google Branding / Logos specifically */
+    .goog-logo-link,
+    .goog-logo-link img,
+    .goog-te-gadget span {
       display: none !important;
       visibility: hidden !important;
-      height: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
+      opacity: 0 !important;
     }
 
-    /* 2. Google Translate Floating Widget */
-    .goog-te-floating-widget {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      width: 0 !important;
-      position: fixed !important;
-      top: -9999px !important;
-      z-index: -9999 !important;
-    }
-
-    .goog-te-float {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    /* 3. Google Translate Gadget (main widget) */
+    /* 3. Gadget and Tooltip cleanup */
     .goog-te-gadget {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      width: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
+      color: transparent !important;
+      font-size: 0 !important;
     }
 
-    .goog-te-gadget-simple {
-      display: none !important;
-      visibility: hidden !important;
+    .goog-te-gadget .goog-te-combo {
+      color: #334155 !important; /* Restore select text color */
+      font-size: 14px !important;
+      display: block !important;
     }
 
-    .goog-te-gadget::before,
-    .goog-te-gadget::after {
+    .goog-te-tooltip,
+    .goog-te-tooltip-small,
+    .goog-te-menu-value {
       display: none !important;
     }
 
-    /* 4. Google Translate Select Element (hidden dropdown) */
-    .goog-te-combo {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      width: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
+    /* 4. Reset Body top (Google adds top: 40px) */
+    body {
+      top: 0 !important;
+      position: static !important;
     }
-
-    /* 5. Hide all Google Translate controls */
-    .goog-te-ctrl {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    .goog-te-ctrl-fullscreen {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    .goog-te-ctrl-open {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    /* 6. Hide G icon and buttons */
-    .goog-te-button {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    .goog-te-tooltip {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    /* 7. Hide remaining Google elements */
-    .goog-te-banner {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    .goog-te-benc {
-      display: none !important;
-      visibility: hidden !important;
-    }
-
-    .goog-te-element {
-      display: none !important;
-      visibility: hidden !important;
-    }
+    html { margin-top: 0 !important; }
 
     .skiptranslate {
       display: none !important;
-      visibility: hidden !important;
     }
 
-    /* 8. Hide any iframe from Google */
-    iframe.goog-te-banner-frame {
+    /* 5. Hide the floating widget if it appears */
+    .goog-te-floating-widget {
       display: none !important;
-      visibility: hidden !important;
     }
 
-    /* 9. Google Translate container */
-    #google_translate_element {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      width: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      position: fixed !important;
-      top: -9999px !important;
-      z-index: -9999 !important;
-    }
-
-    /* 10. Prevent layout shift - reset body margins */
+    /* 6. Prevent layout shift */
     html, body {
       margin: 0 !important;
       padding: 0 !important;
     }
-
-    body {
-      overflow-x: auto !important;
-    }
-
-    /* 11. Ensure Google elements don't overlay */
-    body::before,
-    body::after {
-      display: none !important;
-    }
-
-    /* 12. Hide any injected Google styles */
-    style[data-styled-version] {
-      display: none !important;
-    }
-
-    /* 13. Remove space that Google might create */
-    .goog-te-banner-frame ~ body {
-      margin-top: 0 !important;
-    }
   </style>
-  <script type="module" crossorigin src="/assets/index-BOpvMs5a.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DfHJeA_P.css">
+  <script type="module" crossorigin src="/assets/index-_PbrKKR6.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-C5Ntn1ht.css">
 </head>
 
 <body>

@@ -4,42 +4,46 @@ import { pageVariants } from './utils/motion'
 import { api } from './utils/api'
 import { useAuth } from './context/AuthContext'
 
-import Navbar    from './components/layout/Navbar'
+import Navbar from './components/layout/Navbar'
 import CartModal from './components/ui/CartModal'
 import AuthModal from './components/ui/AuthModal'
-import Chatbot   from './components/ui/Chatbot'
+import Chatbot from './components/ui/Chatbot'
 
-import HomePage      from './pages/HomePage'
-import AboutPage     from './pages/AboutPage'
-import ProcessPage   from './pages/ProcessPage'
-import SearchPage    from './pages/SearchPage'
-import CategoryPage  from './pages/CategoryPage'
-import ModelsPage    from './pages/ModelsPage'
-import VariantsPage  from './pages/VariantsPage'
-import DetailsPage   from './pages/DetailsPage'
+import HomePage from './pages/HomePage'
+import AboutPage from './pages/AboutPage'
+import ProcessPage from './pages/ProcessPage'
+import SearchPage from './pages/SearchPage'
+import CategoryPage from './pages/CategoryPage'
+import ModelsPage from './pages/ModelsPage'
+import VariantsPage from './pages/VariantsPage'
+import DetailsPage from './pages/DetailsPage'
 import SystemConfigPage from './pages/SystemConfigPage'
-import EstimatePage  from './pages/EstimatePage'
-import CartPage      from './pages/CartPage'
-import EcoloopAdmin  from './pages/EcoloopAdmin'
+import EstimatePage from './pages/EstimatePage'
+import CartPage from './pages/CartPage'
+import EcoloopAdmin from './pages/EcoloopAdmin'
+import SchedulePickupPage from './pages/SchedulePickupPage'
+import WalletPage from './pages/WalletPage'
 
 // ─── ROUTE MAP ───────────────────────────────────────────────────────────────
 const ROUTES = {
-  '/':         'home',
-  '/about':    'about',
-  '/process':  'process',
-  '/search':   'search',
-  '/login':    'signin',
-  '/signup':   'signup',
-  '/mobile':   'category',
-  '/laptop':   'category',
-  '/tablet':   'category',
-  '/models':   'models',
+  '/': 'home',
+  '/about': 'about',
+  '/process': 'process',
+  '/search': 'search',
+  '/login': 'signin',
+  '/signup': 'signup',
+  '/mobile': 'category',
+  '/laptop': 'category',
+  '/tablet': 'category',
+  '/models': 'models',
   '/variants': 'variants',
-  '/details':  'details',
-  '/sysconfig':'sysconfig',
+  '/details': 'details',
+  '/sysconfig': 'sysconfig',
   '/estimate': 'estimate',
-  '/cart':     'cart',
-  '/admin':    'ecoloopadmin',
+  '/cart': 'cart',
+  '/admin': 'ecoloopadmin',
+  '/schedule-pickup': 'schedulepickup',
+  '/wallet': 'wallet',
 }
 
 function pageToPath(page, nav = {}) {
@@ -48,7 +52,8 @@ function pageToPath(page, nav = {}) {
     home: '/', about: '/about', process: '/process', search: '/search',
     signin: '/login', signup: '/signup', models: '/models',
     variants: '/variants', details: '/details', sysconfig: '/sysconfig', estimate: '/estimate',
-    cart: '/cart', ecoloopadmin: '/admin',
+    cart: '/cart', ecoloopadmin: '/admin', schedulepickup: '/schedule-pickup',
+    wallet: '/wallet',
   }
   return map[page] || '/'
 }
@@ -65,11 +70,30 @@ function pathToPage(path) {
 export default function App() {
   const init = pathToPage(window.location.pathname)
 
-  const [history,   setHistory]   = useState([{ page: init.page, nav: init.partialNav }])
-  const [cartOpen,  setCartOpen]  = useState(false)
-  const [pageKey,   setPageKey]   = useState(0)   // triggers transition
-  const [visible,   setVisible]   = useState(true)
-  const [authMode,  setAuthMode]  = useState(null) // 'signin' | 'signup' | null
+  const [history, setHistory] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('ecoloop_nav_history')
+      if (saved) return JSON.parse(saved)
+    } catch (e) {}
+    return [{ page: init.page, nav: init.partialNav }]
+  })
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('ecoloop_nav_history', JSON.stringify(history))
+    } catch (e) {
+      console.warn('Storage quota exceeded, clearing old history...');
+      if (history.length > 20) {
+        setHistory(prev => prev.slice(prev.length - 20));
+      } else {
+        sessionStorage.removeItem('ecoloop_nav_history');
+      }
+    }
+  }, [history])
+  const [cartOpen, setCartOpen] = useState(false)
+  const [pageKey, setPageKey] = useState(0)   // triggers transition
+  const [visible, setVisible] = useState(true)
+  const [authMode, setAuthMode] = useState(null) // 'signin' | 'signup' | null
   const [pendingCartItem, setPendingCartItem] = useState(null)
 
   // ── Auth from context (persisted via AuthContext → localStorage) ─────────────
@@ -78,13 +102,13 @@ export default function App() {
 
   useEffect(() => {
     if (token && cart.length === 0) {
-      api.getCart(token).then(setCart).catch(() => {})
+      api.getCart(token).then(setCart).catch(() => { })
     }
   }, [token])
 
-  const current   = history[history.length - 1]
-  const page      = current.page
-  const nav       = current.nav
+  const current = history[history.length - 1]
+  const page = current.page
+  const nav = current.nav
   const canGoBack = history.length > 1
 
   // Sync URL & title
@@ -106,17 +130,23 @@ export default function App() {
       estimate: 'Price Estimate — EcoRecycle',
       cart: 'My Cart — EcoRecycle',
       ecoloopadmin: 'Admin Dashboard — EcoRecycle',
+      wallet: 'My Wallet — EcoRecycle',
     }
     document.title = titles[page] || 'EcoRecycle'
   }, [page, nav])
 
   useEffect(() => {
     const handlePop = (e) => {
-      if (e.state?.page) setHistory((prev) => [...prev, { page: e.state.page, nav: e.state.nav || {} }])
-      else {
-        const { page: p, partialNav } = pathToPage(window.location.pathname)
-        setHistory((prev) => [...prev, { page: p, nav: partialNav }])
-      }
+      setHistory((prev) => {
+        let nextHistory;
+        if (e.state?.page) nextHistory = [...prev, { page: e.state.page, nav: e.state.nav || {} }]
+        else {
+          const { page: p, partialNav } = pathToPage(window.location.pathname)
+          nextHistory = [...prev, { page: p, nav: partialNav }]
+        }
+        if (nextHistory.length > 50) return nextHistory.slice(nextHistory.length - 50)
+        return nextHistory
+      })
       window.scrollTo(0, 0)
     }
     window.addEventListener('popstate', handlePop)
@@ -129,8 +159,8 @@ export default function App() {
     const t = params.get('token')
     if (t) {
       const u = {
-        id:    params.get('id'),
-        name:  params.get('name'),
+        id: params.get('id'),
+        name: params.get('name'),
         email: params.get('email')
       }
       onLoginSuccess(u, t)
@@ -138,15 +168,17 @@ export default function App() {
     }
   }, [])
 
-  // ── Navigation with fade transition ────────────────────────────────────────
+
   const go = useCallback((p, extra = {}) => {
     setVisible(false)
     setTimeout(() => {
       setHistory((prev) => {
         const prevNav = prev[prev.length - 1].nav
         const newNav = { ...prevNav, ...extra }
-        window.history.pushState({ page: p, nav: newNav }, '', pageToPath(p, newNav))
-        return [...prev, { page: p, nav: newNav }]
+        window.history.pushState({ page: p, nav: newNav }, '', '/') 
+        const nextHistory = [...prev, { page: p, nav: newNav }]
+        if (nextHistory.length > 50) return nextHistory.slice(nextHistory.length - 50)
+        return nextHistory
       })
       setPageKey(k => k + 1)
       setVisible(true)
@@ -173,7 +205,7 @@ export default function App() {
   // ── Auth ────────────────────────────────────────────────────────────────────
   const onLoginSuccess = (u, t) => {
     login(u, t)                             // saves to context + localStorage
-    api.getCart(t).then(setCart).catch(() => {})
+    api.getCart(t).then(setCart).catch(() => { })
     setAuthMode(null)
     if (pendingCartItem) {
       setCart((prev) => [...prev, { ...pendingCartItem, id: Date.now() }])
@@ -207,7 +239,7 @@ export default function App() {
   }
 
   const removeFromCart = async (id) => {
-    if (token) { try { await api.removeFromCart(id, token) } catch {} }
+    if (token) { try { await api.removeFromCart(id, token) } catch { } }
     setCart((p) => p.filter((i) => i.id !== id))
   }
 
@@ -234,18 +266,20 @@ export default function App() {
           exit="exit"
           style={{ willChange: 'transform, opacity' }}
         >
-          {page === 'home'     && <HomePage     {...shared} />}
-          {page === 'about'    && <AboutPage    {...shared} />}
-          {page === 'process'  && <ProcessPage  {...shared} />}
-          {page === 'search'   && <SearchPage   {...shared} />}
+          {page === 'home' && <HomePage     {...shared} />}
+          {page === 'about' && <AboutPage    {...shared} />}
+          {page === 'process' && <ProcessPage  {...shared} />}
+          {page === 'search' && <SearchPage   {...shared} />}
           {page === 'category' && <CategoryPage {...shared} />}
-          {page === 'models'   && <ModelsPage   {...shared} />}
+          {page === 'models' && <ModelsPage   {...shared} />}
           {page === 'variants' && <VariantsPage {...shared} />}
-          {page === 'details'  && <DetailsPage  {...shared} />}
-          {page === 'sysconfig'&& <SystemConfigPage {...shared} />}
+          {page === 'details' && <DetailsPage  {...shared} />}
+          {page === 'sysconfig' && <SystemConfigPage {...shared} />}
           {page === 'estimate' && <EstimatePage {...shared} addToCart={addToCart} />}
-          {page === 'cart'     && <CartPage     {...shared} cart={cart} onRemove={removeFromCart} />}
+          {page === 'cart' && <CartPage     {...shared} cart={cart} onRemove={removeFromCart} />}
           {page === 'ecoloopadmin' && <EcoloopAdmin {...shared} />}
+          {page === 'schedulepickup' && <SchedulePickupPage {...shared} />}
+          {page === 'wallet' && <WalletPage {...shared} />}
         </motion.div>
       </AnimatePresence>
 

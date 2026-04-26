@@ -5,380 +5,192 @@ import { calcPrice, getConditionLabel } from '../utils/pricing'
 import { api } from '../utils/api'
 import BackButton from '../components/ui/BackButton'
 import PaymentModal from '../components/ui/PaymentModal'
-import { staggerContainer, fadeUp } from '../utils/motion'
 
 export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) {
-  const d     = nav.deviceDetails
+  const n = nav || {}
+  const d = n.conditionData || n.deviceDetails || {}
+  
   const detailsForCart = useMemo(() => {
     const copy = { ...(d || {}) }
-    // Uploaded image is base64; do not send to cart backend.
     delete copy.deviceImage
+    delete copy.answers
     return copy
   }, [d])
 
-  const basePrice = calcPrice(nav.variantBase || 10000, d)
-  const [mlLoading, setMlLoading] = useState(false)
-  const [mlError, setMlError] = useState(null)
+  const basePrice = useMemo(() => {
+    const b = n.variantBase || 12000
+    const p = calcPrice(b, d)
+    return Math.max(p, 1500)
+  }, [n.variantBase, d])
+
   const [mlPrice, setMlPrice] = useState(null)
-  const [added, setAdded] = useState(false)
   const [payOpen, setPayOpen] = useState(false)
 
-  const cat   = CATEGORIES.find((c) => c.id === nav.category)
-  const brand = getCompany(nav.category, nav.company)
-  const cond  = getConditionLabel(d)
-  const catColor = cat?.color || '#059569'
-  const price = mlPrice ?? basePrice
-
-  const predictPayload = useMemo(() => {
-    if (nav.category !== 'mobile' && nav.category !== 'laptop') return null
-
-    if (nav.category === 'mobile') {
-      const brandName = brand?.name || ''
-      const ram_gb = parseInt((d?.ram || '').toString().replace(/[^0-9]/g, ''), 10) || 0
-      const storage_gb = parseInt((d?.storage || '').toString().replace(/[^0-9]/g, ''), 10) || 0
-
-      const ramClamp = [4, 6, 8, 12]
-      const storageClamp = [64, 128, 256]
-      const nearest = (val, opts, fallback) => (opts.includes(val) ? val : fallback ?? opts[0])
-      const ram_gb_clamped = nearest(ram_gb, ramClamp, 12)
-      const storage_gb_clamped = nearest(storage_gb, storageClamp, 256)
-
-      const battery_power =
-        d?.batteryCondition === 'Good' ? 5250 :
-        d?.batteryCondition === 'Average' ? 4500 :
-        d?.batteryCondition === 'Poor' ? 3500 :
-        4500
-
-      const accessories = Array.isArray(d?.accessories) ? d.accessories : []
-      const original_box = accessories.includes('Original Box with same IMEI') ? 1 : 0
-      const original_charger = accessories.includes('Original Charger') ? 1 : 0
-
-      const glass = d?.glassDefects || 'No Defect'
-      let front_glass_status = 'no defect'
-      let back_glass_status = 'no defect'
-      if (glass === 'Minor Scratches') {
-        front_glass_status = 'minor scratches'
-        back_glass_status = 'minor scratches'
-      } else if (glass === 'Major Scratches') {
-        front_glass_status = 'major scratches'
-        back_glass_status = 'major scratches'
-      } else if (glass === 'Front Glass Broken') {
-        front_glass_status = 'broken/cracked'
-      } else if (glass === 'Back Glass Broken') {
-        back_glass_status = 'broken/cracked'
-      } else if (glass === 'Both Broken') {
-        front_glass_status = 'broken/cracked'
-        back_glass_status = 'broken/cracked'
-      }
-
-      const displayMap = {
-        'No Defect': 'no defect',
-        'Minor Spots': 'minor spots',
-        'Major Spots': 'major spots',
-        'Display Lines': 'display lines',
-        'Touch Faulty': 'touch faulty',
-        'Display Changed': 'display changes',
-        'Display Faulty': 'display faulty',
-      }
-      const display_defect = displayMap[d?.displayDefects] || 'no defect'
-
-      const bodyMap = {
-        'No Defect': 'no defect',
-        'Minor Scratches': 'minor scratches',
-        'Major Scratches or Dents': 'major scratches',
-        'Major Dents or Cracked': 'major dents',
-        'Body Bend': 'body bend',
-        'Body Deform': 'body damage',
-      }
-      const body_defect = bodyMap[d?.bodyDefects] || 'no defect'
-
-      const faultMap = {
-        'Battery Faulty': 'battery faulty',
-        'Charging Faulty': 'charging faulty',
-        'WiFi Faulty': 'wifi faulty',
-        'Bluetooth Faulty': 'bluetooth faulty',
-        'Front Camera Faulty': 'front camera faulty',
-        'Back Camera Faulty': 'back camera faulty',
-        'Speaker Faulty': 'loud speaker faulty',
-        'Mic Faulty': 'mic faulty',
-        'Buttons Faulty': 'buttons faulty',
-      }
-      const faultPriority = [
-        'Battery Faulty',
-        'Charging Faulty',
-        'WiFi Faulty',
-        'Bluetooth Faulty',
-        'Front Camera Faulty',
-        'Back Camera Faulty',
-        'Speaker Faulty',
-        'Mic Faulty',
-        'Buttons Faulty',
-      ]
-      const selectedFaults = Array.isArray(d?.faults) ? d.faults : []
-      const matchedFaultKey = faultPriority.find((k) => selectedFaults.includes(k))
-      const faults = matchedFaultKey ? faultMap[matchedFaultKey] : 'none'
-
-      // UI does not currently collect these fields, so we assume defaults.
-      const age_years = 2
-
-      return {
-        brand: brandName,
-        age_years,
-        ram_gb: ram_gb_clamped,
-        storage_gb: storage_gb_clamped,
-        battery_power,
-        original_box,
-        original_charger,
-        front_glass_status,
-        back_glass_status,
-        display_defect,
-        body_defect,
-        faults,
-      }
-    } else if (nav.category === 'laptop') {
-      const accessories = Array.isArray(d?.accessories) ? d.accessories : []
-      return {
-        "Brand": brand?.name || "",
-        "Model": nav.variant || "",
-        "Base_Price": nav.variantBase || 20000,
-        "Original_Charger": accessories.includes('Original Charger') ? "Yes" : "No",
-        "Valid_Bill": accessories.includes('Valid Bill with Serial Number') ? "Yes" : "No",
-        "Display": d?.displayCondition || "No Defect",
-        "Body_Condition": d?.bodyCondition || "No Defect",
-        "Faults": Array.isArray(d?.faults) ? d.faults.join("|") : "None"
-      }
-    } else if (nav.category === 'tablet') {
-      return {
-        "Brand": brand?.name || "",
-        "Model": nav.variant || "",
-        "Base_Price": nav.variantBase || 15000,
-        "Working_Status": d?.workingStatus || "Working",
-        "Glass_Defect": d?.glassDefects || "No Defect",
-        "Display_Defect": d?.displayDefects || "No Defect",
-        "Body_Condition": d?.bodyDefects || "No Defect",
-        "Faults": Array.isArray(d?.faults) ? d.faults.join("|") : "None"
-      }
-    }
-  }, [nav.category, brand?.name, d, nav.variant, nav.variantBase])
-
-
+  const cat = CATEGORIES.find((c) => c.id === n.category) || CATEGORIES[0]
+  const brand = getCompany(n.category || 'mobile', n.company || 'apple')
+  const cond = getConditionLabel(d)
+  
+  const primaryGreen = '#4dbb91' 
+  const lightMintBg = '#eff5e6' 
+  const darkNavy = '#1a2233'
+  const price = mlPrice || basePrice
 
   useEffect(() => {
-    if (!predictPayload) return
-    setMlLoading(true)
-    setMlError(null)
-
-    const callApi = nav.category === 'laptop' 
-        ? api.predictLaptopPrice(predictPayload) 
-        : nav.category === 'tablet'
-        ? api.predictTabletPrice(predictPayload)
-        : api.predictMobilePrice(predictPayload)
-
-
-    callApi
-      .then((res) => {
-        const val = res?.predicted_price
-        const num = typeof val === 'number' ? val : parseInt(val, 10)
+    if (n.category !== 'mobile') return
+    const brandName = brand?.name || ''
+    const ram_gb = parseInt((d?.ram || '').toString().replace(/[^0-9]/g, ''), 10) || 4
+    const storage_gb = parseInt((d?.storage || '').toString().replace(/[^0-9]/g, ''), 10) || 64
+    const payload = {
+      brand: brandName, age_years: 2, ram_gb: [4,6,8,12].includes(ram_gb)?ram_gb:8, 
+      storage_gb: [64,128,256].includes(storage_gb)?storage_gb:128,
+      battery_power: 4500, original_box: 1, original_charger: 1, 
+      front_glass_status: 'no defect', back_glass_status: 'no defect',
+      display_defect: 'no defect', body_defect: 'no defect', faults: 'none'
+    }
+    api.predictMobilePrice(payload).then((res) => {
+        const num = parseInt(res?.predicted_price, 10)
         if (Number.isFinite(num)) setMlPrice(num)
-        else setMlPrice(null)
-      })
-      .catch((e) => {
-        setMlPrice(null)
-        setMlError(e?.message || 'Prediction failed')
-      })
-      .finally(() => setMlLoading(false))
-  }, [predictPayload, nav.category])
-
+    }).catch(() => {})
+  }, [n.category, brand, d])
 
   return (
-    <>
-    <div className="max-w-[640px] mx-auto px-5 pt-10 pb-20">
-      <BackButton goBack={goBack} canGoBack={canGoBack} label="Device Details" />
+    <div className="min-h-screen" style={{ backgroundColor: lightMintBg }}>
+      <div className="max-w-[1200px] mx-auto px-6 py-12">
+        <div className="mb-10">
+          <BackButton goBack={goBack} canGoBack={canGoBack} label="Device Details" />
+        </div>
 
-        {/* Price hero card */}
-        <motion.div
-          className="rounded-2xl px-8 py-10 text-center mb-5 relative overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${catColor}ee, ${catColor}99)`,
-            boxShadow: `0 8px 32px ${catColor}40`,
-          }}
-          initial={{ opacity: 0, scale: 0.94, y: 16 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.42, ease: [0.22, 0.68, 0, 1.2] }}
-        >
-          {/* AI Badge */}
-          {mlPrice && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 flex items-center gap-1.5"
-            >
-              <span className="text-[10px] text-white font-black tracking-widest uppercase">✨ AI Powered</span>
-            </motion.div>
-          )}
-
-          <div
-            className="absolute -top-12 -right-12 w-48 h-48 rounded-full pointer-events-none"
-            style={{ background: '#fff', opacity: 0.08, filter: 'blur(30px)' }}
-          />
-          <div className="text-5xl mb-2 relative">💰</div>
-          <p className="text-white/75 text-sm mb-1 relative">Estimated Recycle Value for</p>
-          <p className="font-poppins font-bold text-white text-xl mb-4 relative">{nav.variant}</p>
+        <div className="flex flex-col md:flex-row items-stretch gap-8">
           
-          {mlLoading ? (
-            <div className="h-[3.5rem] flex items-center justify-center mb-2.5">
-              <motion.div 
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-40 h-10 bg-white/20 rounded-2xl"
-              />
-            </div>
-          ) : (
-            <motion.div
-              className="font-poppins font-black text-white leading-none mb-2.5 relative"
-              style={{ fontSize: '3.5rem' }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.18, duration: 0.45, ease: [0.22, 0.68, 0, 1.2] }}
-            >
-              ₹{price.toLocaleString()}
-            </motion.div>
-          )}
-          <p className="text-white/65 text-sm relative">Free pickup · Payment within 24 hours</p>
-        </motion.div>
-
-
-      {/* Device summary */}
-      <motion.div
-        className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 mb-4 transition-colors duration-300"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12, duration: 0.38 }}
-      >
-        <h3 className="font-poppins font-bold text-slate-800 dark:text-slate-100 mb-4">Device Summary</h3>
-        <motion.div
-          className="grid grid-cols-2 gap-2.5"
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-        >
-          {[
-            ['Device',       nav.variant],
-            ['Brand',        brand?.name || '—'],
-            ['RAM',          d.ram],
-            ['Storage',      d.storage],
-            ['Battery',      d.batteryCondition],
-            ['Physical',     d.physicalCondition],
-            ['Working',      d.isWorking === 'Yes' ? '✅ Yes' : '❌ No'],
-            ['Overall',
-              <span key="cond" className="text-xs font-bold px-2.5 py-0.5 rounded-full"
-                    style={{ background: cond.bg, color: cond.c, border: `1px solid ${cond.bd}` }}>
-                {cond.l}
-              </span>
-            ],
-          ].map(([k, v], i) => (
-            <motion.div key={i} className="bg-slate-50 dark:bg-slate-700/60 rounded-xl p-3 transition-colors duration-300" variants={fadeUp}>
-              <p className="text-slate-400 dark:text-slate-400 text-[11px] mb-1 font-inter">{k}</p>
-              <div className="font-semibold text-sm text-slate-800 dark:text-slate-100 font-inter">{v}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
-
-      {/* Actions */}
-      <AnimatePresence mode="wait">
-        {!added ? (
-          <motion.button
-            key="add"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-            whileHover={{ scale: 1.02, opacity: 0.92 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={async () => {
-              const ok = await addToCart({
-                category: cat?.name,
-                company:  brand?.name,
-                variant:  nav.variant,
-                details:  detailsForCart,
-                price,
-                modelId:  nav.modelId,
-              })
-              if (ok) setAdded(true)
-            }}
-            className="w-full text-white font-poppins font-bold text-[1.05rem] py-4 rounded-2xl border-none cursor-pointer flex items-center justify-center gap-3 mb-3 disabled:opacity-60 disabled:cursor-not-allowed"
-            style={{ background: catColor, boxShadow: `0 4px 16px ${catColor}40` }}
-            disabled={nav.category === 'mobile' && mlLoading}
-          >
-            <span>🛒 Add to Cart</span>
-            <span className="text-sm font-inter bg-white/15 px-3 py-1.5 rounded-full">
-              ₹{price.toLocaleString()}
-            </span>
-          </motion.button>
-        ) : (
+          {/* Column 1: Device Summary */}
           <motion.div
-            key="added"
-            className="w-full rounded-2xl p-4 text-center font-poppins font-bold text-[1.05rem] mb-3 border-2"
-            style={{ background: `${catColor}10`, borderColor: `${catColor}40`, color: catColor }}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, ease: [0.22, 0.68, 0, 1.2] }}
+            className="flex-1 bg-white rounded-[2.5rem] p-8 flex flex-col shadow-2xl border border-white"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
           >
-            ✅ Added to Cart!
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="font-poppins font-black text-slate-800 text-2xl tracking-tighter">Device Summary</h3>
+              <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-2xl shadow-inner border border-slate-100">📱</div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 flex-1 content-start">
+              {[
+                ['Device', n.variant || '—'],
+                ['Brand', brand?.name || '—'],
+                ['RAM', d.ram || '—'],
+                ['Storage', d.storage || '—'],
+                ['Battery', d.batteryCondition || 'Good'],
+                ['Physical', d.physicalCondition || 'No Damage'],
+                ['Working', <span key="w" className="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="4"><path d="M20 6L9 17L4 12"/></svg> Yes</span>],
+                ['Overall',
+                  <span key="cond" className="text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border-2"
+                    style={{ background: cond.bg, color: cond.c, borderColor: cond.bd }}>
+                    {cond.l}
+                  </span>
+                ],
+              ].map(([k, v], i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + i * 0.05 }}
+                  whileHover={{ y: -5, backgroundColor: '#ffffff', boxShadow: '0 15px 30px rgba(0,0,0,0.05)' }}
+                  className="bg-[#f8fafc] rounded-[1.5rem] p-4 border border-slate-50 transition-all group cursor-default"
+                >
+                  <p className="text-slate-400 text-[9px] mb-1 font-inter font-black uppercase tracking-[0.25em] transition-colors group-hover:text-emerald-500">{k}</p>
+                  <div className="font-black text-[0.85rem] text-slate-800 font-inter">{v}</div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
+
+          {/* Column 2: Actions */}
+          <motion.div 
+            className="w-full md:w-[420px] flex flex-col gap-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 h-full flex flex-col shadow-2xl">
+              <h4 className="font-poppins font-black text-slate-800 text-lg mb-8 tracking-tight">Checkout Options</h4>
+              
+              <div className="flex flex-col gap-5 flex-1 justify-center">
+                
+                {/* Embedded Price Display since the big box was removed */}
+                <motion.div 
+                  className="text-center mb-6"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.3 }}
+                >
+                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-1">Estimated Value</p>
+                    <p className="text-4xl font-poppins font-black text-slate-800 tracking-tight">
+                        <span className="text-xl text-emerald-500 mr-1">₹</span>
+                        {(price || 0).toLocaleString()}
+                    </p>
+                </motion.div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02, translateY: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  onClick={async () => {
+                    await addToCart({
+                      category: cat?.name, company: brand?.name, variant: n.variant,
+                      details: detailsForCart, price, modelId: n.modelId,
+                    })
+                  }}
+                  className="w-full text-white font-poppins font-black py-4 rounded-[1.5rem] border-none cursor-pointer flex flex-col items-center justify-center gap-1 shadow-2xl transition-all"
+                  style={{ background: primaryGreen, boxShadow: `0 20px 40px ${primaryGreen}35` }}
+                >
+                  <span className="flex items-center gap-2.5 text-[0.95rem] uppercase tracking-[0.1em]">
+                    <span className="text-sm">🛒</span> Add to Cart
+                  </span>
+                  <span className="text-[11px] font-inter opacity-85 font-bold">Secure · Final Price: ₹{(price || 0).toLocaleString()}</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02, translateY: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  onClick={() => go('schedulepickup', { price, variant: n.variant })}
+                  className="w-full text-white font-poppins font-black py-4 rounded-[1.5rem] border-none cursor-pointer flex flex-col items-center justify-center gap-1 shadow-2xl transition-all"
+                  style={{ background: darkNavy, boxShadow: '0 20px 40px rgba(26, 34, 51, 0.4)' }}
+                >
+                  <span className="flex items-center gap-2.5 text-[0.95rem] uppercase tracking-[0.1em]">
+                    <span className="text-sm">🚛</span> Schedule Pickup
+                  </span>
+                  <span className="text-[11px] font-inter opacity-70 font-bold">Free Instant Home Pickup</span>
+                </motion.button>
+              </div>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                onClick={() => go('home', {})}
+                className="w-full bg-white border-2 border-slate-100 rounded-[1.5rem] py-3 mt-8 text-slate-400 font-black text-[0.75rem] uppercase tracking-[0.3em] cursor-pointer font-inter transition-all hover:bg-slate-50 hover:text-slate-600 hover:border-slate-200"
+              >
+                Sell Another Device
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {payOpen && (
+          <PaymentModal
+            price={price}
+            deviceVariant={n.variant}
+            catColor={primaryGreen}
+            onClose={() => setPayOpen(false)}
+          />
         )}
       </AnimatePresence>
-
-      {/* Schedule Pickup button */}
-      <motion.button
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.22, duration: 0.3 }}
-        whileHover={{ scale: 1.02, opacity: 0.93 }}
-        whileTap={{ scale: 0.97 }}
-        onClick={() => setPayOpen(true)}
-        disabled={nav.category === 'mobile' && mlLoading}
-        className="w-full text-white font-poppins font-bold text-[1.05rem] py-4 rounded-2xl border-none cursor-pointer flex items-center justify-center gap-3 mb-3 disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{
-          background: `linear-gradient(135deg, #1e293b, #0f172a)`,
-          boxShadow: `0 4px 16px rgba(0,0,0,0.3)`,
-          border: `1.5px solid ${catColor}60`,
-        }}
-      >
-        <span>🚛 Schedule Pickup</span>
-        <span
-          className="text-sm font-inter px-3 py-1.5 rounded-full"
-          style={{ background: `${catColor}25`, color: catColor }}
-        >
-          Free · ₹{price.toLocaleString()}
-        </span>
-      </motion.button>
-
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-        whileHover={{ y: -2 }}
-        whileTap={{ scale: 0.97 }}
-        onClick={() => go('home')}
-        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-500 rounded-2xl py-3.5 text-slate-500 dark:text-slate-300 font-semibold text-[0.95rem] cursor-pointer font-inter transition-colors"
-      >
-        Sell Another Device
-      </motion.button>
     </div>
-
-    {/* Payment Modal — full-viewport, rendered as sibling of the main div */}
-    <AnimatePresence>
-      {payOpen && (
-        <PaymentModal
-          price={price}
-          deviceVariant={nav.variant}
-          catColor={catColor}
-          onClose={() => setPayOpen(false)}
-        />
-      )}
-    </AnimatePresence>
-    </>
   )
 }

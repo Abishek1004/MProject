@@ -60,19 +60,19 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#131921] text-white pt-16 pb-8 px-6 md:px-20 font-sans tracking-tight relative z-10">
+    <footer className="bg-black text-white pt-16 pb-8 px-6 md:px-20 font-sans tracking-tight relative z-10 border-t border-gray-800">
       {/* Top Multi-column Section */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 border-b border-gray-700 pb-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 border-b border-gray-800 pb-12">
         {footerSections.map((section, idx) => (
           <div key={idx} className="flex flex-col space-y-4">
-            <h3 className="font-bold text-lg mb-2">{section.title}</h3>
+            <h3 className="font-bold text-lg mb-2 text-white">{section.title}</h3>
             {section.type === 'social' ? (
               <div className="flex flex-col space-y-4">
                 {socialLinks.map((social, sIdx) => (
                   <a
                     key={sIdx}
                     href={social.url}
-                    className={`flex items-center gap-3 text-slate-400 transition-all duration-300 transform hover:scale-105 ${social.hoverColor}`}
+                    className={`flex items-center gap-3 text-gray-400 transition-all duration-300 transform hover:scale-105 ${social.hoverColor}`}
                   >
                     {social.icon}
                     <span className="text-sm font-medium">{social.name}</span>
@@ -85,7 +85,7 @@ export default function Footer() {
                   <li key={lIdx}>
                     <a
                       href="#"
-                      className="text-slate-400 hover:text-white hover:underline text-sm transition-colors duration-200"
+                      className="text-gray-400 hover:text-emerald-400 hover:underline text-sm transition-colors duration-200"
                     >
                       {link}
                     </a>
@@ -112,20 +112,20 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col items-center md:items-end space-y-2">
-          <p className="text-xs text-slate-500 text-center md:text-right max-w-md italic">
+          <p className="text-xs text-gray-400 text-center md:text-right max-w-md italic">
             "Making e-waste recycling simple & rewarding for a greener tomorrow."
           </p>
-          <div className="flex gap-6 text-[10px] text-slate-600 uppercase tracking-widest font-bold">
-            <a href="#" className="hover:text-emerald-500 transition-colors">Privacy Notice</a>
-            <a href="#" className="hover:text-emerald-500 transition-colors">Terms of Use</a>
-            <a href="#" className="hover:text-emerald-500 transition-colors">Cookies Policy</a>
+          <div className="flex gap-6 text-[10px] text-gray-500 uppercase tracking-widest font-bold">
+            <a href="#" className="hover:text-emerald-400 transition-colors">Privacy Notice</a>
+            <a href="#" className="hover:text-emerald-400 transition-colors">Terms of Use</a>
+            <a href="#" className="hover:text-emerald-400 transition-colors">Cookies Policy</a>
           </div>
         </div>
       </div>
 
       {/* Bottom Copyright Bar */}
       <div className="mt-12 text-center border-t border-gray-800 pt-8 opacity-40 hover:opacity-100 transition-opacity duration-500">
-        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em]">
+        <p className="text-[10px] text-gray-600 uppercase tracking-[0.2em]">
           © 2026 EcoLoop Inc. All rights reserved. | Designed for a Sustainable Future
         </p>
       </div>
