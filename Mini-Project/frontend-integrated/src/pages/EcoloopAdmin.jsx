@@ -127,13 +127,62 @@ export default function EcoloopAdmin({ go }) {
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [adminCredentials, setAdminCredentials] = useState({ userid: '', password: '' });
+  const [loginError, setLoginError] = useState('');
   const { token } = useAuth();
 
   useEffect(() => {
-    fetchUsers();
-    const savedOrders = JSON.parse(localStorage.getItem('ecoloop_orders') || '[]');
-    setOrders(savedOrders);
-  }, []);
+    if (isAdminAuthenticated) {
+      fetchUsers();
+      fetchPickups();
+    }
+  }, [isAdminAuthenticated]);
+
+  const fetchPickups = async () => {
+    setLoading(true);
+    try {
+      const data = await api.getAllPickups();
+      setOrders(Array.isArray(data) ? data.map(p => ({
+        id: p.id,
+        customer: p.userEmail,
+        device: p.cartItemVariant,
+        amount: p.finalPrice,
+        status: p.status,
+        paymentStatus: p.paymentStatus,
+        date: p.createdAt,
+        address: p.address
+      })) : []);
+    } catch (err) {
+      console.error('Failed to fetch pickups:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setLoginError('');
+    try {
+      // Pointing to the Java backend endpoint (8081)
+      const res = await fetch('http://localhost:8081/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(adminCredentials)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsAdminAuthenticated(true);
+      } else {
+        setLoginError(data.error || 'Login failed');
+      }
+    } catch (err) {
+      setLoginError('Could not connect to server');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -172,27 +221,98 @@ export default function EcoloopAdmin({ go }) {
     }
   };
 
-  const handleApproveOrder = (orderId) => {
-    // Update Order Status only
-    const updatedOrders = orders.map(o => o.id === orderId ? { ...o, status: 'Approved' } : o);
-    setOrders(updatedOrders);
-    localStorage.setItem('ecoloop_orders', JSON.stringify(updatedOrders));
-    
-    alert(`Order ${orderId} has been confirmed/approved.`);
+  const handleApproveOrder = async (orderId) => {
+    try {
+      await api.updatePickupStatus(orderId, 'Approved');
+      setOrders(orders.map(o => o.id === orderId ? { ...o, status: 'Approved' } : o));
+      alert(`Order ${orderId} has been confirmed/approved.`);
+    } catch (err) {
+      alert('Failed to update order status');
+    }
   };
 
-  const handleProcessPayment = (orderId, amount) => {
-    // Update Eco Wallet
-    const currentWallet = parseFloat(localStorage.getItem('ecoloop_wallet') || '0');
-    localStorage.setItem('ecoloop_wallet', (currentWallet + amount).toString());
-    
-    // Update Payment Status
-    const updatedOrders = orders.map(o => o.id === orderId ? { ...o, paymentStatus: 'Paid' } : o);
-    setOrders(updatedOrders);
-    localStorage.setItem('ecoloop_orders', JSON.stringify(updatedOrders));
-    
-    alert(`Successfully paid! ₹${amount.toLocaleString()} has been instantly added to the customer's Eco Wallet.`);
+  const handleProcessPayment = async (orderId, amount) => {
+    try {
+      await api.updatePickupStatus(orderId, null, 'Paid');
+      
+      // Local wallet update for current session (optional, as wallet should be backend-driven)
+      const currentWallet = parseFloat(localStorage.getItem('ecoloop_wallet') || '0');
+      localStorage.setItem('ecoloop_wallet', (currentWallet + amount).toString());
+      
+      setOrders(orders.map(o => o.id === orderId ? { ...o, paymentStatus: 'Paid' } : o));
+      alert(`Successfully paid! ₹${amount.toLocaleString()} has been instantly added to the customer's Eco Wallet.`);
+    } catch (err) {
+      alert('Failed to process payment');
+    }
   };
+
+  if (!isAdminAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#f1f5f9] dark:bg-[#0f172a] flex items-center justify-center p-6 font-inter transition-colors duration-500">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-slate-900 w-full max-w-md p-10 rounded-[3rem] shadow-2xl border border-slate-200 dark:border-slate-800"
+        >
+          <div className="flex justify-center mb-8">
+            <div className="w-16 h-16 rounded-3xl overflow-hidden flex items-center justify-center shadow-xl shadow-emerald-500/20 bg-slate-100 dark:bg-slate-800 border-2 border-emerald-500">
+              <ImgF src={ecologo} className="w-10 h-10 object-contain" />
+            </div>
+          </div>
+          
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">Admin Access</h2>
+            <p className="text-slate-500 font-bold text-xs mt-2 uppercase tracking-widest">Verify your credentials to continue</p>
+          </div>
+
+          <form onSubmit={handleAdminLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest ml-1">Admin User ID</label>
+              <input 
+                required
+                type="text"
+                value={adminCredentials.userid}
+                onChange={e => setAdminCredentials({...adminCredentials, userid: e.target.value})}
+                placeholder="Enter User ID"
+                className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 text-slate-800 dark:text-white font-inter focus:border-emerald-500 outline-none transition-colors shadow-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest ml-1">Admin Password</label>
+              <input 
+                required
+                type="password"
+                value={adminCredentials.password}
+                onChange={e => setAdminCredentials({...adminCredentials, password: e.target.value})}
+                placeholder="Enter Password"
+                className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 text-slate-800 dark:text-white font-inter focus:border-emerald-500 outline-none transition-colors shadow-sm"
+              />
+            </div>
+
+            {loginError && (
+              <p className="text-red-500 text-xs font-bold text-center bg-red-50 dark:bg-red-500/10 py-2 rounded-lg border border-red-200 dark:border-red-500/20">{loginError}</p>
+            )}
+
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full bg-emerald-500 text-white font-poppins font-black py-4 rounded-2xl shadow-xl shadow-emerald-500/25 hover:bg-emerald-400 transition-all flex items-center justify-center disabled:opacity-70 uppercase tracking-widest text-xs mt-4"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Authenticate"
+              )}
+            </button>
+          </form>
+          
+          <button onClick={() => go('home')} className="w-full mt-6 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-800 dark:hover:text-white transition-colors">
+            ← Return to User Portal
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-[#f1f5f9] dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 font-inter transition-colors duration-500">
@@ -303,7 +423,7 @@ export default function EcoloopAdmin({ go }) {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.1 }}
-                    className="bg-white dark:bg-slate-800 p-8 rounded-[36px] shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                    className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="relative z-10 flex flex-col gap-4">
                       <p className="text-sm font-bold text-slate-400">{stat.label}</p>
@@ -325,7 +445,7 @@ export default function EcoloopAdmin({ go }) {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
                 {/* Summary Chart Card */}
-                <div className="lg:col-span-8 bg-white dark:bg-slate-800 p-10 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col">
+                <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
                   <div className="flex flex-wrap justify-between items-center gap-4 mb-10">
                     <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Summary</h3>
                     <div className="flex items-center gap-6">
@@ -347,7 +467,7 @@ export default function EcoloopAdmin({ go }) {
                 </div>
 
                 {/* Most Selling Products */}
-                <div className="lg:col-span-4 bg-white dark:bg-slate-800 p-10 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700">
+                <div className="lg:col-span-4 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
                   <div className="flex justify-between items-center mb-10">
                     <h3 className="text-xl font-bold tracking-tight">Most Selling Products</h3>
                     <button className="text-slate-400 hover:text-slate-900 transition-colors">??</button>
@@ -376,7 +496,7 @@ export default function EcoloopAdmin({ go }) {
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 pb-10">
 
                 {/* Recent Orders Table */}
-                <div className="xl:col-span-8 bg-white dark:bg-slate-800 p-10 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col">
+                <div className="xl:col-span-8 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
                   <div className="flex justify-between items-center mb-10">
                     <h3 className="text-xl font-bold tracking-tight">Recent Orders</h3>
                     <button className="text-emerald-500 font-extrabold text-xs uppercase tracking-widest hover:underline transition-all">View All</button>
@@ -422,7 +542,7 @@ export default function EcoloopAdmin({ go }) {
                 </div>
 
                 {/* Weekly Top Customers */}
-                <div className="xl:col-span-4 bg-white dark:bg-slate-800 p-10 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700">
+                <div className="xl:col-span-4 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800">
                   <div className="flex justify-between items-center mb-10">
                     <h3 className="text-xl font-bold tracking-tight">Weekly Top Customers</h3>
                     <button className="text-slate-400 hover:text-slate-900 transition-colors">??</button>
@@ -447,83 +567,76 @@ export default function EcoloopAdmin({ go }) {
           )}
 
           {activeTab === 'Manage Users' && (
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-white dark:bg-slate-800 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-all duration-500">
-               <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50/30 dark:bg-slate-900/10">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+               <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50 dark:bg-slate-800/50">
                   <div>
-                     <h3 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">User Management</h3>
-                     <p className="text-slate-400 font-bold text-sm mt-1 uppercase tracking-[0.2em]">Manage your platform's user base</p>
+                     <h3 className="text-2xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">User Management</h3>
+                     <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">Manage your platform's user base</p>
                   </div>
-                  <div className="flex gap-4">
-                     <button 
-                       onClick={handleCreateUser}
-                       className="bg-emerald-500 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-[0.15em] shadow-lg shadow-emerald-500/25 hover:translate-y-[-2px] active:scale-95 transition-all"
-                     >
-                       + Add New User
-                     </button>
-                  </div>
+                  <button 
+                    onClick={handleCreateUser}
+                    className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest shadow-md hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                  >
+                    + Add New User
+                  </button>
                </div>
                {loading ? (
                  <div className="p-24 text-center">
-                   <div className="animate-spin w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-6"></div>
+                   <div className="animate-spin w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full mx-auto mb-6"></div>
                    <p className="font-black text-slate-400 uppercase tracking-widest text-sm">Syncing with database...</p>
                  </div>
                ) : (
                  <div className="overflow-x-auto">
                    <table className="w-full text-left border-collapse">
                      <thead>
-                       <tr className="bg-slate-50/80 dark:bg-slate-900/80 text-slate-400 text-[11px] font-black uppercase tracking-[0.2em] border-b border-slate-100 dark:border-slate-800">
-                         <th className="px-10 py-6">Identity</th>
-                         <th className="px-10 py-6">Mobile Number</th>
-                         <th className="px-10 py-6">System Privileges</th>
-                         <th className="px-10 py-6">Account Status</th>
-                         <th className="px-10 py-6 text-right">Operations</th>
+                       <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
+                         <th className="px-8 py-5">Identity</th>
+                         <th className="px-8 py-5">Mobile Number</th>
+                         <th className="px-8 py-5">System Privileges</th>
+                         <th className="px-8 py-5">Account Status</th>
+                         <th className="px-8 py-5 text-right">Operations</th>
                        </tr>
                      </thead>
-                     <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
-                       {filteredUsers.length === 0 ? (
+                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                       {users.length === 0 ? (
                          <tr>
-                           <td colSpan="5" className="px-10 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No records found in database</td>
+                           <td colSpan="5" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No records found</td>
                          </tr>
                        ) : (
-                         filteredUsers.map((user, i) => (
-                           <tr key={user.id || i} className="group hover:bg-emerald-50/30 dark:hover:bg-emerald-500/5 transition-all duration-300">
-                             <td className="px-10 py-8">
-                               <div className="flex items-center gap-5">
-                                 <div className="w-12 h-12 rounded-[20px] bg-slate-900 text-white flex items-center justify-center font-black shadow-lg shadow-slate-900/20 group-hover:bg-emerald-500 transition-colors">
+                         users.map((user, i) => (
+                           <tr key={user.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                             <td className="px-8 py-6">
+                               <div className="flex items-center gap-4">
+                                 <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white flex items-center justify-center font-black border border-slate-200 dark:border-slate-700 group-hover:border-slate-400 transition-colors">
                                    {user.name?.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'U'}
                                  </div>
                                  <div>
-                                   <p className="font-black text-sm uppercase tracking-tight text-slate-800 dark:text-white">{user.name || 'Anonymous'}</p>
-                                   <p className="text-xs font-bold text-slate-400 mt-0.5">{user.email}</p>
+                                   <p className="font-black text-sm text-slate-800 dark:text-white">{user.name || 'Anonymous'}</p>
+                                   <p className="text-xs font-bold text-slate-500 mt-0.5">{user.email}</p>
                                  </div>
                                </div>
                              </td>
-                             <td className="px-10 py-8">
-                               <span className="font-bold text-sm text-slate-600 dark:text-slate-400 font-inter">
-                                 {user.mobile_no || user.phone || '—'}
-                               </span>
+                             <td className="px-8 py-6 font-bold text-sm text-slate-600 dark:text-slate-400">
+                               {user.mobile_no || user.phone || '—'}
                              </td>
-                             <td className="px-10 py-8">
-                               <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-700/50 px-4 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                             <td className="px-8 py-6">
+                               <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
                                  {user.role || 'USER'}
                                </span>
                              </td>
-                             <td className="px-10 py-8">
-                               <span className={`inline-flex items-center gap-2 text-[10px] font-black uppercase px-4 py-2 rounded-full ${user.status === 'INACTIVE' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                             <td className="px-8 py-6">
+                               <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-lg border ${user.status === 'INACTIVE' ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-emerald-600'}`}>
                                  <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'INACTIVE' ? 'bg-red-500' : 'bg-emerald-500'}`} />
                                  {user.status || 'ACTIVE'}
                                </span>
                              </td>
-                             <td className="px-10 py-8 text-right">
-                                 <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                                   <button className="p-3 rounded-2xl bg-white dark:bg-slate-700 text-slate-400 hover:text-emerald-500 transition-all hover:shadow-xl border border-slate-100 dark:border-slate-600">
-                                     <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                   </button>
+                             <td className="px-8 py-6 text-right">
+                                 <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                    <button 
                                      onClick={() => handleDeleteUser(user.id)}
-                                     className="p-3 rounded-2xl bg-white dark:bg-slate-700 text-slate-400 hover:text-red-500 transition-all hover:shadow-xl border border-slate-100 dark:border-slate-600"
+                                     className="p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm border border-slate-200 dark:border-slate-700"
                                    >
-                                     <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                     <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                                    </button>
                                  </div>
                              </td>
@@ -538,53 +651,53 @@ export default function EcoloopAdmin({ go }) {
           )}
 
           {activeTab === 'Manage Orders' && (
-             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-white dark:bg-slate-800 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-all duration-500">
-               <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50/30 dark:bg-slate-900/10">
+             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+               <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50 dark:bg-slate-800/50">
                   <div>
-                     <h3 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">Order Management</h3>
-                     <p className="text-slate-400 font-bold text-sm mt-1 uppercase tracking-[0.2em]">Approve pickups to instantly fund the Eco Wallet</p>
+                     <h3 className="text-2xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">Order Management</h3>
+                     <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">Approve pickups to instantly fund the Eco Wallet</p>
                   </div>
                </div>
                <div className="overflow-x-auto">
                  <table className="w-full text-left border-collapse">
                    <thead>
-                     <tr className="bg-slate-50/80 dark:bg-slate-900/80 text-slate-400 text-[11px] font-black uppercase tracking-[0.2em] border-b border-slate-100 dark:border-slate-800">
-                       <th className="px-10 py-6">Order ID</th>
-                       <th className="px-10 py-6">Customer</th>
-                       <th className="px-10 py-6">Device</th>
-                       <th className="px-10 py-6">Amount</th>
-                       <th className="px-10 py-6">Status</th>
-                       <th className="px-10 py-6 text-right">Action</th>
+                     <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
+                       <th className="px-8 py-5">Order ID</th>
+                       <th className="px-8 py-5">Customer</th>
+                       <th className="px-8 py-5">Device</th>
+                       <th className="px-8 py-5">Amount</th>
+                       <th className="px-8 py-5">Status</th>
+                       <th className="px-8 py-5 text-right">Action</th>
                      </tr>
                    </thead>
-                   <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                      {orders.length === 0 ? (
                        <tr>
-                         <td colSpan="6" className="px-10 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No pending orders found</td>
+                         <td colSpan="6" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No pending orders found</td>
                        </tr>
                      ) : (
                        orders.map((o, i) => (
-                         <tr key={o.id || i} className="group hover:bg-emerald-50/30 dark:hover:bg-emerald-500/5 transition-all duration-300">
-                           <td className="px-10 py-8 font-black text-sm text-slate-800 dark:text-white">{o.id}</td>
-                           <td className="px-10 py-8 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
-                           <td className="px-10 py-8 font-bold text-slate-600 dark:text-slate-300">{o.device}</td>
-                           <td className="px-10 py-8 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
-                           <td className="px-10 py-8">
-                             <span className={`inline-flex items-center gap-2 text-[10px] font-black uppercase px-4 py-2 rounded-full ${o.status === 'Approved' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                         <tr key={o.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                           <td className="px-8 py-6 font-black text-sm text-slate-800 dark:text-white">{o.id}</td>
+                           <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
+                           <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.device}</td>
+                           <td className="px-8 py-6 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
+                           <td className="px-8 py-6">
+                             <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-lg border ${o.status === 'Approved' ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-amber-50 border-amber-200 text-amber-600'}`}>
                                <div className={`w-1.5 h-1.5 rounded-full ${o.status === 'Approved' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                                {o.status}
                              </span>
                            </td>
-                           <td className="px-10 py-8 text-right">
+                           <td className="px-8 py-6 text-right">
                              {o.status === 'Pending' ? (
                                <button 
                                  onClick={() => handleApproveOrder(o.id)}
-                                 className="bg-emerald-500 text-white px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20"
+                                 className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-md"
                                >
                                  Approve
                                </button>
                              ) : (
-                               <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">Approved</span>
+                               <span className="text-slate-400 font-bold text-xs uppercase tracking-widest opacity-70">Approved</span>
                              )}
                            </td>
                          </tr>
@@ -597,62 +710,62 @@ export default function EcoloopAdmin({ go }) {
           )}
 
           {activeTab === 'Payment Status' && (
-             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-white dark:bg-slate-800 rounded-[48px] shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-all duration-500">
-               <div className="p-10 border-b border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50/30 dark:bg-slate-900/10">
+             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+               <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50 dark:bg-slate-800/50">
                   <div>
-                     <h3 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">Payment Management</h3>
-                     <p className="text-slate-400 font-bold text-sm mt-1 uppercase tracking-[0.2em]">Process payments to fund Eco Wallets</p>
+                     <h3 className="text-2xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">Payment Management</h3>
+                     <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">Process payments to fund Eco Wallets</p>
                   </div>
                </div>
                <div className="overflow-x-auto">
                  <table className="w-full text-left border-collapse">
                    <thead>
-                     <tr className="bg-slate-50/80 dark:bg-slate-900/80 text-slate-400 text-[11px] font-black uppercase tracking-[0.2em] border-b border-slate-100 dark:border-slate-800">
-                       <th className="px-10 py-6">Order ID</th>
-                       <th className="px-10 py-6">Customer</th>
-                       <th className="px-10 py-6">Amount</th>
-                       <th className="px-10 py-6">Order Status</th>
-                       <th className="px-10 py-6">Payment</th>
-                       <th className="px-10 py-6 text-right">Action</th>
+                     <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
+                       <th className="px-8 py-5">Order ID</th>
+                       <th className="px-8 py-5">Customer</th>
+                       <th className="px-8 py-5">Amount</th>
+                       <th className="px-8 py-5">Order Status</th>
+                       <th className="px-8 py-5">Payment</th>
+                       <th className="px-8 py-5 text-right">Action</th>
                      </tr>
                    </thead>
-                   <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                      {orders.length === 0 ? (
                        <tr>
-                         <td colSpan="6" className="px-10 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No orders available for payment</td>
+                         <td colSpan="6" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No orders available for payment</td>
                        </tr>
                      ) : (
                        orders.map((o, i) => {
                          const isPaid = o.paymentStatus === 'Paid';
                          const canPay = o.status === 'Approved' && !isPaid;
                          return (
-                           <tr key={o.id || i} className="group hover:bg-emerald-50/30 dark:hover:bg-emerald-500/5 transition-all duration-300">
-                             <td className="px-10 py-8 font-black text-sm text-slate-800 dark:text-white">{o.id}</td>
-                             <td className="px-10 py-8 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
-                             <td className="px-10 py-8 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
-                             <td className="px-10 py-8">
-                               <span className={`inline-flex items-center gap-2 text-[10px] font-black uppercase px-4 py-2 rounded-full ${o.status === 'Approved' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
+                           <tr key={o.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                             <td className="px-8 py-6 font-black text-sm text-slate-800 dark:text-white">{o.id}</td>
+                             <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
+                             <td className="px-8 py-6 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
+                             <td className="px-8 py-6">
+                               <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-lg border ${o.status === 'Approved' ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-600'}`}>
                                  {o.status || 'Pending'}
                                </span>
                              </td>
-                             <td className="px-10 py-8">
-                               <span className={`inline-flex items-center gap-2 text-[10px] font-black uppercase px-4 py-2 rounded-full ${isPaid ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-600'}`}>
+                             <td className="px-8 py-6">
+                               <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-lg border ${isPaid ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-amber-50 border-amber-200 text-amber-600'}`}>
                                  <div className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-indigo-500' : 'bg-amber-500'}`} />
                                  {isPaid ? 'Paid' : 'Unpaid'}
                                </span>
                              </td>
-                             <td className="px-10 py-8 text-right">
+                             <td className="px-8 py-6 text-right">
                                {isPaid ? (
                                  <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">Paid ✅</span>
                                ) : canPay ? (
                                  <button 
                                    onClick={() => handleProcessPayment(o.id, o.amount)}
-                                   className="bg-indigo-500 text-white px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-400 transition-colors shadow-lg shadow-indigo-500/20"
+                                   className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors shadow-md"
                                  >
                                    Pay Now
                                  </button>
                                ) : (
-                                 <span className="text-slate-400 font-bold text-xs uppercase tracking-widest opacity-50">Wait for Approval</span>
+                                 <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest opacity-50">Pending Approval</span>
                                )}
                              </td>
                            </tr>

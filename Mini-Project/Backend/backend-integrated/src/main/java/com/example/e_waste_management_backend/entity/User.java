@@ -22,6 +22,13 @@ public class User {
 
     private boolean verified = true;
 
+    private String role = "USER";
+
+    private String status = "ACTIVE";
+
+    @Column(name = "date")
+    private java.time.LocalDateTime date = java.time.LocalDateTime.now();
+
     // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -40,4 +47,13 @@ public class User {
 
     public boolean isVerified() { return verified; }
     public void setVerified(boolean verified) { this.verified = verified; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public java.time.LocalDateTime getDate() { return date; }
+    public void setDate(java.time.LocalDateTime date) { this.date = date; }
 }

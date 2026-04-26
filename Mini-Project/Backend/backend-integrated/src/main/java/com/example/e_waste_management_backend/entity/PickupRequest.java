@@ -28,6 +28,9 @@ public class PickupRequest {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "payment_status")
+    private String paymentStatus = "PENDING";
+
     @Column(name = "final_price")
     private Integer finalPrice;
 
@@ -70,4 +73,7 @@ public class PickupRequest {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
 }

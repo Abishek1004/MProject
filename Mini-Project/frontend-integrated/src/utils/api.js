@@ -1,7 +1,6 @@
 // ─── API Base URLs — read from environment variables for deployment ────────────
 // On Render/Netlify, set VITE_API_BASE_URL and VITE_NODE_API_URL in environment settings
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081/api'
-const NODE_API_BASE = import.meta.env.VITE_NODE_API_URL || 'http://localhost:3000/api'
 
 const request = async (url, options = {}) => {
   const res = await fetch(API_BASE + url, options)
@@ -114,19 +113,35 @@ export const api = {
     })
   },
 
-  // ── Admin Endpoints (Node.js Backend) ─────────────────────────────────────
+  // ── Admin Endpoints (Spring Boot Backend) ─────────────────────────────────────
   getAllUsers: () =>
-    fetch(`${NODE_API_BASE}/users`).then(res => res.json()),
+    request('/users', { method: 'GET' }),
 
   deleteUser: (id) =>
-    fetch(`${NODE_API_BASE}/users/${id}`, {
-      method: 'DELETE',
-    }).then(res => res.json()),
+    request(`/users/${id}`, { method: 'DELETE' }),
 
   createUser: (userData) =>
-    fetch(`${NODE_API_BASE}/users`, {
+    request('/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
-    }).then(res => res.json()),
+    }),
+
+  // ── Pickup Request Endpoints ──────────────────────────────────────────
+  getAllPickups: () =>
+    request('/pickups', { method: 'GET' }),
+
+  createPickup: (pickupData) =>
+    request('/pickups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pickupData),
+    }),
+
+  updatePickupStatus: (id, status, paymentStatus) =>
+    request(`/pickups/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, paymentStatus }),
+    }),
 }

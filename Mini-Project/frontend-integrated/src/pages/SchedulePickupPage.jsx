@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import BackButton from '../components/ui/BackButton'
+import { api } from '../utils/api'
 
 export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
   const d = nav || {}
@@ -27,28 +28,34 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
     
-    // Save order to localStorage for Admin Manage Orders
-    const newOrder = {
-      id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
-      customer: `${formData.firstName} ${formData.lastName}`,
-      device: deviceVariant,
-      amount: price,
-      status: 'Pending',
-      date: new Date().toISOString()
-    }
-    const existingOrders = JSON.parse(localStorage.getItem('ecoloop_orders') || '[]')
-    localStorage.setItem('ecoloop_orders', JSON.stringify([newOrder, ...existingOrders]))
+    const user = JSON.parse(localStorage.getItem('ecoloop_user') || '{}')
+    
+    try {
+      const fullAddress = `${formData.address}, ${formData.city}, ${formData.postalCode}`;
+      
+      await api.createPickup({
+        userEmail: user.email || 'guest@example.com',
+        cartItemVariant: deviceVariant,
+        finalPrice: price,
+        address: fullAddress,
+        scheduledDate: new Date().toISOString().split('T')[0], // Today
+        timeSlot: '10:00 AM - 02:00 PM',
+        status: 'PENDING'
+      });
 
-    setLoading(false)
-    setSuccess(true)
+      setSuccess(true)
+    } catch (err) {
+      console.error('Failed to schedule pickup:', err)
+      alert('Failed to schedule pickup. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (success) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center p-6">
+      <div className="min-h-[80vh] flex items-center justify-center p-6 pt-32">
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

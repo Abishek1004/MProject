@@ -371,9 +371,9 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
                 <button
                   type="button"
                   onClick={() => window.location.href = 'http://localhost:8081/oauth2/authorization/google'}
-                  className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition-all mb-6 font-inter font-medium text-slate-700 shadow-sm active:scale-[0.98] group"
+                  className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-full border border-slate-700 bg-[#131314] hover:bg-[#1e1e1f] transition-all mb-6 font-inter font-medium text-white shadow-sm active:scale-[0.98] group"
                 >
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-105 transition-transform" />
                   <span className="text-[15px]">Sign in with Google</span>
                 </button>
 
@@ -415,9 +415,9 @@ export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
                 <button
                   type="button"
                   onClick={() => window.location.href = 'http://localhost:8081/oauth2/authorization/google'}
-                  className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition-all mb-6 font-inter font-medium text-slate-700 shadow-sm active:scale-[0.98] group"
+                  className="w-full flex items-center justify-center gap-3 py-3 px-5 rounded-full border border-slate-700 bg-[#131314] hover:bg-[#1e1e1f] transition-all mb-6 font-inter font-medium text-white shadow-sm active:scale-[0.98] group"
                 >
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-105 transition-transform" />
                   <span className="text-[15px]">Sign in with Google</span>
                 </button>
 

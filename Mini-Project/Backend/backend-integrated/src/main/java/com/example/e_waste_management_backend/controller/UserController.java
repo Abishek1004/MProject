@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     @Autowired private JwtUtil jwtUtil;
@@ -48,5 +49,52 @@ public class UserController {
                 : fullName;
 
         return ResponseEntity.ok(Map.of("firstName", firstName));
+    }
+
+    /**
+     * Admin Endpoints for User Management
+     */
+    
+    // GET: Fetch all users
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    // POST: Insert a new user
+    @PostMapping("/users")
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        if (user.getName() == null || user.getEmail() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Name and Email are required"));
+        }
+        
+        // Defaults if not provided
+        if (user.getRole() == null) user.setRole("USER");
+        if (user.getStatus() == null) user.setStatus("ACTIVE");
+        if (user.getDate() == null) user.setDate(java.time.LocalDateTime.now());
+        
+        try {
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.status(201).body(Map.of(
+                "message", "User created successfully",
+                "id", savedUser.getId()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to insert user", "message", e.getMessage()));
+        }
+    }
+
+    // DELETE: Remove a user by ID
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+        }
+        try {
+            userRepository.deleteById(id);
+            return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to delete user", "message", e.getMessage()));
+        }
     }
 }
