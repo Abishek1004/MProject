@@ -42,7 +42,7 @@ public class PickupService {
 
     // ─── Admin: confirm device and credit wallet ──────────────────────────────
     @Transactional
-    public PickupRequest confirmAndCredit(Long pickupId, Integer finalPrice) {
+    public PickupRequest confirmAndCredit(Long pickupId, Double finalPrice) {
         PickupRequest req = pickupRepository.findById(pickupId)
                 .orElseThrow(() -> new RuntimeException("Pickup not found: " + pickupId));
 

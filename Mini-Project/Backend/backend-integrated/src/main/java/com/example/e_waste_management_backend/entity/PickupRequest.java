@@ -32,13 +32,16 @@ public class PickupRequest {
     private String paymentStatus = "PENDING";
 
     @Column(name = "final_price")
-    private Integer finalPrice;
+    private Double finalPrice;
 
     @Column(name = "address")
     private String address;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "archived")
+    private boolean archived = false;
 
     @PrePersist
     protected void onCreate() {
@@ -49,6 +52,9 @@ public class PickupRequest {
     // ─── Getters & Setters ────────────────────────────────────────────────────
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public boolean isArchived() { return archived; }
+    public void setArchived(boolean archived) { this.archived = archived; }
 
     public String getCartItemVariant() { return cartItemVariant; }
     public void setCartItemVariant(String cartItemVariant) { this.cartItemVariant = cartItemVariant; }
@@ -65,8 +71,8 @@ public class PickupRequest {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public Integer getFinalPrice() { return finalPrice; }
-    public void setFinalPrice(Integer finalPrice) { this.finalPrice = finalPrice; }
+    public Double getFinalPrice() { return finalPrice; }
+    public void setFinalPrice(Double finalPrice) { this.finalPrice = finalPrice; }
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }

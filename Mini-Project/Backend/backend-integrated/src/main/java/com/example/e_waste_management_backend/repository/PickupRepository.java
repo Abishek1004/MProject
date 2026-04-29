@@ -10,4 +10,6 @@ import java.util.List;
 public interface PickupRepository extends JpaRepository<PickupRequest, Long> {
     List<PickupRequest> findByUserEmailOrderByCreatedAtDesc(String email);
     List<PickupRequest> findAllByOrderByCreatedAtDesc();
+    List<PickupRequest> findByArchivedFalseOrderByCreatedAtDesc();
+    List<PickupRequest> findByArchivedTrueOrderByCreatedAtDesc();
 }

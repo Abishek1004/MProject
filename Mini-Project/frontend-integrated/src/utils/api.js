@@ -138,6 +138,12 @@ export const api = {
       body: JSON.stringify(pickupData),
     }),
 
+  getPickupHistory: () =>
+    request('/pickups/history', { method: 'GET' }),
+
+  clearAllPickups: () =>
+    request('/pickups/clear-all', { method: 'POST' }),
+
   updatePickupStatus: (id, status, paymentStatus) =>
     request(`/pickups/${id}/status`, {
       method: 'PATCH',

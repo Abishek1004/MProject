@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import BackButton from '../components/ui/BackButton'
-import { api } from '../utils/api'
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import BackButton from '../components/ui/BackButton';
+import { api } from '../utils/api';
 
 export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
   const d = nav || {}
@@ -11,6 +11,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    email: '',
     address: '',
     city: '',
     postalCode: ''
@@ -35,7 +36,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
       const fullAddress = `${formData.address}, ${formData.city}, ${formData.postalCode}`;
       
       await api.createPickup({
-        userEmail: user.email || 'guest@example.com',
+        userEmail: user.email || formData.email || 'guest@example.com',
         cartItemVariant: deviceVariant,
         finalPrice: price,
         address: fullAddress,
@@ -80,7 +81,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-12">
+    <form onSubmit={handleSubmit} className="max-w-[1200px] mx-auto px-6 py-12">
       <div className="mb-10">
         <BackButton goBack={goBack} canGoBack={canGoBack} label="Back to Estimate" />
       </div>
@@ -99,7 +100,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
             <h2 className="font-poppins font-black text-slate-800 text-3xl tracking-tight">Pickup Address</h2>
           </div>
 
-          <form className="space-y-8">
+          <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
                 <label className="text-slate-600 text-xs font-black uppercase tracking-widest ml-1">First Name</label>
@@ -123,6 +124,19 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
                   className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-4 text-slate-800 font-inter focus:border-slate-800 outline-none transition-colors shadow-sm"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-slate-600 text-xs font-black uppercase tracking-widest ml-1">Email Address</label>
+              <input 
+                required
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="john@example.com"
+                className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-4 text-slate-800 font-inter focus:border-slate-800 outline-none transition-colors shadow-sm"
+              />
             </div>
 
             <div className="space-y-2">
@@ -161,7 +175,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
                 />
               </div>
             </div>
-          </form>
+          </div>
         </motion.div>
 
         {/* Right Side: Order Summary */}
@@ -201,7 +215,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleSubmit}
+            type="submit"
             disabled={loading}
             className="w-full bg-emerald-500 text-slate-900 font-poppins font-black py-4 rounded-xl shadow-xl hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 disabled:opacity-70 uppercase tracking-widest text-sm"
           >
@@ -217,6 +231,6 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
           </div>
         </motion.div>
       </div>
-    </div>
+    </form>
   )
 }

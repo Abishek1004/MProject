@@ -126,16 +126,19 @@ export default function EcoloopAdmin({ go }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminCredentials, setAdminCredentials] = useState({ userid: '', password: '' });
   const [loginError, setLoginError] = useState('');
-  const { token } = useAuth();
+  useAuth(); // Keeping hook call in case it has side effects, though usually it just returns context
+
 
   useEffect(() => {
     if (isAdminAuthenticated) {
       fetchUsers();
       fetchPickups();
+      fetchHistory();
     }
   }, [isAdminAuthenticated]);
 
@@ -157,6 +160,36 @@ export default function EcoloopAdmin({ go }) {
       console.error('Failed to fetch pickups:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchHistory = async () => {
+    try {
+      const data = await api.getPickupHistory();
+      setHistory(Array.isArray(data) ? data.map(p => ({
+        id: p.id,
+        customer: p.userEmail,
+        device: p.cartItemVariant,
+        amount: p.finalPrice,
+        status: p.status,
+        paymentStatus: p.paymentStatus,
+        date: p.createdAt,
+        address: p.address
+      })) : []);
+    } catch (err) {
+      console.error('Failed to fetch history:', err);
+    }
+  };
+
+  const handleClearRecords = async () => {
+    if (!window.confirm('Are you sure you want to clear all active records? They will be moved to history.')) return;
+    try {
+      await api.clearAllPickups();
+      fetchPickups();
+      fetchHistory();
+      alert('Records cleared successfully!');
+    } catch (err) {
+      alert('Failed to clear records');
     }
   };
 
@@ -338,6 +371,7 @@ export default function EcoloopAdmin({ go }) {
               <SidebarItem label="Dashboard" icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>} active={activeTab === 'Dashboard'} onClick={() => setActiveTab('Dashboard')} />
               <SidebarItem label="Manage Users" icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4-4v2" /></svg>} active={activeTab === 'Manage Users'} onClick={() => setActiveTab('Manage Users')} />
               <SidebarItem label="Manage Orders" icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>} active={activeTab === 'Manage Orders'} onClick={() => setActiveTab('Manage Orders')} />
+              <SidebarItem label="History" icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3" /><circle cx="12" cy="12" r="9" /></svg>} active={activeTab === 'History'} onClick={() => setActiveTab('History')} />
               <SidebarItem label="Payment Status" icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2" /><path d="M2 10h20" /><path d="M16 14h.01" /><path d="M12 14h.01" /><path d="M8 14h.01" /></svg>} active={activeTab === 'Payment Status'} onClick={() => setActiveTab('Payment Status')} />
             </div>
           </div>
@@ -403,7 +437,7 @@ export default function EcoloopAdmin({ go }) {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h2 className="text-3xl font-black tracking-tight text-slate-800 dark:text-white">Welcome Back, Mahfuzul!</h2>
-                  <p className="text-slate-500 font-medium text-sm mt-1">Here's what happening with your store today.</p>
+                  <p className="text-slate-500 font-medium text-sm mt-1">Here&apos;s what happening with your store today.</p>
                 </div>
                 <div className="flex gap-3">
                   <select className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-2.5 text-xs font-bold shadow-sm outline-none cursor-pointer">
@@ -571,7 +605,7 @@ export default function EcoloopAdmin({ go }) {
                <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50 dark:bg-slate-800/50">
                   <div>
                      <h3 className="text-2xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">User Management</h3>
-                     <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">Manage your platform's user base</p>
+                     <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">Manage your platform&apos;s user base</p>
                   </div>
                   <button 
                     onClick={handleCreateUser}
@@ -657,6 +691,13 @@ export default function EcoloopAdmin({ go }) {
                      <h3 className="text-2xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">Order Management</h3>
                      <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">Approve pickups to instantly fund the Eco Wallet</p>
                   </div>
+                  <button 
+                    onClick={handleClearRecords}
+                    className="bg-red-500 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest shadow-md hover:bg-red-600 transition-colors flex items-center gap-2"
+                  >
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                    Clear Records
+                  </button>
                </div>
                <div className="overflow-x-auto">
                  <table className="w-full text-left border-collapse">
@@ -689,7 +730,7 @@ export default function EcoloopAdmin({ go }) {
                              </span>
                            </td>
                            <td className="px-8 py-6 text-right">
-                             {o.status === 'Pending' ? (
+                             {o.status !== 'Approved' ? (
                                <button 
                                  onClick={() => handleApproveOrder(o.id)}
                                  className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-md"
@@ -699,6 +740,55 @@ export default function EcoloopAdmin({ go }) {
                              ) : (
                                <span className="text-slate-400 font-bold text-xs uppercase tracking-widest opacity-70">Approved</span>
                              )}
+                           </td>
+                         </tr>
+                       ))
+                     )}
+                   </tbody>
+                 </table>
+               </div>
+             </motion.div>
+          )}
+
+          {activeTab === 'History' && (
+             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+               <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex flex-wrap justify-between items-center gap-6 bg-slate-50 dark:bg-slate-800/50">
+                  <div>
+                     <h3 className="text-2xl font-poppins font-black tracking-tight text-slate-800 dark:text-white">Archived History</h3>
+                     <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">View all previously cleared records</p>
+                  </div>
+               </div>
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left border-collapse">
+                   <thead>
+                     <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
+                       <th className="px-8 py-5">Order ID</th>
+                       <th className="px-8 py-5">Customer</th>
+                       <th className="px-8 py-5">Device</th>
+                       <th className="px-8 py-5">Amount</th>
+                       <th className="px-8 py-5">Final Status</th>
+                       <th className="px-8 py-5 text-right">Date</th>
+                     </tr>
+                   </thead>
+                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                     {history.length === 0 ? (
+                       <tr>
+                         <td colSpan="6" className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No history found</td>
+                       </tr>
+                     ) : (
+                       history.map((o, i) => (
+                         <tr key={o.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                           <td className="px-8 py-6 font-black text-sm text-slate-800 dark:text-white">#{o.id}</td>
+                           <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
+                           <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.device}</td>
+                           <td className="px-8 py-6 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
+                           <td className="px-8 py-6">
+                             <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-lg border bg-slate-50 border-slate-200 text-slate-500">
+                               {o.status}
+                             </span>
+                           </td>
+                           <td className="px-8 py-6 text-right text-slate-400 text-xs font-bold">
+                             {new Date(o.date).toLocaleDateString()}
                            </td>
                          </tr>
                        ))
@@ -762,7 +852,7 @@ export default function EcoloopAdmin({ go }) {
                                    onClick={() => handleProcessPayment(o.id, o.amount)}
                                    className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-colors shadow-md"
                                  >
-                                   Pay Now
+                                   Approve Payment
                                  </button>
                                ) : (
                                  <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest opacity-50">Pending Approval</span>
