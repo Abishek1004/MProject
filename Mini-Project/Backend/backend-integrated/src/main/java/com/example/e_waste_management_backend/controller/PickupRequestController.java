@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.math.BigDecimal;
 import com.example.e_waste_management_backend.service.WalletService;
+import com.example.e_waste_management_backend.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/pickups")
@@ -22,6 +23,20 @@ public class PickupRequestController {
     @Autowired
     private WalletService walletService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    private String getEmailFromHeader(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid token");
+        }
+        String token = authHeader.substring(7);
+        if (!jwtUtil.isValid(token)) {
+            throw new RuntimeException("Token expired or invalid");
+        }
+        return jwtUtil.extractEmail(token);
+    }
+
     @GetMapping
     public List<PickupRequest> getAllPickups() {
         return pickupRepository.findByArchivedFalseOrderByCreatedAtDesc();
@@ -30,6 +45,34 @@ public class PickupRequestController {
     @GetMapping("/history")
     public List<PickupRequest> getHistory() {
         return pickupRepository.findByArchivedTrueOrderByCreatedAtDesc();
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyPickups(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String email = getEmailFromHeader(authHeader);
+            return ResponseEntity.ok(pickupRepository.findByUserEmailOrderByCreatedAtDesc(email));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelPickup(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+        try {
+            String email = getEmailFromHeader(authHeader);
+            return pickupRepository.findById(id).map(pickup -> {
+                if (!pickup.getUserEmail().equals(email)) {
+                    return ResponseEntity.status(403).body(Map.of("error", "Not authorized"));
+                }
+                pickup.setStatus("Cancelled");
+                pickup.setArchived(true); // removes from admin manage orders
+                pickupRepository.save(pickup);
+                return ResponseEntity.ok(Map.of("message", "Order cancelled successfully"));
+            }).orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PostMapping

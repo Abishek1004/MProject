@@ -3,10 +3,16 @@ import { motion } from 'framer-motion';
 import BackButton from '../components/ui/BackButton';
 import { api } from '../utils/api';
 
-export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
-  const d = nav || {}
-  const price = d.price || 0
-  const deviceVariant = d.variant || 'Device'
+export default function SchedulePickupPage({ nav, go, goBack, canGoBack, cart = [], onRemove }) {
+  // If cart is empty, fallback to nav (if they somehow bypassed cart, though unlikely now)
+  const singlePrice = nav?.price || 0;
+  const singleVariant = nav?.variant || 'Device';
+  
+  const isCartEmpty = cart.length === 0;
+  
+  const totalPrice = isCartEmpty 
+    ? singlePrice 
+    : cart.reduce((sum, item) => sum + item.price, 0);
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -34,16 +40,34 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
     
     try {
       const fullAddress = `${formData.address}, ${formData.city}, ${formData.postalCode}`;
+      const userEmail = user.email || formData.email || 'guest@example.com';
       
-      await api.createPickup({
-        userEmail: user.email || formData.email || 'guest@example.com',
-        cartItemVariant: deviceVariant,
-        finalPrice: price,
-        address: fullAddress,
-        scheduledDate: new Date().toISOString().split('T')[0], // Today
-        timeSlot: '10:00 AM - 02:00 PM',
-        status: 'PENDING'
-      });
+      if (isCartEmpty) {
+        // Fallback for single item
+        await api.createPickup({
+          userEmail: userEmail,
+          cartItemVariant: singleVariant,
+          finalPrice: singlePrice,
+          address: fullAddress,
+          scheduledDate: new Date().toISOString().split('T')[0],
+          timeSlot: '10:00 AM - 02:00 PM',
+          status: 'PENDING'
+        });
+      } else {
+        // Submit all cart items
+        for (const item of cart) {
+          await api.createPickup({
+            userEmail: userEmail,
+            cartItemVariant: item.variant,
+            finalPrice: item.price,
+            address: fullAddress,
+            scheduledDate: new Date().toISOString().split('T')[0],
+            timeSlot: '10:00 AM - 02:00 PM',
+            status: 'PENDING'
+          });
+          if (onRemove) await onRemove(item.id);
+        }
+      }
 
       setSuccess(true)
     } catch (err) {
@@ -67,13 +91,13 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
           </div>
           <h2 className="text-3xl font-poppins font-black text-slate-800 mb-4">Awesome!</h2>
           <p className="text-slate-500 font-inter mb-8 leading-relaxed">
-            Your pickup for <span className="text-emerald-500 font-bold">{deviceVariant}</span> has been scheduled successfully. We'll contact you shortly.
+            Your pickup for <span className="text-emerald-500 font-bold">{isCartEmpty ? singleVariant : `${cart.length} devices`}</span> has been scheduled successfully. We'll contact you shortly.
           </p>
           <button 
-            onClick={() => go('home')}
+            onClick={() => go('orders')}
             className="w-full bg-slate-800 text-white font-black py-5 rounded-2xl hover:bg-slate-900 transition-all shadow-xl"
           >
-            Back to Home
+            Track My Orders
           </button>
         </motion.div>
       </div>
@@ -187,13 +211,25 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
           <h3 className="font-poppins font-black text-2xl mb-8 tracking-tight">Order Summary</h3>
           
           <div className="space-y-4 mb-8 text-sm text-slate-300 font-inter">
-             <div className="flex justify-between items-center font-bold text-white">
-                 <span>1x {deviceVariant}</span>
-                 <span>₹{price.toLocaleString()}</span>
-             </div>
+             {isCartEmpty ? (
+               <div className="flex justify-between items-center font-bold text-white">
+                   <span>1x {singleVariant}</span>
+                   <span>₹{singlePrice.toLocaleString()}</span>
+               </div>
+             ) : (
+               cart.map((item, i) => (
+                 <div key={item.id || i} className="flex justify-between items-center font-bold text-white">
+                     <span className="truncate pr-4">{1}x {item.variant}</span>
+                     <span>₹{item.price.toLocaleString()}</span>
+                 </div>
+               ))
+             )}
+             
+             <div className="h-px w-full bg-slate-700/50 my-4" />
+             
              <div className="flex justify-between items-center">
                  <span>Subtotal</span>
-                 <span>₹{price.toLocaleString()}</span>
+                 <span>₹{totalPrice.toLocaleString()}</span>
              </div>
              <div className="flex justify-between items-center text-emerald-400 font-bold">
                  <span>Pickup Service</span>
@@ -209,7 +245,7 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack }) {
 
           <div className="flex justify-between items-end mb-8">
               <span className="font-black text-lg text-slate-400 uppercase tracking-widest">Total Value</span>
-              <span className="text-3xl font-black text-emerald-400">₹{price.toLocaleString()}</span>
+              <span className="text-3xl font-black text-emerald-400">₹{totalPrice.toLocaleString()}</span>
           </div>
 
           <motion.button

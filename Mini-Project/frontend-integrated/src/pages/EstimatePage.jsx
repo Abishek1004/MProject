@@ -156,7 +156,13 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  onClick={() => go('schedulepickup', { price, variant: n.variant })}
+                  onClick={async () => {
+                    await addToCart({
+                      category: cat?.name, company: brand?.name, variant: n.variant,
+                      details: detailsForCart, price, modelId: n.modelId,
+                    })
+                    go('cart')
+                  }}
                   className="w-full text-white font-poppins font-black py-4 rounded-[1.5rem] border-none cursor-pointer flex flex-col items-center justify-center gap-1 shadow-2xl transition-all"
                   style={{ background: darkNavy, boxShadow: '0 20px 40px rgba(26, 34, 51, 0.4)' }}
                 >

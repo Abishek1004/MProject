@@ -3,32 +3,21 @@ import { motion } from 'framer-motion'
 import { staggerContainer, fadeUp } from '../utils/motion'
 import BackButton from '../components/ui/BackButton'
 import Footer from '../components/layout/Footer'
+import { api } from '../utils/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
-  const [isScheduled, setIsScheduled] = useState(false)
-  const [status, setStatus] = useState('Pending')
-  const [address, setAddress] = useState('')
-  const [phone, setPhone] = useState('')
+  const { user } = useAuth()
   
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price, 0), [cart])
 
   const handleSchedulePickup = () => {
-    if (!address.trim() || !phone.trim()) {
-      alert("Please provide both phone number and address for pickup scheduling.")
+    if (!user) {
+      alert("Please sign in to schedule a pickup.")
       return
     }
-    setIsScheduled(true)
-    setStatus('Pickup Scheduled')
-    // In a real app, cart would be cleared or moved to 'orders'
-    // Here we'll just show the status for the user
+    go('schedulepickup')
   }
-
-  const steps = [
-    { name: 'Request Received', completed: true },
-    { name: 'Pickup Scheduled', completed: isScheduled },
-    { name: 'Device Inspection', completed: false },
-    { name: 'Payment Released', completed: false },
-  ]
 
   return (
     <div className="bg-slate-50 dark:bg-slate-900 min-h-screen transition-colors duration-300 font-inter">
@@ -38,48 +27,7 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
           <h1 className="font-poppins font-black text-3xl text-slate-800 dark:text-slate-100">🛒 My Cart</h1>
         </div>
 
-        {isScheduled && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 p-6 bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-500/30 rounded-3xl"
-          >
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-2 h-2 rounded-full bg-[#037252] animate-pulse" />
-                  <span className="text-[#037252] dark:text-[#037252] font-bold uppercase text-[10px] tracking-widest">Active Order</span>
-                </div>
-                <h3 className="font-poppins font-bold text-xl text-slate-800 dark:text-slate-100">Status: {status}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Our agent will call you within 2 hours to confirm the pickup time.</p>
-              </div>
-              
-              <div className="flex gap-2 sm:gap-4 w-full md:w-auto overflow-x-auto pb-2 no-scrollbar justify-center md:justify-end">
-                {steps.map((step, i) => (
-                  <div key={step.name} className="flex flex-col items-center min-w-[70px] sm:min-w-[90px] max-w-[110px]">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-colors flex-shrink-0 ${step.completed ? 'bg-[#037252] text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
-                      {step.completed ? '✓' : i + 1}
-                    </div>
-                    <span className={`text-[8px] sm:text-[10px] font-bold text-center leading-tight uppercase tracking-tighter sm:tracking-normal ${step.completed ? 'text-[#037252] dark:text-[#037252]' : 'text-slate-400'}`}>
-                      {step.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="mt-6 pt-6 border-t border-emerald-500/10 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white/40 dark:bg-white/5 p-4 rounded-2xl">
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Pickup Contact</p>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{phone}</p>
-              </div>
-              <div className="bg-white/40 dark:bg-white/5 p-4 rounded-2xl">
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Pickup Address</p>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-200 line-clamp-2">{address}</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Cart Items */}
@@ -129,58 +77,15 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
                     </div>
                     <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
                       <span className="font-poppins font-black text-[#037252] dark:text-[#037252] text-xl">₹{item.price.toLocaleString()}</span>
-                      {!isScheduled && (
-                        <button 
-                          onClick={() => onRemove(item.id)}
-                          className="text-xs font-bold text-red-400 hover:text-red-500 transition-colors uppercase tracking-widest border-none bg-transparent cursor-pointer"
-                        >
-                          Remove
-                        </button>
-                      )}
+                      <button 
+                        onClick={() => onRemove(item.id)}
+                        className="text-xs font-bold text-red-400 hover:text-red-500 transition-colors uppercase tracking-widest border-none bg-transparent cursor-pointer"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </motion.div>
                 ))}
-
-                {/* Pickup Address Section */}
-                {!isScheduled && (
-                  <motion.div 
-                    variants={fadeUp}
-                    className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 mt-4"
-                  >
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-[#037252]/10 flex items-center justify-center text-xl text-[#037252]">
-                        📍
-                      </div>
-                      <div>
-                        <h3 className="font-poppins font-bold text-slate-800 dark:text-slate-100">Pickup Details</h3>
-                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Where should we collect the items?</p>
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-6">
-                      <div className="md:col-span-1">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Contact Number</label>
-                        <input 
-                          type="tel" 
-                          placeholder="+91 98765 43210" 
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 font-bold placeholder:font-normal"
-                        />
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Full Pickup Address</label>
-                        <textarea 
-                          placeholder="Building No, Street Name, Landmark, City, Pincode" 
-                          rows="3"
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                          className="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#037252] outline-none transition-all dark:text-slate-100 resize-none font-medium placeholder:font-normal"
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
               </motion.div>
             )}
           </div>
@@ -209,19 +114,13 @@ export default function CartPage({ cart, onRemove, go, goBack, canGoBack }) {
                 </div>
               </div>
 
-              {!isScheduled ? (
-                <button 
-                  onClick={handleSchedulePickup}
-                  disabled={cart.length === 0}
-                  className={`w-full font-poppins font-bold py-4 rounded-2xl border-none shadow-lg transition-all ${cart.length > 0 ? 'bg-[#037252] hover:bg-[#025c42] text-white shadow-[#037252]/25 cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
-                >
-                  Schedule Pickup →
-                </button>
-              ) : (
-                <div className="w-full font-poppins font-bold py-4 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-500 text-center border border-slate-200 dark:border-slate-600">
-                  Scheduled ✅
-                </div>
-              )}
+              <button 
+                onClick={handleSchedulePickup}
+                disabled={cart.length === 0}
+                className={`w-full font-poppins font-bold py-4 rounded-2xl border-none shadow-lg transition-all ${cart.length > 0 ? 'bg-[#037252] hover:bg-[#025c42] text-white shadow-[#037252]/25 cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+              >
+                Schedule Pickup →
+              </button>
               
               <p className="text-[10px] text-slate-400 text-center mt-4 uppercase tracking-widest font-bold">Secure Checkout Powered by EcoRecycle</p>
             </motion.div>

@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { motion } from 'framer-motion'
 import { fadeIn, slideUp } from '../../utils/motion'
 
-export default function CartModal({ cart, onRemove, onClose }) {
+export default function CartModal({ cart, onRemove, onClose, onCheckout }) {
   const overlayRef = useRef(null)
   const total = cart.reduce((sum, item) => sum + item.price, 0)
 
@@ -101,7 +101,9 @@ export default function CartModal({ cart, onRemove, onClose }) {
                 ₹{total.toLocaleString()}
               </span>
             </div>
-            <button className="w-full bg-eco-600 hover:bg-eco-700 text-white font-poppins font-bold text-base py-3.5 rounded-2xl border-none cursor-pointer transition-colors shadow-lg shadow-eco-600/25">
+            <button 
+              onClick={onCheckout}
+              className="w-full bg-eco-600 hover:bg-eco-700 text-white font-poppins font-bold text-base py-3.5 rounded-2xl border-none cursor-pointer transition-colors shadow-lg shadow-eco-600/25">
               Schedule Pickup →
             </button>
           </div>

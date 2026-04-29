@@ -176,6 +176,12 @@ export default function Navbar({ cart, page, nav, go, onSignIn, onLogout, onCart
                 </svg>
               </button>
 
+              <button onClick={() => go('orders')} className="relative p-2.5 rounded-xl hover:bg-slate-100 transition-all bg-transparent border-none cursor-pointer group active:scale-90" aria-label="Orders">
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#475569" strokeWidth="2" className="group-hover:stroke-slate-900 transition-colors">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </button>
+
               <button onClick={onCart} className="relative p-2.5 rounded-xl hover:bg-slate-100 transition-all bg-transparent border-none cursor-pointer group active:scale-90" aria-label="Cart">
                 <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#475569" strokeWidth="2" className="group-hover:stroke-slate-900 transition-colors">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />

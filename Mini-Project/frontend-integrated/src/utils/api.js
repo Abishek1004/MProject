@@ -141,6 +141,17 @@ export const api = {
   getPickupHistory: () =>
     request('/pickups/history', { method: 'GET' }),
 
+  getMyPickups: (token) =>
+    request('/pickups/my', {
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+
+  cancelPickup: (id, token) =>
+    request(`/pickups/${id}/cancel`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    }),
+
   clearAllPickups: () =>
     request('/pickups/clear-all', { method: 'POST' }),
 

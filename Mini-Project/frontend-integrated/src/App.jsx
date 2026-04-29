@@ -23,6 +23,7 @@ import CartPage from './pages/CartPage'
 import EcoloopAdmin from './pages/EcoloopAdmin'
 import SchedulePickupPage from './pages/SchedulePickupPage'
 import WalletPage from './pages/WalletPage'
+import OrdersPage from './pages/OrdersPage'
 
 // ─── ROUTE MAP ───────────────────────────────────────────────────────────────
 const ROUTES = {
@@ -44,6 +45,7 @@ const ROUTES = {
   '/admin': 'ecoloopadmin',
   '/schedule-pickup': 'schedulepickup',
   '/wallet': 'wallet',
+  '/orders': 'orders',
 }
 
 function pageToPath(page, nav = {}) {
@@ -53,7 +55,7 @@ function pageToPath(page, nav = {}) {
     signin: '/login', signup: '/signup', models: '/models',
     variants: '/variants', details: '/details', sysconfig: '/sysconfig', estimate: '/estimate',
     cart: '/cart', ecoloopadmin: '/admin', schedulepickup: '/schedule-pickup',
-    wallet: '/wallet',
+    wallet: '/wallet', orders: '/orders',
   }
   return map[page] || '/'
 }
@@ -131,6 +133,7 @@ export default function App() {
       cart: 'My Cart — EcoRecycle',
       ecoloopadmin: 'Admin Dashboard — EcoRecycle',
       wallet: 'My Wallet — EcoRecycle',
+      orders: 'My Orders — EcoRecycle',
     }
     document.title = titles[page] || 'EcoRecycle'
   }, [page, nav])
@@ -278,14 +281,23 @@ export default function App() {
           {page === 'estimate' && <EstimatePage {...shared} addToCart={addToCart} />}
           {page === 'cart' && <CartPage     {...shared} cart={cart} onRemove={removeFromCart} />}
           {page === 'ecoloopadmin' && <EcoloopAdmin {...shared} />}
-          {page === 'schedulepickup' && <SchedulePickupPage {...shared} />}
+          {page === 'schedulepickup' && <SchedulePickupPage {...shared} cart={cart} onRemove={removeFromCart} />}
           {page === 'wallet' && <WalletPage {...shared} />}
+          {page === 'orders' && <OrdersPage {...shared} />}
         </motion.div>
       </AnimatePresence>
 
       <AnimatePresence>
         {cartOpen && (
-          <CartModal cart={cart} onRemove={removeFromCart} onClose={() => setCartOpen(false)} />
+          <CartModal 
+            cart={cart} 
+            onRemove={removeFromCart} 
+            onClose={() => setCartOpen(false)} 
+            onCheckout={() => {
+              setCartOpen(false);
+              go('cart');
+            }}
+          />
         )}
       </AnimatePresence>
 
