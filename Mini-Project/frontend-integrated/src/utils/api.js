@@ -150,4 +150,22 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status, paymentStatus }),
     }),
+
+  // ── Wallet Endpoints ──────────────────────────────────────────────────
+  getWalletBalance: (token) =>
+    request('/wallet/balance', {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+
+  getWalletHistory: (token) =>
+    request('/wallet/history', {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+
+  withdrawWallet: (amount, method, token) =>
+    request('/wallet/withdraw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ amount, method }),
+    }),
 }

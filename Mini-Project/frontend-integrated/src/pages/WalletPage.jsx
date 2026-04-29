@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import BackButton from '../components/ui/BackButton'
 import Footer from '../components/layout/Footer'
+import { api } from '../utils/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function WalletPage({ goBack, canGoBack }) {
-  const [walletBalance, setWalletBalance] = useState(() => {
-    return parseFloat(localStorage.getItem('ecoloop_wallet') || '0');
-  });
+  const { token, isLoggedIn } = useAuth();
+
+  const [walletBalance, setWalletBalance] = useState(0);
   
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [method, setMethod] = useState('bank'); // 'bank' or 'upi'
@@ -23,11 +25,24 @@ export default function WalletPage({ goBack, canGoBack }) {
   const [ifsc, setIfsc] = useState('');
   const [upiId, setUpiId] = useState('');
 
-  const [history, setHistory] = useState(() => {
-    return JSON.parse(localStorage.getItem('ecoloop_wallet_history') || '[]');
-  });
+  const [history, setHistory] = useState([]);
 
-  const handleWithdraw = () => {
+  useEffect(() => {
+    if (isLoggedIn && token) {
+      api.getWalletBalance(token).then(data => {
+        setWalletBalance(data.balance || 0);
+      }).catch(err => console.error("Failed to fetch balance", err));
+      
+      api.getWalletHistory(token).then(data => {
+        setHistory(data || []);
+      }).catch(err => console.error("Failed to fetch history", err));
+    } else {
+      setWalletBalance(0);
+      setHistory([]);
+    }
+  }, [isLoggedIn, token]);
+
+  const handleWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
     if (!amount || isNaN(amount) || amount <= 0) {
       showToast("Please enter a valid amount.");
@@ -47,26 +62,27 @@ export default function WalletPage({ goBack, canGoBack }) {
        return;
     }
 
-    const newBalance = walletBalance - amount;
-    setWalletBalance(newBalance);
-    localStorage.setItem('ecoloop_wallet', newBalance.toString());
+    if (!isLoggedIn || !token) {
+      showToast("Please sign in to withdraw.");
+      return;
+    }
 
-    const transaction = {
-      id: 'TXN-' + Math.floor(1000 + Math.random() * 9000),
-      type: 'Withdrawal',
-      amount: amount,
-      date: new Date().toISOString()
-    };
-    
-    const newHistory = [transaction, ...history];
-    setHistory(newHistory);
-    localStorage.setItem('ecoloop_wallet_history', JSON.stringify(newHistory));
-    
-    setWithdrawAmount('');
-    setAccNumber('');
-    setIfsc('');
-    setUpiId('');
-    showToast(`Successfully withdrawn ₹${amount.toLocaleString()} to your ${method === 'bank' ? 'Bank Account' : 'UPI ID'}.`, 'success');
+    try {
+      const data = await api.withdrawWallet(amount, method, token);
+      setWalletBalance(data.balance);
+      
+      // Refresh history
+      const histData = await api.getWalletHistory(token);
+      setHistory(histData || []);
+      
+      setWithdrawAmount('');
+      setAccNumber('');
+      setIfsc('');
+      setUpiId('');
+      showToast(`Successfully withdrawn ₹${amount.toLocaleString()} to your ${method === 'bank' ? 'Bank Account' : 'UPI ID'}.`, 'success');
+    } catch (err) {
+      showToast(err.error || "Failed to process withdrawal");
+    }
   };
 
   return (
@@ -254,18 +270,18 @@ export default function WalletPage({ goBack, canGoBack }) {
                     history.map((txn, i) => (
                       <div key={i} className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm">
                         <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-sm ${txn.type === 'Withdrawal' ? 'bg-red-100 text-red-500' : 'bg-emerald-100 text-emerald-500'}`}>
-                            {txn.type === 'Withdrawal' ? '↗' : '↙'}
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-sm ${txn.type === 'DEBIT' ? 'bg-red-100 text-red-500' : 'bg-emerald-100 text-emerald-500'}`}>
+                            {txn.type === 'DEBIT' ? '↗' : '↙'}
                           </div>
                           <div>
                             <p className="font-bold text-slate-800 text-sm">{txn.type}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                              {new Date(txn.date).toLocaleDateString()} at {new Date(txn.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                              {new Date(txn.createdAt).toLocaleDateString()} at {new Date(txn.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                             </p>
                           </div>
                         </div>
-                        <p className={`font-black ${txn.type === 'Withdrawal' ? 'text-red-500' : 'text-emerald-500'}`}>
-                          {txn.type === 'Withdrawal' ? '-' : '+'}₹{txn.amount.toLocaleString()}
+                        <p className={`font-black ${txn.type === 'DEBIT' ? 'text-red-500' : 'text-emerald-500'}`}>
+                          {txn.type === 'DEBIT' ? '-' : '+'}₹{txn.amount.toLocaleString()}
                         </p>
                       </div>
                     ))
