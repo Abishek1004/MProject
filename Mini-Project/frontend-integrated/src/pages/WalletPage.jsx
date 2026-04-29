@@ -26,6 +26,9 @@ export default function WalletPage({ goBack, canGoBack }) {
   const [upiId, setUpiId] = useState('');
 
   const [history, setHistory] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [activeOrderId, setActiveOrderId] = useState(null);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn && token) {
@@ -36,11 +39,36 @@ export default function WalletPage({ goBack, canGoBack }) {
       api.getWalletHistory(token).then(data => {
         setHistory(data || []);
       }).catch(err => console.error("Failed to fetch history", err));
+
+      setLoadingOrders(true);
+      api.getMyPickups(token).then(data => {
+        setOrders(Array.isArray(data) ? data : []);
+        if (data && data.length > 0) setActiveOrderId(data[0].id);
+      }).catch(err => console.error("Failed to fetch orders", err))
+        .finally(() => setLoadingOrders(false));
     } else {
       setWalletBalance(0);
       setHistory([]);
+      setOrders([]);
     }
   }, [isLoggedIn, token]);
+
+  const activeOrder = orders.find(o => o.id === activeOrderId);
+
+  const getStatusProgress = (order) => {
+    if (order.status === 'Cancelled') return -1;
+    if (order.paymentStatus === 'Paid') return 3;
+    if (order.status === 'Approved') return 1;
+    if (order.status === 'In Progress') return 2;
+    return 0;
+  };
+
+  const steps = [
+    { label: 'Request Placed', desc: 'We have received your pickup request.', icon: '📝' },
+    { label: 'Pickup Scheduled', desc: 'Agent assigned and scheduled for pickup.', icon: '🚚' },
+    { label: 'Device Inspected', desc: 'Device quality check and verification complete.', icon: '🔍' },
+    { label: 'Payment Released', desc: 'Funds added to your Eco Wallet.', icon: '💰' }
+  ];
 
   const handleWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
@@ -241,6 +269,139 @@ export default function WalletPage({ goBack, canGoBack }) {
             </motion.button>
           </div>
         </div>
+
+        {/* NEW: Order Tracking Section */}
+        {isLoggedIn && orders.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-20 pt-10 border-t border-slate-200"
+          >
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+              <div>
+                <h2 className="font-poppins font-black text-4xl text-slate-800 tracking-tight">Track Your Requests</h2>
+                <p className="text-slate-500 font-bold mt-2 uppercase tracking-[0.2em] text-xs">Real-time status of your recycling pickups</p>
+              </div>
+              <div className="flex gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
+                {orders.map(order => (
+                  <button
+                    key={order.id}
+                    onClick={() => setActiveOrderId(order.id)}
+                    className={`px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all whitespace-nowrap
+                      ${activeOrderId === order.id 
+                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' 
+                        : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
+                  >
+                    {order.trackingId || `Order #${order.id}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {activeOrder && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Left: Device Info Card */}
+                <div className="lg:col-span-4">
+                  <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 h-full relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-100 transition-colors" />
+                    
+                    <div className="relative">
+                      <div className="flex justify-between items-start mb-10">
+                        <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-3xl shadow-inner">
+                          📱
+                        </div>
+                        <span className="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 font-black text-[10px] uppercase tracking-widest border border-emerald-100">
+                          Active Request
+                        </span>
+                      </div>
+
+                      <h3 className="font-poppins font-black text-2xl text-slate-800 leading-tight mb-2">
+                        {activeOrder.cartItemVariant}
+                      </h3>
+                      <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-8">
+                        Tracking ID: <span className="text-slate-800">{activeOrder.trackingId || 'ELOOP-NEW'}</span>
+                      </p>
+
+                      <div className="space-y-6">
+                        <div className="flex justify-between items-center py-4 border-b border-slate-50">
+                          <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">Expected Value</span>
+                          <span className="font-black text-xl text-emerald-500">₹{activeOrder.finalPrice?.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4 border-b border-slate-50">
+                          <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">Scheduled Date</span>
+                          <span className="font-black text-sm text-slate-700">{activeOrder.scheduledDate || 'TBD'}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4">
+                          <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">Location</span>
+                          <span className="font-black text-sm text-slate-700 truncate max-w-[150px]">{activeOrder.address || 'Saved Address'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Vertical Timeline */}
+                <div className="lg:col-span-8">
+                  <div className="bg-white rounded-[2.5rem] p-10 shadow-xl border border-slate-100 h-full">
+                    <div className="flex items-center gap-4 mb-12">
+                      <div className="w-10 h-10 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                      </div>
+                      <h3 className="font-poppins font-black text-2xl text-slate-800 tracking-tight">Lifecycle Progress</h3>
+                    </div>
+
+                    <div className="space-y-0 relative pl-4">
+                      {/* Vertical line connector */}
+                      <div className="absolute left-[35px] top-4 bottom-12 w-0.5 bg-slate-100" />
+                      
+                      {steps.map((step, idx) => {
+                        const progress = getStatusProgress(activeOrder);
+                        const isCompleted = progress >= idx;
+                        const isCurrent = progress === idx - 1 || (progress === 0 && idx === 0);
+                        const isUpcoming = progress < idx;
+
+                        return (
+                          <div key={idx} className="relative flex gap-8 pb-12 last:pb-0 group">
+                            {/* Marker */}
+                            <div className={`relative z-10 w-11 h-11 rounded-2xl flex items-center justify-center text-lg transition-all duration-500 shadow-md
+                              ${isCompleted 
+                                ? 'bg-emerald-500 text-white ring-4 ring-emerald-50' 
+                                : isCurrent 
+                                  ? 'bg-white text-slate-400 ring-4 ring-slate-50 border-2 border-emerald-500 animate-pulse'
+                                  : 'bg-white text-slate-300 border-2 border-slate-100'}`}
+                            >
+                              {isCompleted ? '✓' : step.icon}
+                            </div>
+
+                            <div className="pt-1">
+                              <h4 className={`font-poppins font-black text-sm uppercase tracking-widest transition-colors
+                                ${isCompleted ? 'text-slate-800' : isCurrent ? 'text-emerald-600' : 'text-slate-300'}`}>
+                                {step.label}
+                              </h4>
+                              <p className={`text-xs font-bold mt-1 transition-colors ${isCompleted || isCurrent ? 'text-slate-500' : 'text-slate-300'}`}>
+                                {step.desc}
+                              </p>
+                              {isCurrent && (
+                                <motion.div 
+                                  initial={{ opacity: 0, x: -10 }} 
+                                  animate={{ opacity: 1, x: 0 }}
+                                  className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-widest"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                                  Current Stage
+                                </motion.div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
       
       <AnimatePresence>

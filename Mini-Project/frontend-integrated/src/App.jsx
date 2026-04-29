@@ -23,7 +23,7 @@ import CartPage from './pages/CartPage'
 import EcoloopAdmin from './pages/EcoloopAdmin'
 import SchedulePickupPage from './pages/SchedulePickupPage'
 import WalletPage from './pages/WalletPage'
-import OrdersPage from './pages/OrdersPage'
+
 
 // ─── ROUTE MAP ───────────────────────────────────────────────────────────────
 const ROUTES = {
@@ -133,7 +133,7 @@ export default function App() {
       cart: 'My Cart — EcoRecycle',
       ecoloopadmin: 'Admin Dashboard — EcoRecycle',
       wallet: 'My Wallet — EcoRecycle',
-      orders: 'My Orders — EcoRecycle',
+      orders: 'Track Orders — EcoRecycle',
     }
     document.title = titles[page] || 'EcoRecycle'
   }, [page, nav])
@@ -283,7 +283,7 @@ export default function App() {
           {page === 'ecoloopadmin' && <EcoloopAdmin {...shared} />}
           {page === 'schedulepickup' && <SchedulePickupPage {...shared} cart={cart} onRemove={removeFromCart} />}
           {page === 'wallet' && <WalletPage {...shared} />}
-          {page === 'orders' && <OrdersPage {...shared} />}
+
         </motion.div>
       </AnimatePresence>
 

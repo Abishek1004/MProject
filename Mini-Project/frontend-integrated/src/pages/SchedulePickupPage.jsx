@@ -94,10 +94,10 @@ export default function SchedulePickupPage({ nav, go, goBack, canGoBack, cart = 
             Your pickup for <span className="text-emerald-500 font-bold">{isCartEmpty ? singleVariant : `${cart.length} devices`}</span> has been scheduled successfully. We'll contact you shortly.
           </p>
           <button 
-            onClick={() => go('orders')}
+            onClick={() => go('home', {})}
             className="w-full bg-slate-800 text-white font-black py-5 rounded-2xl hover:bg-slate-900 transition-all shadow-xl"
           >
-            Track My Orders
+            Back to Home
           </button>
         </motion.div>
       </div>

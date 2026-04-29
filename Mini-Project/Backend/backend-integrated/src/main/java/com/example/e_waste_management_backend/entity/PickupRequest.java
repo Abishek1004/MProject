@@ -43,15 +43,24 @@ public class PickupRequest {
     @Column(name = "archived")
     private boolean archived = false;
 
+    @Column(name = "tracking_id", unique = true)
+    private String trackingId;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         if (this.status == null) this.status = "SCHEDULED";
+        if (this.trackingId == null) {
+            this.trackingId = "ELOOP-" + System.currentTimeMillis() % 1000000;
+        }
     }
 
     // ─── Getters & Setters ────────────────────────────────────────────────────
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getTrackingId() { return trackingId; }
+    public void setTrackingId(String trackingId) { this.trackingId = trackingId; }
 
     public boolean isArchived() { return archived; }
     public void setArchived(boolean archived) { this.archived = archived; }

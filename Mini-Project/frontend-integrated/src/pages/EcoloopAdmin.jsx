@@ -148,6 +148,7 @@ export default function EcoloopAdmin({ go }) {
       const data = await api.getAllPickups();
       setOrders(Array.isArray(data) ? data.map(p => ({
         id: p.id,
+        trackingId: p.trackingId,
         customer: p.userEmail,
         device: p.cartItemVariant,
         amount: p.finalPrice,
@@ -168,6 +169,7 @@ export default function EcoloopAdmin({ go }) {
       const data = await api.getPickupHistory();
       setHistory(Array.isArray(data) ? data.map(p => ({
         id: p.id,
+        trackingId: p.trackingId,
         customer: p.userEmail,
         device: p.cartItemVariant,
         amount: p.finalPrice,
@@ -276,6 +278,16 @@ export default function EcoloopAdmin({ go }) {
       alert(`Successfully paid! ₹${amount.toLocaleString()} has been instantly added to the customer's Eco Wallet.`);
     } catch (err) {
       alert('Failed to process payment');
+    }
+  };
+
+  const handleInspectOrder = async (orderId) => {
+    try {
+      await api.updatePickupStatus(orderId, 'In Progress');
+      setOrders(orders.map(o => o.id === orderId ? { ...o, status: 'In Progress' } : o));
+      alert(`Order ${orderId} marked as inspected.`);
+    } catch (err) {
+      alert('Failed to update order status');
     }
   };
 
@@ -703,7 +715,7 @@ export default function EcoloopAdmin({ go }) {
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
-                       <th className="px-8 py-5">Order ID</th>
+                       <th className="px-8 py-5">Tracking ID</th>
                        <th className="px-8 py-5">Customer</th>
                        <th className="px-8 py-5">Device</th>
                        <th className="px-8 py-5">Amount</th>
@@ -719,7 +731,7 @@ export default function EcoloopAdmin({ go }) {
                      ) : (
                        orders.map((o, i) => (
                          <tr key={o.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                           <td className="px-8 py-6 font-black text-sm text-slate-800 dark:text-white">{o.id}</td>
+                           <td className="px-8 py-6 font-black text-[11px] text-slate-800 dark:text-white uppercase tracking-tighter bg-slate-50 dark:bg-slate-800/50">{o.trackingId || `ID-${o.id}`}</td>
                            <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
                            <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.device}</td>
                            <td className="px-8 py-6 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
@@ -730,17 +742,30 @@ export default function EcoloopAdmin({ go }) {
                              </span>
                            </td>
                            <td className="px-8 py-6 text-right">
-                             {o.status !== 'Approved' ? (
-                               <button 
-                                 onClick={() => handleApproveOrder(o.id)}
-                                 className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-md"
-                               >
-                                 Approve
-                               </button>
-                             ) : (
-                               <span className="text-slate-400 font-bold text-xs uppercase tracking-widest opacity-70">Approved</span>
-                             )}
-                           </td>
+                             <div className="flex justify-end gap-2">
+                                {o.status !== 'Approved' && o.status !== 'In Progress' && (
+                                  <button 
+                                    onClick={() => handleApproveOrder(o.id)}
+                                    className="bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-md"
+                                  >
+                                    Approve
+                                  </button>
+                                )}
+                                {o.status === 'Approved' && (
+                                  <button 
+                                    onClick={() => handleInspectOrder(o.id)}
+                                    className="bg-blue-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-600 transition-colors shadow-md"
+                                  >
+                                    Inspect
+                                  </button>
+                                )}
+                                {(o.status === 'In Progress' || o.paymentStatus === 'Paid') && (
+                                  <span className="text-slate-400 font-bold text-xs uppercase tracking-widest opacity-70">
+                                    {o.paymentStatus === 'Paid' ? 'Completed' : 'Inspected'}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
                          </tr>
                        ))
                      )}
@@ -762,7 +787,7 @@ export default function EcoloopAdmin({ go }) {
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
-                       <th className="px-8 py-5">Order ID</th>
+                       <th className="px-8 py-5">Tracking ID</th>
                        <th className="px-8 py-5">Customer</th>
                        <th className="px-8 py-5">Device</th>
                        <th className="px-8 py-5">Amount</th>
@@ -778,7 +803,7 @@ export default function EcoloopAdmin({ go }) {
                      ) : (
                        history.map((o, i) => (
                          <tr key={o.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                           <td className="px-8 py-6 font-black text-sm text-slate-800 dark:text-white">#{o.id}</td>
+                           <td className="px-8 py-6 font-black text-[11px] text-slate-800 dark:text-white uppercase tracking-tighter bg-slate-50 dark:bg-slate-800/50">{o.trackingId || `ID-${o.id}`}</td>
                            <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
                            <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.device}</td>
                            <td className="px-8 py-6 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
@@ -811,7 +836,7 @@ export default function EcoloopAdmin({ go }) {
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="bg-white dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b-2 border-slate-100 dark:border-slate-800">
-                       <th className="px-8 py-5">Order ID</th>
+                       <th className="px-8 py-5">Tracking ID</th>
                        <th className="px-8 py-5">Customer</th>
                        <th className="px-8 py-5">Amount</th>
                        <th className="px-8 py-5">Order Status</th>
@@ -830,7 +855,7 @@ export default function EcoloopAdmin({ go }) {
                          const canPay = o.status === 'Approved' && !isPaid;
                          return (
                            <tr key={o.id || i} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                             <td className="px-8 py-6 font-black text-sm text-slate-800 dark:text-white">{o.id}</td>
+                             <td className="px-8 py-6 font-black text-[11px] text-slate-800 dark:text-white uppercase tracking-tighter bg-slate-50 dark:bg-slate-800/50">{o.trackingId || `ID-${o.id}`}</td>
                              <td className="px-8 py-6 font-bold text-slate-600 dark:text-slate-300">{o.customer}</td>
                              <td className="px-8 py-6 font-black text-emerald-500">₹{o.amount?.toLocaleString()}</td>
                              <td className="px-8 py-6">

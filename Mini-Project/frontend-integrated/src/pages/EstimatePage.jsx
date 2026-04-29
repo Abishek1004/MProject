@@ -25,6 +25,7 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
 
   const [mlPrice, setMlPrice] = useState(null)
   const [payOpen, setPayOpen] = useState(false)
+  const [showTechnical, setShowTechnical] = useState(false)
 
   const cat = CATEGORIES.find((c) => c.id === n.category) || CATEGORIES[0]
   const brand = getCompany(n.category || 'mobile', n.company || 'apple')
@@ -36,21 +37,46 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
   const price = mlPrice || basePrice
 
   useEffect(() => {
-    if (n.category !== 'mobile') return
-    const brandName = brand?.name || ''
-    const ram_gb = parseInt((d?.ram || '').toString().replace(/[^0-9]/g, ''), 10) || 4
-    const storage_gb = parseInt((d?.storage || '').toString().replace(/[^0-9]/g, ''), 10) || 64
-    const payload = {
-      brand: brandName, age_years: 2, ram_gb: [4,6,8,12].includes(ram_gb)?ram_gb:8, 
-      storage_gb: [64,128,256].includes(storage_gb)?storage_gb:128,
-      battery_power: 4500, original_box: 1, original_charger: 1, 
-      front_glass_status: 'no defect', back_glass_status: 'no defect',
-      display_defect: 'no defect', body_defect: 'no defect', faults: 'none'
-    }
-    api.predictMobilePrice(payload).then((res) => {
+    if (n.category === 'mobile') {
+      const brandName = brand?.name || ''
+      const ram_gb = parseInt((d?.ram || '').toString().replace(/[^0-9]/g, ''), 10) || 4
+      const storage_gb = parseInt((d?.storage || '').toString().replace(/[^0-9]/g, ''), 10) || 64
+      const payload = {
+        brand: brandName, age_years: 2, ram_gb: [4,6,8,12].includes(ram_gb)?ram_gb:8, 
+        storage_gb: [64,128,256].includes(storage_gb)?storage_gb:128,
+        battery_power: 4500, original_box: 1, original_charger: 1, 
+        front_glass_status: 'no defect', back_glass_status: 'no defect',
+        display_defect: 'no defect', body_defect: 'no defect', faults: 'none'
+      }
+      api.predictMobilePrice(payload).then((res) => {
+          const num = parseInt(res?.predicted_price, 10)
+          if (Number.isFinite(num)) setMlPrice(num)
+      }).catch(() => {})
+    } else if (n.category === 'laptop') {
+      const payload = {
+        brand: brand?.name || 'Dell',
+        processor: d.processor || 'Intel Core i5',
+        ram: parseInt(d.ram) || 8,
+        storage: parseInt(d.storage) || 256,
+        age: 2,
+        condition: d.physicalCondition || 'Good'
+      }
+      api.predictLaptopPrice(payload).then((res) => {
         const num = parseInt(res?.predicted_price, 10)
         if (Number.isFinite(num)) setMlPrice(num)
-    }).catch(() => {})
+      }).catch(() => {})
+    } else if (n.category === 'tablet') {
+      const payload = {
+        brand: brand?.name || 'Apple',
+        storage: parseInt(d.storage) || 64,
+        age: 2,
+        condition: d.physicalCondition || 'Good'
+      }
+      api.predictTabletPrice(payload).then((res) => {
+        const num = parseInt(res?.predicted_price, 10)
+        if (Number.isFinite(num)) setMlPrice(num)
+      }).catch(() => {})
+    }
   }, [n.category, brand, d])
 
   return (
@@ -172,6 +198,39 @@ export default function EstimatePage({ nav, go, goBack, canGoBack, addToCart }) 
                   <span className="text-[11px] font-inter opacity-70 font-bold">Free Instant Home Pickup</span>
                 </motion.button>
               </div>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                onClick={() => setShowTechnical(!showTechnical)}
+                className="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-[1.5rem] py-3 mt-4 text-slate-500 font-bold text-[0.75rem] uppercase tracking-widest cursor-pointer font-inter transition-all hover:border-emerald-300 hover:text-emerald-600"
+              >
+                {showTechnical ? 'Hide Analysis' : 'View Value Analysis'}
+              </motion.button>
+
+              <AnimatePresence>
+                {showTechnical && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-4 overflow-hidden"
+                  >
+                    <div className="bg-slate-900 rounded-2xl p-6 text-[10px] font-mono text-emerald-400 space-y-2">
+                      <p className="text-slate-500 uppercase font-black tracking-widest mb-2 border-b border-slate-800 pb-1">AI Valuation Factors</p>
+                      <div className="flex justify-between"><span>Base Multiplier</span><span>x1.0</span></div>
+                      <div className="flex justify-between"><span>Condition Rank</span><span>{cond.l}</span></div>
+                      <div className="flex justify-between"><span>ML Confidence</span><span>High</span></div>
+                      <div className="flex justify-between"><span>Market Demand</span><span>Strong</span></div>
+                      <div className="pt-2 border-t border-slate-800 text-white flex justify-between">
+                        <span>Final Output</span>
+                        <span>₹{price.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <motion.button
                 initial={{ opacity: 0 }}

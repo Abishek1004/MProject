@@ -513,7 +513,13 @@ function ConditionWizard({ cc, steps, persistKey, onComplete, nav }) {
     setAnimKey(k => k + 1)
   }, [step])
 
-  const handleRadio = (key, label) => setAnswers(p => ({ ...p, [key]: label }))
+  const handleRadio = (key, label) => {
+    setAnswers(p => ({ ...p, [key]: label }));
+    if (key === 'workingStatus' && label === 'Not Working') {
+      // Short-circuit: skip all remaining steps and complete immediately
+      onComplete({ ...answers, [key]: label });
+    }
+  }
   const handleCheckbox = (key, label) => setAnswers(p => {
     const arr = p[key]
     return { ...p, [key]: arr.includes(label) ? arr.filter(v => v !== label) : [...arr, label] }
@@ -530,10 +536,19 @@ function ConditionWizard({ cc, steps, persistKey, onComplete, nav }) {
         : true
 
   const goNext = () => {
-    if (!canProceed) return
-    if (step < steps.length - 1) setStep(step + 1)
-    else onComplete(answers)
-  }
+    if (!canProceed) return;
+    
+    let nextStep = step + 1;
+    // Skip functional 'Faults' step (usually Step 7 in mobile/tablet) if device is not working
+    if (answers.workingStatus === 'Not Working') {
+      while (nextStep < steps.length && steps[nextStep].key === 'faults') {
+        nextStep++;
+      }
+    }
+
+    if (nextStep < steps.length) setStep(nextStep);
+    else onComplete(answers);
+  };
   const goBack = () => { if (step > 0) setStep(step - 1) }
 
   return (
@@ -1068,9 +1083,9 @@ export default function DetailsPage({ nav, go, goBack, canGoBack }) {
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
-                          <span className="text-[10px] font-bold font-inter text-slate-400">
-                            Logic Pending
+                          <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${conditionDone ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]' : 'bg-slate-200'}`}></div>
+                          <span className={`text-[10px] font-bold font-inter transition-colors duration-500 ${conditionDone ? 'text-slate-800' : 'text-slate-400'}`}>
+                            {conditionDone ? 'AI Pricing Ready' : 'Logic Pending'}
                           </span>
                         </div>
                       </div>
